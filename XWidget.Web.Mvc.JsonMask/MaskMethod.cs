@@ -13,9 +13,9 @@ namespace XWidget.Web.Mvc.JsonMask {
         Controller,
 
         /// <summary>
-        /// 動作、方法
+        /// 動作、方法名稱
         /// </summary>
-        Action,
+        ActionName,
 
         /// <summary>
         /// 模式名稱
@@ -25,11 +25,6 @@ namespace XWidget.Web.Mvc.JsonMask {
         /// <summary>
         /// 輸出類型
         /// </summary>
-        ReturnType,
-
-        /// <summary>
-        /// 定義類型
-        /// </summary>
-        DeclaringType,
+        ReturnType
     }
 }

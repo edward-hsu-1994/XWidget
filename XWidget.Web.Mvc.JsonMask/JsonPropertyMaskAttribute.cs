@@ -33,11 +33,9 @@ namespace XWidget.Web.Mvc.JsonMask {
             switch (Method) {
                 case MaskMethod.Controller:
                     return Key.Equals(controller.GetType());
-                case MaskMethod.DeclaringType:
-                    return Key.Equals(declaringType);
                 case MaskMethod.PatternName:
                     return Key.Equals(patternName);
-                case MaskMethod.Action:
+                case MaskMethod.ActionName:
                     return Key.Equals(controller.ControllerContext.ActionDescriptor.MethodInfo.Name);
                 case MaskMethod.ReturnType:
                     return Key.Equals(controller.ControllerContext.ActionDescriptor.MethodInfo.ReturnType);

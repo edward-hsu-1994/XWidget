@@ -157,7 +157,7 @@ namespace Microsoft.AspNetCore.Mvc {
             var resolvers = new PropertyMaskSerializerContractResolver();
 
             // 建立屬性遮罩
-            controller.AddPropertyMask(null, source.GetType(), patternName, resolvers);
+            AddPropertyMask(controller, source.GetType(), source.GetType(), patternName, resolvers);
 
             // 建立序列化設定選項
             var serializerSettings = new JsonSerializerSettings();
