@@ -25,6 +25,11 @@ namespace XWidget.Web.Mvc.JsonMask {
         /// <summary>
         /// 輸出類型
         /// </summary>
-        ReturnType
+        ReturnType,
+
+        /// <summary>
+        /// 定義類型
+        /// </summary>
+        DeclaringType,
     }
 }
