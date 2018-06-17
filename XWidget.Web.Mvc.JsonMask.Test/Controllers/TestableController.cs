@@ -8,16 +8,8 @@ using XWidget.Web.Mvc.JsonMask.Test.Models;
 
 namespace XWidget.Web.Mvc.JsonMask.Test.Controllers {
     public class TestableController : Controller {
-        //[HttpGet("TestByController")]
-
-        public object Result { get; set; }
-
-        public override void OnActionExecuting(ActionExecutingContext context) {
-            base.OnActionExecuting(context);
-        }
-
-        public void TestByController() {
-            Result = this.Mask(Category_Controller.GetCategories());
+        public IEnumerable<Category_Controller> TestByAction() {
+            return this.Mask(Category_Controller.GetCategories());
         }
     }
 }

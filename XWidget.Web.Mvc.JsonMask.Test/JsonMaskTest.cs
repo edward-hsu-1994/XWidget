@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Routing;
 using System;
 using System.Linq;
+using System.Reflection;
 using Xunit;
 using XWidget.Web.Mvc.JsonMask.Test.Controllers;
 using XWidget.Web.Mvc.JsonMask.Test.Models;
@@ -34,6 +35,29 @@ namespace XWidget.Web.Mvc.JsonMask.Test {
             var maskedResult = controller.Mask(Category_Controller.GetCategories());
 
             foreach (var category in maskedResult) {
+                Assert.Null(category.Children);
+            }
+        }
+
+        /// <summary>
+        /// 依據操作或方法屏蔽
+        /// </summary>
+        [Fact]
+        public void ByAction() {
+            var controller = new TestableController();
+
+            var actionContext = new ActionContext(
+                new DefaultHttpContext(),
+                new RouteData(),
+                new ControllerActionDescriptor() {
+                    ActionName = nameof(TestableController.TestByAction),
+                    ControllerName = nameof(TestableController),
+                    ControllerTypeInfo = typeof(TestableController).GetTypeInfo()
+                });
+
+            controller.ControllerContext = new ControllerContext(actionContext);
+
+            foreach (var category in controller.TestByAction()) {
                 Assert.Null(category.Children);
             }
         }
