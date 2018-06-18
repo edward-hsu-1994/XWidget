@@ -12,4 +12,4 @@ matrix:
 install:
 - dotnet restore
 script:
-- dotnet test
+- dotnet test XWidget.Web.Mvc.JsonMask.Test
