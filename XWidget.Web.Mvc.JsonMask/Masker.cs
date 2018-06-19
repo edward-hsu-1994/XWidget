@@ -40,7 +40,7 @@ namespace XWidget.Web.Mvc.JsonMask {
             TData data,
             string patternName) {
             // 引動內部屏蔽方法，並深層複製原始資料，中斷參考關係
-            return InternalMask(data.GetType(), data.DeepClone(), null, patternName);
+            return InternalMask(data.GetType(), data.DeepClone(), null, patternName, new List<object>());
         }
 
         /// <summary>
@@ -57,20 +57,30 @@ namespace XWidget.Web.Mvc.JsonMask {
             string patternName = null)
             where TController : Controller {
             // 引動內部屏蔽方法，並深層複製原始資料，中斷參考關係
-            return InternalMask(data.GetType(), data.DeepClone(), controller, patternName);
+            return InternalMask(data.GetType(), data.DeepClone(), controller, patternName, new List<object>());
         }
 
         internal static TData InternalMask<TData>(
             Type declaringType,
             TData data,
             object controller,
-            string patternName) {
+            string patternName,
+            List<object> refList) {
+
+            // 檢查是否發生參考循環
+            if (refList.Contains(data)) {
+                // 發生參考循環則直接返回
+                return data;
+            }
+            // 加入參考列表
+            refList.Add(data);
+
             #region 可列舉型別處理
             if (data is IEnumerable enumData) {
                 foreach (var ele in enumData) {
                     // 遞迴至下層，並將結果重設回element的屬性中
                     Masker.MapperInstance.Map(
-                        InternalMask(declaringType, ele, controller, patternName),
+                        InternalMask(declaringType, ele, controller, patternName, refList),
                         ele,
                         ele.GetType(),
                         ele.GetType());
@@ -114,7 +124,8 @@ namespace XWidget.Web.Mvc.JsonMask {
                                 propertyType,
                                 value,
                                 controller,
-                                patternName
+                                patternName,
+                                refList
                             )
                         );
                     }
@@ -151,7 +162,8 @@ namespace XWidget.Web.Mvc.JsonMask {
                             filedType,
                             value,
                             controller,
-                            patternName
+                            patternName,
+                            refList
                         )
                     );
                 }

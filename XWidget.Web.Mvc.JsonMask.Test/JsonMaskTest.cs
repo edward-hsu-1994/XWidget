@@ -98,5 +98,16 @@ namespace XWidget.Web.Mvc.JsonMask.Test {
                 Assert.Null(category.Children);
             }
         }
+
+        /// <summary>
+        /// 循環參考測試
+        /// </summary>
+        [Fact]
+        public void RefLoopTest() {
+            var obj = new RefLoop();
+            obj.Loop = obj;
+
+            var maskedResult = ControllerExtension.Mask(null, obj, "NoPatternName");
+        }
     }
 }
