@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Routing;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
 using System.Reflection;
@@ -108,6 +109,45 @@ namespace XWidget.Web.Mvc.JsonMask.Test {
             obj.Loop = obj;
 
             var maskedResult = ControllerExtension.Mask(null, obj, "NoPatternName");
+        }
+
+        [Fact]
+        public void EFTest() {
+            var options = new DbContextOptionsBuilder<TestContext>()
+                .UseInMemoryDatabase(databaseName: "Find_searches_url")
+                .Options;
+
+            using (var context = new TestContext(options)) {
+                Category_EF category_EF1;
+                context.Categories.Add(category_EF1 = new Category_EF { Name = "A" });
+
+                category_EF1.Children.Add(new Category_EF() {
+                    Name = "A-1"
+                });
+
+                context.Categories.Add(new Category_EF { Name = "B" });
+                context.Categories.Add(new Category_EF { Name = "C" });
+                context.SaveChanges();
+            }
+
+            using (var context = new TestContext(options)) {
+                var data = ControllerExtension.Mask(
+                    null,
+                    context.Categories.Where(x => 1 == 1),
+                    "Mask");
+
+                foreach (var category in data) {
+                    Assert.Null(category.Children);
+                    Assert.Null(category.Parent);
+                }
+
+                //嘗試儲存變更，確認是否deepclone有作用
+                context.SaveChanges();
+            }
+
+            using (var context = new TestContext(options)) {
+                Assert.True(context.Categories.Any(x => x.Children.Count > 0));
+            }
         }
     }
 }
