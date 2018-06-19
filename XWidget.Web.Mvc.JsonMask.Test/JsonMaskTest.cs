@@ -31,7 +31,7 @@ namespace XWidget.Web.Mvc.JsonMask.Test {
         /// </summary>
         [Fact]
         public void ByDeclaringType() {
-            var maskedResult = ControllerExtension.Mask(null, Category_DeclaringType.GetCategories());
+            var maskedResult = ControllerExtension.Mask(null, Category_PackageType.GetCategories());
 
             foreach (var category in maskedResult) {
                 Assert.Null(category.Children);

@@ -16,7 +16,7 @@ namespace XWidget.Web.Mvc.JsonMask {
         public object Key { get; private set; }
 
         /// <summary>
-        /// 在<see cref="Method"/>為<see cref="MaskMethod.Controller"/>、<see cref="MaskMethod.DeclaringType"/>或<see cref="MaskMethod.ReturnType"/>情況下使否要使用匹配繼承鏈，
+        /// 在<see cref="Method"/>為<see cref="MaskMethod.Controller"/>、<see cref="MaskMethod.PackageType"/>或<see cref="MaskMethod.ReturnType"/>情況下使否要使用匹配繼承鏈，
         /// 並檢查Interfaces
         /// </summary>
         public bool Inherited { get; set; } = true;
@@ -44,7 +44,7 @@ namespace XWidget.Web.Mvc.JsonMask {
                     } else {
                         return Key.Equals(controller.GetType());
                     }
-                case MaskMethod.DeclaringType:
+                case MaskMethod.PackageType:
                     if (Inherited) {
                         return GetAllRefTypes(declaringType).Contains(Key);
                     } else {

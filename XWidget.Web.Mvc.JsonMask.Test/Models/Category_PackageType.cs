@@ -7,7 +7,7 @@ namespace XWidget.Web.Mvc.JsonMask.Test.Models {
     /// <summary>
     /// 分類
     /// </summary>
-    public class Category_DeclaringType {
+    public class Category_PackageType {
         /// <summary>
         /// 唯一識別號
         /// </summary>
@@ -27,30 +27,30 @@ namespace XWidget.Web.Mvc.JsonMask.Test.Models {
         /// <summary>
         /// 子分類
         /// </summary>
-        [JsonPropertyMask(key: typeof(IEnumerable<Category_DeclaringType>), Method = MaskMethod.DeclaringType)]
-        public ICollection<Category_DeclaringType> Children { get; set; }
+        [JsonPropertyMask(key: typeof(IEnumerable<Category_PackageType>), Method = MaskMethod.PackageType)]
+        public ICollection<Category_PackageType> Children { get; set; }
 
         /// <summary>
         /// 取得分類樹狀結構
         /// </summary>
         /// <returns>分類集合</returns>
-        public static IEnumerable<Category_DeclaringType> GetCategoryTree() {
-            return new Category_DeclaringType[] {
-                new Category_DeclaringType() {
+        public static IEnumerable<Category_PackageType> GetCategoryTree() {
+            return new Category_PackageType[] {
+                new Category_PackageType() {
                     Name = "CategoryRoot",
-                    Children = new Category_DeclaringType[] {
-                        new Category_DeclaringType() {
+                    Children = new Category_PackageType[] {
+                        new Category_PackageType() {
                             Name = "Level1-1",
-                            Children = new Category_DeclaringType[] {
-                                new Category_DeclaringType() {
+                            Children = new Category_PackageType[] {
+                                new Category_PackageType() {
                                     Name = "Level2-1"
                                 },
-                                new Category_DeclaringType() {
+                                new Category_PackageType() {
                                     Name = "Level2-2"
                                 }
                             }
                         },
-                        new Category_DeclaringType() {
+                        new Category_PackageType() {
                             Name = "Level1-2"
                         }
                     }
@@ -62,12 +62,12 @@ namespace XWidget.Web.Mvc.JsonMask.Test.Models {
         /// 取得所有分類集合
         /// </summary>
         /// <returns>分類集合</returns>
-        public static IEnumerable<Category_DeclaringType> GetCategories() {
+        public static IEnumerable<Category_PackageType> GetCategories() {
             var tree = GetCategoryTree();
 
-            List<Category_DeclaringType> result = new List<Category_DeclaringType>();
+            List<Category_PackageType> result = new List<Category_PackageType>();
 
-            void AddList(IEnumerable<Category_DeclaringType> categories) {
+            void AddList(IEnumerable<Category_PackageType> categories) {
                 foreach (var category in categories) {
                     result.Add(category);
                     if (category.Children != null) {
