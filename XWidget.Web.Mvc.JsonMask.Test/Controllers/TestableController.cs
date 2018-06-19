@@ -11,5 +11,9 @@ namespace XWidget.Web.Mvc.JsonMask.Test.Controllers {
         public IEnumerable<Category_Controller> TestByAction() {
             return this.Mask(Category_Controller.GetCategories());
         }
+
+        public IEnumerable<Category_ActionReturnType> TestByActionReturnType() {
+            return this.Mask(Category_ActionReturnType.GetCategories());
+        }
     }
 }

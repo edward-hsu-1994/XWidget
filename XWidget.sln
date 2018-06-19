@@ -3,9 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27428.2037
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XWidget.Web.Mvc.JsonMask", "XWidget.Web.Mvc.JsonMask\XWidget.Web.Mvc.JsonMask.csproj", "{AC85A51A-D93C-4F2B-8480-2232593C9964}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XWidget.Web.Mvc.JsonMask", "XWidget.Web.Mvc.JsonMask\XWidget.Web.Mvc.JsonMask.csproj", "{AC85A51A-D93C-4F2B-8480-2232593C9964}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XWidget.Web.Mvc.JsonMask.Test", "XWidget.Web.Mvc.JsonMask.Test\XWidget.Web.Mvc.JsonMask.Test.csproj", "{934F5C6C-3DB4-4834-B38F-1BA5CD70540B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XWidget.Web.Mvc.JsonMask.Test", "XWidget.Web.Mvc.JsonMask.Test\XWidget.Web.Mvc.JsonMask.Test.csproj", "{934F5C6C-3DB4-4834-B38F-1BA5CD70540B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{399EB402-AA57-4F5F-B629-EF3B06BDB1C9}"
+	ProjectSection(SolutionItems) = preProject
+		.travis.yml = .travis.yml
+		LICENSE = LICENSE
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
