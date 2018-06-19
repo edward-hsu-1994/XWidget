@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using Force.DeepCloner;
+﻿using Force.DeepCloner;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections;
@@ -13,22 +12,6 @@ namespace XWidget.Web.Mvc.JsonMask {
     /// 屬性屏蔽核心
     /// </summary>
     internal static class Masker {
-        /// <summary>
-        /// AutoMapper實例
-        /// </summary>
-        private static IMapper MapperInstance = null;
-
-        /// <summary>
-        /// 靜態建構子，用以初始化<see cref="MapperInstance"/>
-        /// </summary>
-        static Masker() {
-            var conf = new MapperConfiguration(x => {
-                x.CreateMissingTypeMaps = true;
-            });
-
-            Masker.MapperInstance = conf.CreateMapper();
-        }
-
         /// <summary>
         /// 取得屬性屏蔽後的結果
         /// </summary>
@@ -78,12 +61,8 @@ namespace XWidget.Web.Mvc.JsonMask {
             #region 可列舉型別處理
             if (data is IEnumerable enumData) {
                 foreach (var ele in enumData) {
-                    // 遞迴至下層，並將結果重設回element的屬性中
-                    Masker.MapperInstance.Map(
-                        InternalMask(declaringType, ele, controller, patternName, refList),
-                        ele,
-                        ele.GetType(),
-                        ele.GetType());
+                    InternalMask(declaringType, ele, controller, patternName, refList)
+                        .DeepCloneTo(ele);
                 }
                 return data;
             }
