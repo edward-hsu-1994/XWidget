@@ -15,9 +15,10 @@ namespace XWidget.Web.Mvc.JsonMask {
         /// <summary>
         /// 深層複製方法，預設為Force.DeepCloner
         /// </summary>
-        public static Func<object, object> DeepClone = (obj) => {
-            return obj.DeepClone();
-        };
+        public static Func<object, object> DeepClone { get; set; }
+            = (obj) => {
+                return obj.DeepClone();
+            };
 
         /// <summary>
         /// 取得屬性屏蔽後的結果
