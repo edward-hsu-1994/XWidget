@@ -15,9 +15,10 @@ namespace XWidget.Web.Mvc.JsonMask {
         /// <summary>
         /// 深層複製方法，預設為Force.DeepCloner
         /// </summary>
-        public static Func<object, object> DeepClone = (obj) => {
-            return obj.DeepClone();
-        };
+        public static Func<object, object> DeepClone { get; set; }
+            = (obj) => {
+                return obj.DeepClone();
+            };
 
         /// <summary>
         /// 取得屬性屏蔽後的結果
@@ -30,7 +31,7 @@ namespace XWidget.Web.Mvc.JsonMask {
             TData data,
             string patternName) {
             // 引動內部屏蔽方法，並深層複製原始資料，中斷參考關係
-            return InternalMask(data.GetType(), (TData)DeepClone(data), null, patternName, new List<object>());
+            return InternalMask(null, data.GetType(), (TData)DeepClone(data), null, patternName, new List<object>());
         }
 
         /// <summary>
@@ -47,11 +48,12 @@ namespace XWidget.Web.Mvc.JsonMask {
             string patternName = null)
             where TController : Controller {
             // 引動內部屏蔽方法，並深層複製原始資料，中斷參考關係
-            return InternalMask(data.GetType(), (TData)DeepClone(data), controller, patternName, new List<object>());
+            return InternalMask(null, data.GetType(), (TData)DeepClone(data), controller, patternName, new List<object>());
         }
 
         internal static TData InternalMask<TData>(
             Type declaringType,
+            Type packageType,
             TData data,
             object controller,
             string patternName,
@@ -68,7 +70,7 @@ namespace XWidget.Web.Mvc.JsonMask {
             #region 可列舉型別處理
             if (data is IEnumerable enumData) {
                 foreach (var ele in enumData) {
-                    InternalMask(declaringType, ele, controller, patternName, refList)
+                    InternalMask(null, packageType, ele, controller, patternName, refList)
                         .DeepCloneTo(ele);
                 }
                 return data;
@@ -89,7 +91,7 @@ namespace XWidget.Web.Mvc.JsonMask {
                 var attrs = property.GetCustomAttributes<JsonPropertyMaskAttribute>();
 
                 // 在JsonMask設定集合中尋找是否有符合項目
-                if (attrs.Any(x => x.IsMatch(controller as Controller, declaringType, patternName))) {
+                if (attrs.Any(x => x.IsMatch(controller as Controller, type, packageType, patternName))) {
                     if (property.CanWrite) {
                         // 找到符合項目則設定屏蔽
                         property.SetValue(data, null);
@@ -107,6 +109,7 @@ namespace XWidget.Web.Mvc.JsonMask {
                         property.SetValue(
                             data,
                             InternalMask(
+                                type,
                                 propertyType,
                                 value,
                                 controller,
@@ -125,7 +128,7 @@ namespace XWidget.Web.Mvc.JsonMask {
                 var attrs = filed.GetCustomAttributes<JsonPropertyMaskAttribute>();
 
                 // 在JsonMask設定集合中尋找是否有符合項目
-                if (attrs.Any(x => x.IsMatch(controller as Controller, declaringType, patternName))) {
+                if (attrs.Any(x => x.IsMatch(controller as Controller, type, packageType, patternName))) {
                     // 找到符合項目則設定屏蔽
                     filed.SetValue(data, null);
                 } else {
@@ -145,6 +148,7 @@ namespace XWidget.Web.Mvc.JsonMask {
                     filed.SetValue(
                         data,
                         InternalMask(
+                            type,
                             filedType,
                             value,
                             controller,

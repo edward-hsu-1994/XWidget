@@ -31,6 +31,18 @@ namespace XWidget.Web.Mvc.JsonMask.Test {
         /// </summary>
         [Fact]
         public void ByDeclaringType() {
+            var maskedResult = ControllerExtension.Mask(null, Category_DeclaringType.GetCategories());
+
+            foreach (var category in maskedResult) {
+                Assert.Null(category.Children);
+            }
+        }
+
+        /// <summary>
+        /// 依據包裝類型屏蔽
+        /// </summary>
+        [Fact]
+        public void ByPackageType() {
             var maskedResult = ControllerExtension.Mask(null, Category_PackageType.GetCategories());
 
             foreach (var category in maskedResult) {
@@ -111,6 +123,9 @@ namespace XWidget.Web.Mvc.JsonMask.Test {
             var maskedResult = ControllerExtension.Mask(null, obj, "NoPatternName");
         }
 
+        /// <summary>
+        /// EFCore的測試
+        /// </summary>
         [Fact]
         public void EFTest() {
             var options = new DbContextOptionsBuilder<TestContext>()
