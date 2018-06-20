@@ -31,5 +31,10 @@ namespace XWidget.Web.Mvc.JsonMask {
         /// 包裝類型
         /// </summary>
         PackageType,
+
+        /// <summary>
+        /// 定義類型
+        /// </summary>
+        DeclaringType
     }
 }

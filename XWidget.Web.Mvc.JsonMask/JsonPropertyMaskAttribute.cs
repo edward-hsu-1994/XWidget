@@ -33,10 +33,11 @@ namespace XWidget.Web.Mvc.JsonMask {
         /// 檢查是否匹配
         /// </summary>
         /// <param name="controller">控制器實例</param>
-        /// <param name="declaringType">回傳類型</param>
+        /// <param name="declaringType">定義類型</param>
+        /// <param name="packageType">包裝類型</param>
         /// <param name="patternName">模式名稱</param>
         /// <returns></returns>
-        internal bool IsMatch(Controller controller, Type declaringType, string patternName) {
+        internal bool IsMatch(Controller controller, Type declaringType, Type packageType, string patternName) {
             switch (Method) {
                 case MaskMethod.Controller:
                     if (Inherited) {
@@ -44,11 +45,17 @@ namespace XWidget.Web.Mvc.JsonMask {
                     } else {
                         return Key.Equals(controller.GetType());
                     }
-                case MaskMethod.PackageType:
+                case MaskMethod.DeclaringType:
                     if (Inherited) {
                         return GetAllRefTypes(declaringType).Contains(Key);
                     } else {
                         return Key.Equals(declaringType);
+                    }
+                case MaskMethod.PackageType:
+                    if (Inherited) {
+                        return GetAllRefTypes(packageType).Contains(Key);
+                    } else {
+                        return Key.Equals(packageType);
                     }
                 case MaskMethod.PatternName:
                     return Key.Equals(patternName);
