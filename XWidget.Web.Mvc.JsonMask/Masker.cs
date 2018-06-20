@@ -11,7 +11,14 @@ namespace XWidget.Web.Mvc.JsonMask {
     /// <summary>
     /// 屬性屏蔽核心
     /// </summary>
-    internal static class Masker {
+    public static class Masker {
+        /// <summary>
+        /// 深層複製方法，預設為Force.DeepCloner
+        /// </summary>
+        public static Func<object, object> DeepClone = (obj) => {
+            return obj.DeepClone();
+        };
+
         /// <summary>
         /// 取得屬性屏蔽後的結果
         /// </summary>
@@ -23,7 +30,7 @@ namespace XWidget.Web.Mvc.JsonMask {
             TData data,
             string patternName) {
             // 引動內部屏蔽方法，並深層複製原始資料，中斷參考關係
-            return InternalMask(data.GetType(), data.DeepClone(), null, patternName, new List<object>());
+            return InternalMask(data.GetType(), (TData)DeepClone(data), null, patternName, new List<object>());
         }
 
         /// <summary>
@@ -40,7 +47,7 @@ namespace XWidget.Web.Mvc.JsonMask {
             string patternName = null)
             where TController : Controller {
             // 引動內部屏蔽方法，並深層複製原始資料，中斷參考關係
-            return InternalMask(data.GetType(), data.DeepClone(), controller, patternName, new List<object>());
+            return InternalMask(data.GetType(), (TData)DeepClone(data), controller, patternName, new List<object>());
         }
 
         internal static TData InternalMask<TData>(
