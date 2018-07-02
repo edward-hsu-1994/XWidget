@@ -6,9 +6,4 @@ namespace XWidget.Web.Mvc.Multipart {
     public class FromJsonAttribute : FromFormAttribute {
 
     }
-
-    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter)]
-    public class FromJson2Attribute : Attribute {
-
-    }
 }

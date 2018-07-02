@@ -35,6 +35,10 @@ namespace XWidget.Web.Mvc.Multipart {
                     return new MultipartJsonModelBinderProvider();
                 }
 
+                if (context.Metadata.BinderType.GetCustomAttribute<FromJsonAttribute>() != null) {
+                    return new MultipartJsonModelBinderProvider();
+                }
+
                 var visited = context.GetType().GetProperty("Visited", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
 
                 ControllerParameterDescriptor cpd = null;
