@@ -15,7 +15,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XWidget.Web.Mvc.Multipart", "XWidget.Web.Mvc.Multipart\XWidget.Web.Mvc.Multipart.csproj", "{EC61BCC6-D3E5-4B61-8584-3E59901AC627}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XWidget.Web.Mvc.Multipart.WebTest", "XWidget.Web.Mvc.Multipart.WebTest\XWidget.Web.Mvc.Multipart.WebTest.csproj", "{5427E0B4-8392-46FF-A038-F7CE62207A34}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XWidget.Web.Mvc.Multipart.Test", "XWidget.Web.Mvc.Multipart.Test\XWidget.Web.Mvc.Multipart.Test.csproj", "{0C18274C-3471-4E60-ADC0-AB9EF4422308}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -35,10 +35,10 @@ Global
 		{EC61BCC6-D3E5-4B61-8584-3E59901AC627}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EC61BCC6-D3E5-4B61-8584-3E59901AC627}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EC61BCC6-D3E5-4B61-8584-3E59901AC627}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5427E0B4-8392-46FF-A038-F7CE62207A34}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5427E0B4-8392-46FF-A038-F7CE62207A34}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5427E0B4-8392-46FF-A038-F7CE62207A34}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5427E0B4-8392-46FF-A038-F7CE62207A34}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0C18274C-3471-4E60-ADC0-AB9EF4422308}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0C18274C-3471-4E60-ADC0-AB9EF4422308}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0C18274C-3471-4E60-ADC0-AB9EF4422308}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0C18274C-3471-4E60-ADC0-AB9EF4422308}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -35,7 +35,7 @@ namespace XWidget.Web.Mvc.Multipart {
                     return new MultipartJsonModelBinderProvider();
                 }
 
-                if (context.Metadata.BinderType.GetCustomAttribute<FromJsonAttribute>() != null) {
+                if (context?.Metadata?.BinderType?.GetCustomAttribute<FromJsonAttribute>() != null) {
                     return new MultipartJsonModelBinderProvider();
                 }
 

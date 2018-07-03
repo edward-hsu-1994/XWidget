@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Reflection;
+using System.Text;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
+using XWidget.Web.Mvc.Multipart;
+using XWidget.Web.Mvc.Multipart.Test.Controllers;
 
-namespace XWidget.Web.Mvc.Multipart.WebTest {
+namespace XWidget.Web.Mvc.Multipart.Test {
     public class Startup {
         public Startup(IConfiguration configuration) {
             Configuration = configuration;
@@ -20,8 +20,10 @@ namespace XWidget.Web.Mvc.Multipart.WebTest {
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services) {
             services.AddMvc(options => {
-                options.ModelBinderProviders.Insert(0, new Multipart.MultipartJsonModelBinderProvider());
-            });
+                options.ModelBinderProviders.Insert(0, new MultipartJsonModelBinderProvider());
+            })
+            .AddApplicationPart(typeof(TestController).GetTypeInfo().Assembly)
+            .AddControllersAsServices();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
