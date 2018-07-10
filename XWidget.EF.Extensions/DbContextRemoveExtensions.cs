@@ -27,8 +27,11 @@ namespace XWidget.EF.Extensions {
             /// <param name="entityType">檢查類型</param>
             /// <returns>是否符合 </returns>
             bool TypeCheck(Type entityType) {
-                if (entityType.GetGenericTypeDefinition() == typeof(ICollection<>)) {
+                if (entityType.IsGenericType &&
+                    entityType.GetGenericTypeDefinition() == typeof(ICollection<>)) {
                     entityType = entityType.GetGenericArguments()[0];
+                } else {
+                    return false;
                 }
                 return entitiesTypes
                     .Contains(entityType);
@@ -42,6 +45,11 @@ namespace XWidget.EF.Extensions {
                 }
 
                 var value = property.GetValue(entity);
+
+                if (value == null) {
+                    continue;
+                }
+
                 if (value is IEnumerable enumValue) {
                     foreach (var element in enumValue) {
                         result.AddRange(GetRefEntities(context, element));
@@ -57,6 +65,11 @@ namespace XWidget.EF.Extensions {
                 }
 
                 var value = field.GetValue(entity);
+
+                if (value == null) {
+                    continue;
+                }
+
                 if (value is IEnumerable enumValue) {
                     foreach (var element in enumValue) {
                         result.AddRange(GetRefEntities(context, element));
