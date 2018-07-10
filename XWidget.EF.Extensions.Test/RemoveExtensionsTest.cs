@@ -38,8 +38,6 @@ namespace XWidget.EF.Extensions.Test {
             context.RemoveCascade(category_B_FirstChild);
             context.SaveChanges();
 
-
-            var p = context.Notes.Where(x => x.Category == category_B);
             Assert.NotEmpty(context.Notes.Where(x => x.Category == category_B));
             Assert.NotEmpty(context.Categories.Where(x => x.ParentId == category_B.Id));
         }
