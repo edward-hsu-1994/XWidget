@@ -2,6 +2,13 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Description>提供在MVC Controller中Multipart的進階使用</Description>
+    <PackageProjectUrl>https://github.com/XuPeiYao/XWidget/tree/master/XWidget.Web.Mvc.Multipart</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/XuPeiYao/XWidget.git</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <Authors>XuPeiYao</Authors>
+    <Company>XuPeiYao</Company>
   </PropertyGroup>
 
   <ItemGroup>

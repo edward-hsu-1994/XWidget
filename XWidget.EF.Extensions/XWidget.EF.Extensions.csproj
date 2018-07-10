@@ -2,6 +2,13 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Authors>XuPeiYao</Authors>
+    <Company>XuPeiYao</Company>
+    <Description>提供EntityFrameworkCore的擴充方法</Description>
+    <PackageProjectUrl>https://github.com/XuPeiYao/XWidget/tree/master/XWidget.EF.Extensions</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/XuPeiYao/XWidget.git</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
   </PropertyGroup>
 
   <ItemGroup>
