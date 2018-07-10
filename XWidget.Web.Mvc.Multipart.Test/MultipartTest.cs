@@ -11,9 +11,9 @@ using XWidget.Web.Mvc.Multipart.Test.Controllers;
 using System.Net;
 
 namespace XWidget.Web.Mvc.Multipart.Test {
-    public class UnitTest1 {
+    public class MultipartTest {
         [Fact]
-        public async Task Test1() {
+        public async Task FormDataPostTest() {
             var webhost = BuildWebHost(new string[0]);
 
             await webhost.StartAsync();
