@@ -17,7 +17,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XWidget.Web.Mvc.Multipart",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XWidget.Web.Mvc.Multipart.Test", "XWidget.Web.Mvc.Multipart.Test\XWidget.Web.Mvc.Multipart.Test.csproj", "{0C18274C-3471-4E60-ADC0-AB9EF4422308}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XWidget.EF.Extensions", "XWidget.EF.Extensions\XWidget.EF.Extensions.csproj", "{CDA35AD9-E370-40F4-8FFD-A965071B4232}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XWidget.EF.Extensions", "XWidget.EF.Extensions\XWidget.EF.Extensions.csproj", "{CDA35AD9-E370-40F4-8FFD-A965071B4232}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XWidget.EF.Extensions.Test", "XWidget.EF.Extensions.Test\XWidget.EF.Extensions.Test.csproj", "{DF8FC753-DF1F-4DCA-B14E-A171BC145D60}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +47,10 @@ Global
 		{CDA35AD9-E370-40F4-8FFD-A965071B4232}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CDA35AD9-E370-40F4-8FFD-A965071B4232}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CDA35AD9-E370-40F4-8FFD-A965071B4232}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DF8FC753-DF1F-4DCA-B14E-A171BC145D60}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DF8FC753-DF1F-4DCA-B14E-A171BC145D60}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DF8FC753-DF1F-4DCA-B14E-A171BC145D60}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DF8FC753-DF1F-4DCA-B14E-A171BC145D60}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
