@@ -11,6 +11,10 @@
 在EntityFrameworkCore中要刪除指定的實例時，必須要確保該實例沒有相依的項目，通常可以透過外來鍵連鎖刪除，但在特定情況下需要追蹤刪除項目、自參考的外來鍵，無法使用這個方式
 就需要使用到客戶端的連鎖刪除操作。
 
+## 必要項目
+由於需要載入相關實例，所以必須要使用LazyLoading才可以使用者個套件。
+需要在DbContext中使用`Microsoft.EntityFrameworkCore.Proxies`套件。
+
 ## 快速上手
 ```csharp
 var context = new TestContext()
