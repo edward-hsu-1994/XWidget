@@ -47,7 +47,7 @@ public class CategoryController: Controller{
             result = result.Where(x => EF.Functions.Like(x.Name, $"%{keyword}%"));
         }
 
-        // AsPaging方法請見https://github.com/XuPeiYao/EzKit/blob/develop/EzKit.Linq/PagingExtension.cs
+        // AsPaging方法請見https://github.com/XuPeiYao/XWidget/blob/develop/XWidget.Linq/PagingExtension.cs
         return result.AsPaging(skip,take);
     }
 
@@ -181,7 +181,7 @@ public Paging<Category> GetList(
     if(!string.IsNullOrEmpty(keyword)){
         result = result.Where(x => EF.Functions.Like(x.Name, $"%{keyword}%"));
     }
-    // AsPaging方法請見https://github.com/XuPeiYao/EzKit/blob/develop/EzKit.Linq/PagingExtension.cs
+    // AsPaging方法請見https://github.com/XuPeiYao/XWidget/blob/develop/XWidget.Linq/PagingExtension.cs
     return this.Mask(result.AsPaging(skip,take));
 }
 ```
