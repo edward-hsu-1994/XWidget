@@ -4,11 +4,11 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace XWidget.Threading {
+namespace XWidget.Utilities {
     /// <summary>
     /// 針對<see cref="Task"/>之幫助類別
     /// </summary>
-    public class TaskHelper {
+    public class TaskUtility {
         /// <summary>
         /// 等待<see cref="Action"/>物件在指定的毫秒限制內完成執行，否則結束
         /// </summary>
