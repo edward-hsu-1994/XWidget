@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.Net;
 
 namespace XWidget.Web.Exceptions {
     /// <summary>
@@ -50,7 +51,21 @@ namespace XWidget.Web.Exceptions {
         /// <param name="name">名稱</param>
         /// <param name="message">訊息</param>
         public ExceptionBase(int statusCode, int code, string name, string message) {
-			StatusCode = statusCode;
+            StatusCode = statusCode;
+            Code = code;
+            Name = name;
+            Message = message;
+        }
+
+        /// <summary>
+        /// 訂製例外基礎類別的建構子
+        /// </summary>
+        /// <param name="statusCode">Http狀態碼</param>
+        /// <param name="code">錯誤代碼</param>
+        /// <param name="name">名稱</param>
+        /// <param name="message">訊息</param>
+        public ExceptionBase(HttpStatusCode statusCode, int code, string name, string message) {
+            StatusCode = (int)statusCode;
             Code = code;
             Name = name;
             Message = message;
