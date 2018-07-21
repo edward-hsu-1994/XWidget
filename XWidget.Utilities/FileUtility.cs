@@ -11,7 +11,7 @@ namespace XWidget.Utilities {
         /// </summary>
         /// <param name="path">檔案路徑</param>
         /// <param name="overWriteTime">內容擦除次數，預設為一次</param>
-        public static void Delete(string path, uint overWriteTime = 1) {
+        public static void SecureDelete(string path, uint overWriteTime = 1) {
             if (overWriteTime > 0) {
                 //write 0x00
                 WriteToFile(path, () => 0x00);
@@ -31,7 +31,7 @@ namespace XWidget.Utilities {
             if (overWriteTime == 0) {
                 System.IO.File.Delete(path);
             } else {//>=1
-                Delete(path, overWriteTime - 1);
+                SecureDelete(path, overWriteTime - 1);
             }
         }
 
