@@ -55,6 +55,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XWidget.Web.Test", "XWidget
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XWidget.Web.Jwt.Test", "XWidget.Web.Jwt.Test\XWidget.Web.Jwt.Test.csproj", "{C0EB1FBB-1FF0-4801-9692-758132B721E8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XWidget.Web.Mvc.Test", "XWidget.Web.Mvc.Test\XWidget.Web.Mvc.Test.csproj", "{80CE103C-8DDD-46C4-94A9-408B919ACAAA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -153,6 +155,10 @@ Global
 		{C0EB1FBB-1FF0-4801-9692-758132B721E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C0EB1FBB-1FF0-4801-9692-758132B721E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C0EB1FBB-1FF0-4801-9692-758132B721E8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{80CE103C-8DDD-46C4-94A9-408B919ACAAA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{80CE103C-8DDD-46C4-94A9-408B919ACAAA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{80CE103C-8DDD-46C4-94A9-408B919ACAAA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{80CE103C-8DDD-46C4-94A9-408B919ACAAA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
