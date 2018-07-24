@@ -4,39 +4,43 @@ using System.Collections.Generic;
 using System.Text;
 
 namespace XWidget.Web.Jwt {
-    public interface ICommonPayload {
+    public class CommonPayload {
         /// <summary>
         /// 發行者
         /// </summary>
-        string Issuer { get; }
+        [JsonProperty("iss")]
+        public string Issuer { get; set; }
 
         /// <summary>
         /// 接受者
         /// </summary>
-        string Audience { get; }
+        [JsonProperty("aud")]
+        public string Audience { get; set; }
 
         /// <summary>
         /// 行為者
         /// </summary>
-        string Actor { get; }
+        [JsonProperty("act")]
+        public string Actor { get; set; }
 
         /// <summary>
         /// 主題
         /// </summary>
-        string Subject { get; }
+        [JsonProperty("sub")]
+        public string Subject { get; set; }
 
         /// <summary>
         /// 有效期限起始
         /// </summary>
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        [JsonProperty("iat", NullValueHandling = NullValueHandling.Ignore)]
         [JsonConverter(typeof(JwtTimeConvert))]
-        DateTime? IssuedAt { get; }
+        public DateTime? IssuedAt { get; set; }
 
         /// <summary>
         /// 有效期限結束
         /// </summary>
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        [JsonProperty("exp", NullValueHandling = NullValueHandling.Ignore)]
         [JsonConverter(typeof(JwtTimeConvert))]
-        DateTime? Expires { get; }
+        public DateTime? Expires { get; set; }
     }
 }

@@ -13,6 +13,11 @@ namespace XWidget.Web.Jwt {
     /// JWT轉換類別
     /// </summary>
     public static class JwtTokenConvert {
+        private class TempToken<TJwtPayload> : IJwtToken<DefaultJwtHeader, TJwtPayload> {
+            public DefaultJwtHeader Header { get; set; }
+            public TJwtPayload Payload { get; set; }
+        }
+
         private static void SetToJwtHeader(IJwtHeader source, JWT.JwtHeader target) {
             var headerJObj = JObject.FromObject(source);
 
@@ -48,16 +53,46 @@ namespace XWidget.Web.Jwt {
             SetToJwtHeader(token.Header, nToken.Header);
             SetToJwtPayload(token.Payload, nToken.Payload);
 
-            return new JWT.JwtSecurityTokenHandler().WriteToken(
+            return "bearer " + new JWT.JwtSecurityTokenHandler().WriteToken(
                 nToken
             );
+        }
+
+        public static bool Verify(
+            string token,
+            SecurityKey signingCredentials,
+            out IJwtToken<DefaultJwtHeader, dynamic> result) {
+            var tempResult = new TempToken<dynamic>();
+            var returnValue = Verify<TempToken<dynamic>, DefaultJwtHeader, dynamic>(token, signingCredentials, out tempResult);
+
+            result = tempResult;
+            return returnValue;
+        }
+
+        public static bool Verify<TJwtPayload>(
+            string token,
+            SecurityKey signingCredentials,
+            out IJwtToken<DefaultJwtHeader, TJwtPayload> result) {
+            var tempResult = new TempToken<TJwtPayload>();
+            var returnValue = Verify<TempToken<TJwtPayload>, DefaultJwtHeader, TJwtPayload>(token, signingCredentials, out tempResult);
+
+            result = tempResult;
+            return returnValue;
+        }
+
+        public static bool Verify<TToken, TJwtPayload>(
+            string token,
+            SecurityKey signingCredentials,
+            out TToken result)
+            where TToken : class, IJwtToken<DefaultJwtHeader, TJwtPayload> {
+            return Verify<TToken, DefaultJwtHeader, TJwtPayload>(token, signingCredentials, out result);
         }
 
         public static bool Verify<TToken, TJwtHeader, TJwtPayload>(
             string token,
             SecurityKey signingCredentials,
             out TToken result)
-            where TToken : IJwtToken<TJwtHeader, TJwtPayload>
+            where TToken : class, IJwtToken<TJwtHeader, TJwtPayload>
             where TJwtHeader : IJwtHeader {
             return Verify<TToken, TJwtHeader, TJwtPayload>(token, new TokenValidationParameters() {
                 IssuerSigningKey = signingCredentials,
@@ -73,7 +108,7 @@ namespace XWidget.Web.Jwt {
             string token,
             TokenValidationParameters validationParameters,
             out TToken result)
-            where TToken : IJwtToken<TJwtHeader, TJwtPayload>
+            where TToken : class, IJwtToken<TJwtHeader, TJwtPayload>
             where TJwtHeader : IJwtHeader {
             result = default(TToken);
 
@@ -84,6 +119,8 @@ namespace XWidget.Web.Jwt {
                 var payload = (TJwtPayload)DictionaryToJObject(nToken.Payload).ToObject(typeof(TJwtPayload));
 
                 result = (TToken)FormatterServices.GetUninitializedObject(typeof(TToken));
+                result.Header = header;
+                result.Payload = payload;
 
                 if (validationParameters == null) { //不走驗證
                     return true;
@@ -91,7 +128,7 @@ namespace XWidget.Web.Jwt {
 
                 var tokenHandler = new JwtSecurityTokenHandler();
 
-                tokenHandler.ValidateToken(token, validationParameters, out _);
+                tokenHandler.ValidateToken(token.Split(' ').Last(), validationParameters, out _);
 
                 return true;
             } catch {

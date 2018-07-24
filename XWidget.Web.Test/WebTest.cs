@@ -22,8 +22,6 @@ namespace XWidget.Web.Test {
 
             Assert.True(response.Headers.CacheControl.NoCache);
             Assert.True(response.Headers.CacheControl.NoStore);
-
-
         }
 
         public static IWebHost BuildWebHost(string[] args) =>

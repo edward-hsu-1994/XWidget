@@ -5,13 +5,13 @@ using System.Security.Claims;
 using System.Text;
 
 namespace XWidget.Web.Jwt {
-    public interface IMvcIdentityPayload : ICommonPayload {
+    public class MvcIdentityPayload : CommonPayload {
         [JsonProperty(ClaimsIdentity.DefaultRoleClaimType,
             NullValueHandling = NullValueHandling.Ignore)]
-        string Role { get; }
+        public string Role { get; set; }
 
         [JsonProperty(ClaimsIdentity.DefaultNameClaimType,
             NullValueHandling = NullValueHandling.Ignore)]
-        string Name { get; }
+        public string Name { get; set; }
     }
 }

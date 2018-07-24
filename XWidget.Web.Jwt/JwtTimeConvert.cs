@@ -12,7 +12,7 @@ namespace XWidget.Web.Jwt {
 
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer) {
             try {
-                return DateTimeUtility.FromUnixTimestamp((long)reader.ReadAsDecimal());
+                return DateTimeUtility.FromUnixTimestamp((long)reader.Value);
             } catch {
                 return null;
             }
