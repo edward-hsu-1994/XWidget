@@ -9,6 +9,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using Xunit;
+using XWidget.Web.Exceptions;
 
 namespace XWidget.Web.Mvc.Test {
     public class WebTest {
@@ -23,6 +24,10 @@ namespace XWidget.Web.Mvc.Test {
             var response1 = await client.GetAsync("http://localhost:9996/api/test");
 
             Assert.False(response1.IsSuccessStatusCode);
+
+            var response1Content = JObject.Parse(await response1.Content.ReadAsStringAsync()).ToObject<UnknowException>();
+
+            Assert.Equal(response1Content.Name, "未知錯誤");
 
             var response2 = await client.GetAsync("http://localhost:9996/api/test/list");
 
