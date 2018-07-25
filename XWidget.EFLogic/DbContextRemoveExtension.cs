@@ -3,8 +3,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
-namespace XWidget.EF.Extensions {
+namespace XWidget.EFLogic {
     /// <summary>
     /// 針對<see cref="DbContext"/>的擴充方法
     /// </summary>
