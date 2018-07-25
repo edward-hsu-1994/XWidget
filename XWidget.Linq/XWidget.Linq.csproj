@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Authors>XuPeiYao</Authors>
+    <Company>XuPeiYao</Company>
+    <PackageProjectUrl>https://github.com/XuPeiYao/XWidget/tree/master/XWidget.Linq</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/XuPeiYao/XWidget.git</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <Description>System.Linq查詢擴充，提供列舉分頁、範圍查詢、最大小值查詢等擴充</Description>
+    <PackageIconUrl>https://i.imgur.com/fF6aNHL.png</PackageIconUrl>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\XWidget.Reflection\XWidget.Reflection.csproj" />
+  </ItemGroup>
+
+</Project>

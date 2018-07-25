@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Authors>XuPeiYao</Authors>
+    <Company>XuPeiYao</Company>
+    <PackageProjectUrl>https://github.com/XuPeiYao/XWidget/tree/master/XWidget.Extensions</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/XuPeiYao/XWidget.git</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <Description>常用資料型別擴充方法</Description>
+    <PackageIconUrl>https://i.imgur.com/fF6aNHL.png</PackageIconUrl>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
+  </ItemGroup>
+
+</Project>
