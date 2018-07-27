@@ -14,10 +14,12 @@
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <LangVersion>latest</LangVersion>
+    <DocumentationFile>bin\Debug\netstandard2.0\XWidget.Extensions.xml</DocumentationFile>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <LangVersion>latest</LangVersion>
+    <DocumentationFile>bin\Release\netstandard2.0\XWidget.Extensions.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
