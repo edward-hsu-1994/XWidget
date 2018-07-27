@@ -13,11 +13,34 @@ namespace XWidget.Web.Mvc.JsonMask {
     /// </summary>
     public static class Masker {
         /// <summary>
+        /// 全域型別略過條件
+        /// </summary>
+        public static Func<Type, bool> GlobalIgnoreCondition { get; set; } = (type) => {
+            return false;
+        };
+
+        /// <summary>
         /// 深層複製方法，預設為Force.DeepCloner
         /// </summary>
         public static Func<object, object> DeepClone { get; set; }
             = (obj) => {
                 return obj.DeepClone();
+            };
+
+        /// <summary>
+        /// 深層複製至目標物件方法，預設為Force.DeepClonerTo
+        /// </summary>
+        public static Action<object, object> DeepCloneTo { get; set; }
+            = (source, target) => {
+                source.DeepCloneTo(target);
+                /*foreach (var property in source.GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)) {
+                    if (property.CanWrite) {
+                        property.SetValue(target, Masker.DeepClone(property.GetValue(source)));
+                    }
+                }
+                foreach (var field in source.GetType().GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)) {
+                    field.SetValue(target, Masker.DeepClone(field.GetValue(source)));
+                }*/
             };
 
         /// <summary>
@@ -70,8 +93,13 @@ namespace XWidget.Web.Mvc.JsonMask {
             #region 可列舉型別處理
             if (data is IEnumerable enumData) {
                 foreach (var ele in enumData) {
-                    InternalMask(null, packageType, ele, controller, patternName, refList)
-                        .DeepCloneTo(ele);
+                    if (ele.GetType().IsValueType) {
+                        continue;
+                    }
+                    DeepCloneTo(
+                        InternalMask(null, packageType, ele, controller, patternName, refList),
+                        ele
+                    );
                 }
                 return data;
             }
@@ -80,7 +108,7 @@ namespace XWidget.Web.Mvc.JsonMask {
             var type = data.GetType();
 
             #region 排除命名空間為System的類型
-            if (type.Namespace == nameof(System)) {
+            if (type.Namespace == nameof(System) || GlobalIgnoreCondition(type)) {
                 return data;
             }
             #endregion
