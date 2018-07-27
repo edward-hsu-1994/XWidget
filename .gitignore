@@ -261,3 +261,4 @@ __pycache__/
 *.pyc
 coverage-hits.txt
 coverage.json
+result.json
