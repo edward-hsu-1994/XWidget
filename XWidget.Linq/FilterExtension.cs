@@ -20,25 +20,17 @@ namespace System.Linq {
         /// <returns>查詢結果</returns>
         public static IEnumerable<TSource> Filter<TSource, TProperty>(
             this IEnumerable<TSource> source,
-            Expression<Func<TSource, TProperty>> selector,
-            Nullable<TProperty> value)
-            where TProperty : struct {
+            Func<TSource, TProperty> selector,
+            Nullable<TProperty> value) where TProperty : struct {
             var result = source;
 
-            var p = Expression.Parameter(typeof(TSource), "x");
+            if (value == null) return result;
 
-            if (value.HasValue) {
-                return result.Where(
-                        Expression.Lambda<Func<TSource, bool>>(
-                            Expression.Equal(
-                                Expression.Constant(value, typeof(Nullable<TProperty>)),
-                                Expression.Constant(null, typeof(Nullable<TProperty>))
-                            ), p)
-                            .Compile()
-                      );
-            } else {
-                return result;
-            }
+            return result.Where(x => {
+                var v = selector(x);
+
+                return value.Equals(v);
+            });
         }
     }
 }
