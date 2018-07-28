@@ -21,13 +21,15 @@ namespace System.Linq {
         public static IEnumerable<TSource> Filter<TSource, TProperty>(
             this IEnumerable<TSource> source,
             Func<TSource, TProperty> selector,
-            TProperty value) {
+            Nullable<TProperty> value) where TProperty : struct {
             var result = source;
+
+            if (value == null) return result;
 
             return result.Where(x => {
                 var v = selector(x);
 
-                return value?.Equals(v) ?? v?.Equals(value) ?? false;
+                return value.Equals(v);
             });
         }
     }
