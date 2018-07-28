@@ -20,54 +20,15 @@ namespace System.Linq {
         /// <returns>查詢結果</returns>
         public static IEnumerable<TSource> Filter<TSource, TProperty>(
             this IEnumerable<TSource> source,
-            Expression<Func<TSource, TProperty>> selector,
-            Nullable<TProperty> value)
-            where TProperty : struct {
+            Func<TSource, TProperty> selector,
+            TProperty value) {
             var result = source;
 
-            var p = Expression.Parameter(typeof(TSource), "x");
+            return result.Where(x => {
+                var v = selector(x);
 
-            if (value.HasValue) {
-                return result.Where(
-                        Expression.Lambda<Func<TSource, bool>>(
-                            Expression.Equal(
-                                Expression.Constant(value, typeof(Nullable<TProperty>)),
-                                Expression.Constant(null, typeof(Nullable<TProperty>))
-                            ), p)
-                            .Compile()
-                      );
-            } else {
-                return result;
-            }
-        }
-
-        /// <summary>
-        /// 針對指定屬性取得值相等的成員
-        /// </summary>
-        /// <typeparam name="TSource">列舉元素類型</typeparam>
-        /// <typeparam name="TProperty">條件屬性類型</typeparam>
-        /// <param name="source">列舉來源</param>
-        /// <param name="selector">查詢屬性</param>
-        /// <param name="value">值，如為空則表示不篩選</param>
-        /// <returns>查詢結果</returns>
-        public static IEnumerable<TSource> Filter<TSource, TProperty>(
-            this IEnumerable<TSource> source,
-            Expression<Func<TSource, TProperty>> selector,
-            TProperty value)
-            where TProperty : class {
-            var result = source;
-
-            var p = Expression.Parameter(typeof(TSource), "x");
-
-            return result.Where(
-                    Expression.Lambda<Func<TSource, bool>>(
-                        Expression.Equal(
-                            Expression.Constant(value, typeof(TProperty)),
-                            Expression.Constant(null, typeof(TProperty))
-                        ), p)
-                        .Compile()
-                  );
-
+                return value?.Equals(v) ?? v?.Equals(value) ?? false;
+            });
         }
     }
 }
