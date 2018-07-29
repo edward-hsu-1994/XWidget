@@ -12,7 +12,12 @@ namespace XWidget.Linq.Test {
             var list = Student.InitList();
             var groupedList = list.GroupBy("Class".BoxingToArray());
 
-            Assert.Equal(groupedList, list.GroupBy(x => x.Class));
+            Assert.Equal(list.GroupBy(x => x.Class), groupedList);
+
+            var list2 = list.AsQueryable();
+            var expressionGroupedList = list2.GroupBy("Class".BoxingToArray());
+
+            Assert.Equal(list2.GroupBy(x => x.Class), expressionGroupedList);
         }
     }
 }
