@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Reflection;
 
 namespace Microsoft.Extensions.DependencyInjection {
     /// <summary>
@@ -93,25 +94,52 @@ namespace Microsoft.Extensions.DependencyInjection {
                 instance.MapBuilder = builder;
                 instance.ServiceProvider = serviceProvider;
 
-                foreach (var property in typeof(TLogic).GetProperties()) {
-                    var isLogic = GetAllBaseTypes(property.PropertyType).Where(x => x.IsGenericType).Select(x => x.GetGenericTypeDefinition()).Contains(typeof(LogicBase<,,>));
+                List<PropertyInfo> hasLogicProperties = new List<PropertyInfo>();
+                Dictionary<Type, object> logicMapping = new Dictionary<Type, object>();
 
-                    if (!isLogic) continue;
+                hasLogicProperties.AddRange(typeof(TLogic).GetProperties());
 
-                    var constuctor = property.PropertyType.GetConstructors().Single();
-                    var constuctorParameters = constuctor.GetParameters();
+                while (hasLogicProperties.Any()) {
+                    var currentLoopProperties = hasLogicProperties.ToArray();
+                    hasLogicProperties.Clear();
 
-                    List<object> parameterValues = new List<object>();
-                    foreach (var param in constuctorParameters) {
-                        var isLogicManager = param.ParameterType.GetAllBaseTypes().Where(x => x.IsGenericType).Select(x => x.GetGenericTypeDefinition()).Contains(typeof(LogicManagerBase<>));
-                        if (isLogicManager) {
-                            parameterValues.Add(instance);
-                        } else {
-                            parameterValues.Add(serviceProvider.GetService(param.ParameterType));
+                    foreach (var property in currentLoopProperties) {
+                        var isLogic = GetAllBaseTypes(property.PropertyType).Where(x => x.IsGenericType).Select(x => x.GetGenericTypeDefinition()).Contains(typeof(LogicBase<,,>));
+
+                        if (!isLogic) continue;
+
+                        var constuctor = property.PropertyType.GetConstructors().Single();
+                        var constuctorParameters = constuctor.GetParameters();
+                        var hasLogicParam = false;
+
+                        List<object> parameterValues = new List<object>();
+                        foreach (var param in constuctorParameters) {
+                            var isLogicManager = param.ParameterType.GetAllBaseTypes().Where(x => x.IsGenericType).Select(x => x.GetGenericTypeDefinition()).Contains(typeof(LogicManagerBase<>));
+                            var paramIsLogic = param.ParameterType.GetAllBaseTypes().Where(x => x.IsGenericType).Select(x => x.GetGenericTypeDefinition()).Contains(typeof(LogicBase<,,>));
+
+                            if (isLogicManager) {
+                                parameterValues.Add(instance);
+                            } else if (isLogic) {
+                                if (logicMapping.ContainsKey(param.ParameterType)) {
+                                    parameterValues.Add(logicMapping[param.ParameterType]);
+                                } else {
+                                    hasLogicParam = true;
+                                    break;
+                                }
+                            } else {
+                                parameterValues.Add(serviceProvider.GetService(param.ParameterType));
+                            }
                         }
-                    }
 
-                    property.SetValue(instance, constuctor.Invoke(parameterValues.ToArray()));
+                        if (hasLogicParam) {
+                            hasLogicProperties.Add(property);
+                            continue;
+                        }
+
+                        var logicPropertyValue = constuctor.Invoke(parameterValues.ToArray());
+                        logicMapping[property.PropertyType] = logicPropertyValue;
+                        property.SetValue(instance, logicPropertyValue);
+                    }
                 }
 
                 return instance;
