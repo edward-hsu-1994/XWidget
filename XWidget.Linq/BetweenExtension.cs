@@ -20,58 +20,24 @@ namespace System.Linq {
         /// <returns>查詢結果</returns>
         public static IEnumerable<TSource> Between<TSource, TProperty>(
             this IEnumerable<TSource> source,
-            Expression<Func<TSource, TProperty>> selector,
+            Func<TSource, TProperty> selector,
             Nullable<TProperty> min,
             Nullable<TProperty> max)
-            where TProperty : struct {
-            var selectPropertyName = (selector.Body as MemberExpression)?.Member?.Name;
-
-            var isParam = selector.Body is ParameterExpression;
-
+            where TProperty : struct, IComparable {
             var result = source;
 
-            var p = Expression.Parameter(typeof(TSource), "x");
-
             if (min.HasValue) {
-                var minFilter = Expression.OrElse(
-                    Expression.Equal(
-                        Expression.Constant(min.Value, typeof(Nullable<TProperty>)),
-                        Expression.Constant(null, typeof(Nullable<TProperty>))
-                    ),
-                    Expression.GreaterThanOrEqual(
-                        Expression.Convert(
-                            isParam ? p : (Expression)Expression.PropertyOrField(
-                                p,
-                                selectPropertyName
-                            ),
-                            typeof(Nullable<TProperty>)
-                        ),
-                        Expression.Constant(min.Value, typeof(Nullable<TProperty>))
-                    )
-                );
-                result = result
-                            .Where(Expression.Lambda<Func<TSource, bool>>(minFilter, p).Compile());
+                result = result.Where(x => {
+                    var temp = selector(x) as IComparable;
+                    return temp.CompareTo(min.Value) >= 0;
+                });
             }
 
             if (max.HasValue) {
-                var maxFilter = Expression.OrElse(
-                    Expression.Equal(
-                        Expression.Constant(max, typeof(Nullable<TProperty>)),
-                        Expression.Constant(null, typeof(Nullable<TProperty>))
-                    ),
-                    Expression.LessThanOrEqual(
-                        Expression.Convert(
-                            isParam ? p : (Expression)Expression.PropertyOrField(
-                                p,
-                                selectPropertyName
-                            ),
-                            typeof(Nullable<TProperty>)
-                        ),
-                        Expression.Constant(max, typeof(Nullable<TProperty>))
-                    )
-                );
-                result = result
-                            .Where(Expression.Lambda<Func<TSource, bool>>(maxFilter, p).Compile());
+                result = result.Where(x => {
+                    var temp = selector(x) as IComparable;
+                    return temp.CompareTo(max.Value) <= 0;
+                });
             }
 
             return result;
