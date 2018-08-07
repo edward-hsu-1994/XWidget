@@ -122,7 +122,7 @@ namespace XWidget.Web.Mvc.JsonMask {
                 if (attrs.Any(x => x.IsMatch(controller as Controller, type, packageType, patternName))) {
                     if (property.CanWrite) {
                         // 找到符合項目則設定屏蔽
-                        property.SetValue(data, null);
+                        property.SetValue(data, property.PropertyType.IsValueType ? Activator.CreateInstance(property.PropertyType) : null);
                     }
                 } else {
                     // 該屬性找不到屏蔽設定，檢查該屬性的屬性類型是否有屏蔽選項
@@ -158,7 +158,7 @@ namespace XWidget.Web.Mvc.JsonMask {
                 // 在JsonMask設定集合中尋找是否有符合項目
                 if (attrs.Any(x => x.IsMatch(controller as Controller, type, packageType, patternName))) {
                     // 找到符合項目則設定屏蔽
-                    filed.SetValue(data, null);
+                    filed.SetValue(data, filed.FieldType.IsValueType ? Activator.CreateInstance(filed.FieldType) : null);
                 } else {
                     // 該屬性找不到屏蔽設定，檢查該欄位的屬性類型是否有屏蔽選項
                     var filedType = filed.FieldType;
