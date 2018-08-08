@@ -8,18 +8,18 @@ namespace XWidget.Web.Mvc.PropertyMask.Test.Models {
         /// <summary>
         /// 唯一識別號
         /// </summary>
-        public Guid Id { get; set; } = Guid.NewGuid();
+        public virtual Guid Id { get; set; } = Guid.NewGuid();
 
         /// <summary>
         /// 父分類唯一識別號
         /// </summary>
         [JsonIgnore]
-        public Guid? ParentId { get; set; }
+        public virtual Guid? ParentId { get; set; }
 
         /// <summary>
         /// 名稱
         /// </summary>
-        public string Name { get; set; }
+        public virtual string Name { get; set; }
 
         /// <summary>
         /// 父節點
