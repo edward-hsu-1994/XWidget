@@ -23,10 +23,23 @@ namespace XWidget.Web.Mvc.PropertyMask {
         /// </summary>
         public bool Inherited { get; set; } = true;
 
+        /// <summary>
+        /// 直接屏蔽
+        /// </summary>
+        public PropertyMaskAttribute() { }
+
+        /// <summary>
+        /// 屏蔽類型
+        /// </summary>
+        /// <param name="key">類型</param>
         public PropertyMaskAttribute(Type key) {
             this.Key = key;
         }
 
+        /// <summary>
+        /// 屏蔽模式
+        /// </summary>
+        /// <param name="key">模式名稱</param>
         public PropertyMaskAttribute(string key) {
             this.Key = key;
         }
@@ -40,6 +53,9 @@ namespace XWidget.Web.Mvc.PropertyMask {
         /// <param name="patternName">模式名稱</param>
         /// <returns></returns>
         internal bool IsMatch(Controller controller, Type declaringType, Type packageType, string patternName) {
+            if (Key == null) {
+                return true;
+            }
             switch (Method) {
                 case MaskMethod.Controller:
                     if (Inherited) {

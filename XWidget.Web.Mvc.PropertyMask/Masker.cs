@@ -5,12 +5,26 @@ using System.Linq;
 using System.Reflection;
 using XWidget.Web.Mvc.PropertyMask;
 using XWidget.Reflection;
+using Castle.DynamicProxy;
+using Newtonsoft.Json;
 
 namespace Microsoft.AspNetCore.Mvc {
     /// <summary>
     /// 屬性屏蔽核心
     /// </summary>
     public static class Masker {
+        /// <summary>
+        /// 啟用Masker的類型檢查條件
+        /// </summary>
+        public static Func<Type, bool> MaskCondition { get; set; } =
+            (Type type) => {
+                /*if (type.Namespace.StartsWith("Microsoft.EntityFrameworkCore")) {
+                    return false;
+                }*/
+                return true;
+            };
+
+
         /// <summary>
         /// 取得屬性屏蔽後的結果
         /// </summary>
@@ -104,6 +118,12 @@ namespace Microsoft.AspNetCore.Mvc {
             List<object> refList)
             where TData : class {
 
+            var type = typeof(TData);
+
+            if (!MaskCondition(type)) {
+                return data;
+            }
+
             // 檢查是否發生參考循環
             if (refList.Contains(data)) {
                 // 發生參考循環則直接返回
@@ -112,7 +132,7 @@ namespace Microsoft.AspNetCore.Mvc {
             // 加入參考列表
             refList.Add(data);
 
-            var type = data.GetType();
+
 
             #region 可列舉型別處理
             if (data is IEnumerable && type.IsGenericType && type.GetGenericTypeDefinition().GetInterfaces().Contains(typeof(IEnumerable))) {
@@ -150,6 +170,14 @@ namespace Microsoft.AspNetCore.Mvc {
                     var propertyType = property.PropertyType;
                     if (propertyType.IsValueType || propertyType.Namespace.StartsWith("System")) continue;
 
+                    if (!MaskCondition(propertyType)) {
+                        continue;
+                    }
+
+                    if (!property.GetMethod.IsVirtual) {
+                        throw new MemberAccessException($"屬性{type.Name}.{property.Name}必須為Virtual");
+                    }
+
                     var value = property.GetValue(data);
                     if (value == null) continue;
 
@@ -166,10 +194,13 @@ namespace Microsoft.AspNetCore.Mvc {
             }
             #endregion
 
-            var result = new Castle.DynamicProxy.ProxyGenerator()
-                .CreateClassProxyWithTarget<TData>(data, interceptor);
+            if (interceptor.MaskedProperties.Count == 0 &&
+                interceptor.ReplaceProperties.Count == 0) {
+                return data;
+            }
 
-            return result;
+            return new Castle.DynamicProxy.ProxyGenerator()
+                    .CreateClassProxyWithTarget<TData>(data, interceptor);
         }
     }
 }

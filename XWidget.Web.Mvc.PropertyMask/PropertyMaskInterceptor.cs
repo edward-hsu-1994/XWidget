@@ -10,6 +10,7 @@ namespace XWidget.Web.Mvc.PropertyMask {
     internal class PropertyMaskInterceptor : IInterceptor {
         public List<string> MaskedProperties { get; set; } = new List<string>();
         public Dictionary<string, object> ReplaceProperties { get; set; } = new Dictionary<string, object>();
+
         public void Intercept(IInvocation invocation) {
             if (invocation.Method.Name.StartsWith("set_") ||
                 invocation.Method.Name.StartsWith("get_")) {
@@ -20,12 +21,13 @@ namespace XWidget.Web.Mvc.PropertyMask {
                     return;
                 }
 
-                if (invocation.Method.Name.StartsWith("get_") ||
+                if (invocation.Method.Name.StartsWith("get_") &&
                     ReplaceProperties.ContainsKey(propertyName)) {
                     invocation.ReturnValue = ReplaceProperties[propertyName];
                     return;
                 }
             }
+
             invocation.Proceed();
         }
     }
