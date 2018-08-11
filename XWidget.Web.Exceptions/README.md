@@ -4,7 +4,7 @@
 [![NuGet](https://img.shields.io/nuget/dt/XWidget.Web.Exceptions.svg?style=flat-square)](https://www.nuget.org/packages/XWidget.Web.Exceptions/)
 [![GitHub](https://img.shields.io/github/license/XuPeiYao/XWidget.svg?style=flat-square)](https://github.com/XuPeiYao/XWidget/blob/master/LICENSE)
 
-ASP.net Core常用例外便於序列化的類型
+網頁應用程式常用例外類別
 
 ## 提供的例外類型
 1.ExceptionBase:
