@@ -33,8 +33,6 @@ namespace XWidget.Web.Test {
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseServiceHelper();
-
             app.UseNoCache();
 
             app.UseMvc();

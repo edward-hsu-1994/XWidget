@@ -7,7 +7,7 @@ namespace Microsoft.Extensions.DependencyInjection {
     /// <summary>
     /// 針對ASP.net Core提供全域No ResponseCache設定
     /// </summary>
-    public static class NoCacheMiddeware {
+    public static class NoCacheMiddleware {
         /// <summary>
         /// 使用全域No ResponseCache預設設定
         /// </summary>
