@@ -12,7 +12,6 @@ namespace XWidget.Web.Mvc {
         /// <summary>
         /// 當發生未知例外
         /// </summary>
-        /// <param name="exception">例外</param>
         public virtual void OnUnknowException(ActionExecutedContext context) {
             var unknow = new UnknowException();
             context.Result = new JsonResult(unknow);
