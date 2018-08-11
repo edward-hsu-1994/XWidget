@@ -8,8 +8,14 @@ namespace XWidget.Web.Jwt {
     /// JWT標頭
     /// </summary>
     public class DefaultJwtHeader : IJwtHeader {
+        /// <summary>
+        /// 簽名演算法
+        /// </summary>
         public string Algorithm { get; set; } = SecurityAlgorithms.HmacSha256;
 
+        /// <summary>
+        /// 類型
+        /// </summary>
         public string Type => "JWT";
     }
 }

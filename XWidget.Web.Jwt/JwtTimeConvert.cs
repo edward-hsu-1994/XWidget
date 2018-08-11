@@ -5,7 +5,7 @@ using System.Text;
 using XWidget.Utilities;
 
 namespace XWidget.Web.Jwt {
-    public class JwtTimeConvert : JsonConverter {
+    internal class JwtTimeConvert : JsonConverter {
         public override bool CanConvert(Type objectType) {
             return objectType == typeof(DateTime);
         }
