@@ -13,5 +13,23 @@ namespace XWidget.Web.Exceptions {
             0,
             "未知錯誤",
             "系統發生未知錯誤") { }
+
+        public UnknowException(string message) : base(
+            HttpStatusCode.InternalServerError,
+            0,
+            "未知錯誤",
+            message) { }
+
+        public UnknowException(string name, string message) : base(
+            HttpStatusCode.InternalServerError,
+            1,
+            name,
+            message) { }
+
+        public UnknowException(int code, string name, string message) : base(
+            HttpStatusCode.InternalServerError,
+            code,
+            name,
+            message) { }
     }
 }
