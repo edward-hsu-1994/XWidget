@@ -5,8 +5,8 @@ using System.Text;
 using Xunit;
 
 namespace XWidget.Reflection.Test {
-    public class ExpandoObjectHelperTest {
-        [Fact(DisplayName = "ExpandoObjectHelper.ConvertToExpando")]
+    public class ExpandoObjectUtilityTest {
+        [Fact(DisplayName = "ExpandoObjectUtilityTest.ConvertToExpando")]
         public void ConvertToExpando() {
             var obj = new TestClass();
             dynamic test = ExpandoObjectUtility.ConvertToExpando(obj);
