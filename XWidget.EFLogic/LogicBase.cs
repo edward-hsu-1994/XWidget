@@ -122,7 +122,7 @@ namespace XWidget.EFLogic {
         /// </summary>
         /// <param name="likePatten">SQL Like模式</param>
         /// <returns>搜尋結果</returns>
-        public virtual async Task<IEnumerable<TEntity>> SearchAsync(
+        public virtual async Task<IQueryable<TEntity>> SearchAsync(
             string likePatten) {
             return await SearchAsync(likePatten, typeof(TEntity).GetProperties()
                 .Where(x => x.PropertyType == typeof(string) && x.GetCustomAttribute<NotMappedAttribute>() == null)
@@ -142,7 +142,7 @@ namespace XWidget.EFLogic {
         /// <param name="likePatten">SQL Like模式</param>
         /// <param name="properties">搜尋屬性名稱</param>
         /// <returns>搜尋結果</returns>
-        public virtual async Task<IEnumerable<TEntity>> SearchAsync(
+        public virtual async Task<IQueryable<TEntity>> SearchAsync(
             string likePatten,
             params string[] properties) {
             return await SearchAsync(likePatten, properties.Select(x => {
@@ -160,7 +160,7 @@ namespace XWidget.EFLogic {
         /// <param name="likePatten">SQL Like模式</param>
         /// <param name="propertySelectors">比對屬性選擇器</param>
         /// <returns>搜尋結果</returns>
-        public virtual async Task<IEnumerable<TEntity>> SearchAsync(
+        public virtual async Task<IQueryable<TEntity>> SearchAsync(
             string likePatten,
             params Expression<Func<TEntity, object>>[] propertySelectors) {
             var dbSet = GetDbSet(this.GetType().GetMethod(
@@ -206,9 +206,9 @@ namespace XWidget.EFLogic {
                     return x;
                 }).ToArray();
 
-            return (IEnumerable<TEntity>)Enumerable.Where(dbSet, Expression.Lambda<Func<TEntity, bool>>(
+            return (IQueryable<TEntity>)Queryable.Where(dbSet, Expression.Lambda<Func<TEntity, bool>>(
                 AllOr(equalExpList), p
-            ).Compile());
+            ));
         }
 
         /// <summary>
@@ -350,14 +350,60 @@ namespace XWidget.EFLogic {
         }
 
         #region Hook
+        /// <summary>
+        /// 建立前處理
+        /// </summary>
+        /// <param name="entity">實例</param>
+        /// <param name="parameters">參數</param>
+        /// <returns>實例</returns>
         public virtual async Task BeforeCreate(TEntity entity, params object[] parameters) { }
+
+        /// <summary>
+        /// 建立後處理
+        /// </summary>
+        /// <param name="entity">實例</param>
+        /// <param name="parameters">參數</param>
+        /// <returns>實例</returns>
         public virtual async Task BeforeUpdate(TEntity entity, params object[] parameters) { }
+
+        /// <summary>
+        /// 刪除前處理
+        /// </summary>
+        /// <param name="entity">實例</param>
+        /// <param name="parameters">參數</param>
+        /// <returns>實例</returns>
         public virtual async Task BeforeDelete(TEntity entity, params object[] parameters) { }
 
-
+        /// <summary>
+        /// 取得後處理
+        /// </summary>
+        /// <param name="entity">實例</param>
+        /// <param name="parameters">參數</param>
+        /// <returns>實例</returns>
         public virtual async Task AfterGet(TEntity entity, params object[] parameters) { }
+
+        /// <summary>
+        /// 建立後處理
+        /// </summary>
+        /// <param name="entity">實例</param>
+        /// <param name="parameters">參數</param>
+        /// <returns>實例</returns>
         public virtual async Task AfterCreate(TEntity entity, params object[] parameters) { }
+
+        /// <summary>
+        /// 更新後處理
+        /// </summary>
+        /// <param name="entity">實例</param>
+        /// <param name="parameters">參數</param>
+        /// <returns>實例</returns>
         public virtual async Task AfterUpdate(TEntity entity, params object[] parameters) { }
+
+        /// <summary>
+        /// 刪除後處理
+        /// </summary>
+        /// <param name="entity">實例</param>
+        /// <param name="parameters">參數</param>
+        /// <returns>實例</returns>
         public virtual async Task AfterDelete(TEntity entity, params object[] parameters) { }
         #endregion
     }

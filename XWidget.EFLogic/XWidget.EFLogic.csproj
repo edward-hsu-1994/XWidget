@@ -8,7 +8,7 @@
     <PackageProjectUrl>https://github.com/XuPeiYao/XWidget/tree/master/XWidget.EFLogic</PackageProjectUrl>
     <RepositoryUrl>https://github.com/XuPeiYao/XWidget.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <Description>針對EntityFrameworkCore的商業邏輯層存取架構</Description>
+    <Description>針對EntityFrameworkCore的邏輯層存取架構</Description>
     <PackageIconUrl>https://i.imgur.com/fF6aNHL.png</PackageIconUrl>
   </PropertyGroup>
 
