@@ -1,11 +1,10 @@
 ﻿XWidget.Web.Mvc.Multipart
 =====
-[![license](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/XuPeiYao/XWidget)
- ![NuGet](https://img.shields.io/nuget/dt/XWidget.Web.Mvc.Multipart.svg)
- [![Build Status](https://travis-ci.org/XuPeiYao/XWidget.svg?branch=master)](https://travis-ci.org/XuPeiYao/XWidget) [![xpy MyGet Build Status](https://www.myget.org/BuildSource/Badge/xpy?identifier=e039f3b9-1678-4c48-997b-a10eca325f39)](https://www.myget.org/)
+[![NuGet](https://img.shields.io/nuget/v/XWidget.Web.Mvc.Multipart.svg?style=flat-square)](https://www.nuget.org/packages/XWidget.Web.Mvc.Multipart/)
+[![NuGet](https://img.shields.io/nuget/dt/XWidget.Web.Mvc.Multipart.svg?style=flat-square)](https://www.nuget.org/packages/XWidget.Web.Mvc.Multipart/)
+[![GitHub](https://img.shields.io/github/license/XuPeiYao/XWidget.svg?style=flat-square)](https://github.com/XuPeiYao/XWidget/blob/master/LICENSE)
 
-
-Multipart/Form格式包含JSON格式剖析
+提供在MVC Controller中Multipart的進階使用，Multipart/Form格式包含JSON格式剖析
 
 ## 使用情境
 
