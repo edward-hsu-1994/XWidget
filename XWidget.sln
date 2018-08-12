@@ -57,7 +57,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XWidget.EFLogic.Test", "XWi
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XWidget.Web.Mvc.PropertyMask", "XWidget.Web.Mvc.PropertyMask\XWidget.Web.Mvc.PropertyMask.csproj", "{524B6C0F-7603-431F-8B57-0FE07EF7FF99}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XWidget.Web.Mvc.PropertyMask.Test", "XWidget.Web.Mvc.PropertyMask.Test\XWidget.Web.Mvc.PropertyMask.Test.csproj", "{3509EEED-82D8-454F-8681-F482E83F1EDF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XWidget.Web.Mvc.PropertyMask.Test", "XWidget.Web.Mvc.PropertyMask.Test\XWidget.Web.Mvc.PropertyMask.Test.csproj", "{3509EEED-82D8-454F-8681-F482E83F1EDF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XWidget.JobQueue", "XWidget.JobQueue\XWidget.JobQueue.csproj", "{FFF3703D-2A05-404F-94B4-24BABD9BC47D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XWidget.JobQueue.Test", "XWidget.JobQueue.Test\XWidget.JobQueue.Test.csproj", "{377FD2A7-6BC7-4545-AA4B-46AE9BBEABAE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -165,6 +169,14 @@ Global
 		{3509EEED-82D8-454F-8681-F482E83F1EDF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3509EEED-82D8-454F-8681-F482E83F1EDF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3509EEED-82D8-454F-8681-F482E83F1EDF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FFF3703D-2A05-404F-94B4-24BABD9BC47D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FFF3703D-2A05-404F-94B4-24BABD9BC47D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FFF3703D-2A05-404F-94B4-24BABD9BC47D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FFF3703D-2A05-404F-94B4-24BABD9BC47D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{377FD2A7-6BC7-4545-AA4B-46AE9BBEABAE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{377FD2A7-6BC7-4545-AA4B-46AE9BBEABAE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{377FD2A7-6BC7-4545-AA4B-46AE9BBEABAE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{377FD2A7-6BC7-4545-AA4B-46AE9BBEABAE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

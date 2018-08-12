@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <Authors>XuPeiYao</Authors>
+    <Description>提供工作列隊操作</Description>
+    <PackageProjectUrl>https://github.com/XuPeiYao/XWidget/tree/master/XWidget.JobQueue</PackageProjectUrl>
+    <PackageIconUrl>https://i.imgur.com/fF6aNHL.png</PackageIconUrl>
+    <RepositoryUrl>https://github.com/XuPeiYao/XWidget.git</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile>bin\Debug\netstandard2.0\XWidget.JobQueue.xml</DocumentationFile>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DocumentationFile>bin\Release\netstandard2.0\XWidget.JobQueue.xml</DocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Reactive" Version="4.0.0" />
+  </ItemGroup>
+
+</Project>
