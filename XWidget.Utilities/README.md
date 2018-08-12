@@ -39,6 +39,6 @@ await TaskUtility.LimitedTask(()=>{
 ### TypeUtility
 ```csharp
 TypeUtility.GetNamespaceTypes(typeof(List<int>).Namespace); // 取得指定命名空間內的Type
-TypeUtility.Parse<int>("123"); // 實作字串轉int
-TypeUtility.TryParse<int>("123"); // 嘗試實作字串轉int
+TypeUtility.Parse<int>("123"); // 實作字串轉指定類型
+TypeUtility.TryParse<int>("123"); // 嘗試實作字串轉指定類型
 ```
