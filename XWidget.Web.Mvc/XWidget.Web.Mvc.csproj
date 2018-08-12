@@ -8,7 +8,7 @@
     <PackageProjectUrl>https://github.com/XuPeiYao/XWidget/tree/master/XWidget.Web.Mvc</PackageProjectUrl>
     <RepositoryUrl>https://github.com/XuPeiYao/XWidget.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <Description>ASP.net Core控制器與分頁結果相關擴充</Description>
+    <Description>ASP.net Core控制器與分頁結果相關擴充並支援XWidget.Web.Exceptions套件的例外處理</Description>
     <PackageIconUrl>https://i.imgur.com/fF6aNHL.png</PackageIconUrl>
   </PropertyGroup>
 
@@ -26,6 +26,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\XWidget.Linq\XWidget.Linq.csproj" />
     <ProjectReference Include="..\XWidget.Web.Exceptions\XWidget.Web.Exceptions.csproj" />
   </ItemGroup>
 

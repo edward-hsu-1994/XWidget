@@ -4,6 +4,9 @@ using System.Collections.Generic;
 using System.Text;
 
 namespace XWidget.Web.Jwt {
+    /// <summary>
+    /// 常用JWT內容
+    /// </summary>
     public class CommonPayload {
         /// <summary>
         /// 發行者

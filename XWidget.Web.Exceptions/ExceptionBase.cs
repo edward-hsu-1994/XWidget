@@ -9,7 +9,7 @@ namespace XWidget.Web.Exceptions {
     [JsonObject(MemberSerialization = MemberSerialization.OptIn)]
     public class ExceptionBase : Exception {
         /// <summary>
-        /// 錯誤代碼
+        /// 自訂錯誤代碼
         /// </summary>
         [JsonProperty]
         public int Code { get; private set; }

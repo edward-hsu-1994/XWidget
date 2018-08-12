@@ -13,5 +13,23 @@ namespace XWidget.Web.Exceptions {
             2,
             "權限不足",
             "您無法進行此操作") { }
+
+        public PermissionsException(string message) : base(
+            HttpStatusCode.Forbidden,
+            2,
+            "權限不足",
+            message) { }
+
+        public PermissionsException(string name, string message) : base(
+            HttpStatusCode.Forbidden,
+            1,
+            name,
+            message) { }
+
+        public PermissionsException(int code, string name, string message) : base(
+            HttpStatusCode.Forbidden,
+            code,
+            name,
+            message) { }
     }
 }

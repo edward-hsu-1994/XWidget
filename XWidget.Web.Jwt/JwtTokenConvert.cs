@@ -45,6 +45,14 @@ namespace XWidget.Web.Jwt {
             return result;
         }
 
+        /// <summary>
+        /// 簽名並產生JWT字串
+        /// </summary>
+        /// <typeparam name="TJwtHeader">標頭類型</typeparam>
+        /// <typeparam name="TJwtPayload">內容類型</typeparam>
+        /// <param name="token">JWT結構</param>
+        /// <param name="signingCredentials">簽名鑰匙</param>
+        /// <returns>JWT字串</returns>
         public static string Sign<TJwtHeader, TJwtPayload>(
             this IJwtToken<TJwtHeader, TJwtPayload> token,
             SecurityKey signingCredentials)
@@ -58,6 +66,13 @@ namespace XWidget.Web.Jwt {
             );
         }
 
+        /// <summary>
+        /// 驗證JWT
+        /// </summary>
+        /// <param name="token">JWT字串</param>
+        /// <param name="signingCredentials">簽名鑰匙</param>
+        /// <param name="result">剖析後的JWT結構</param>
+        /// <returns>是否合法</returns>
         public static bool Verify(
             string token,
             SecurityKey signingCredentials,
@@ -69,6 +84,14 @@ namespace XWidget.Web.Jwt {
             return returnValue;
         }
 
+        /// <summary>
+        /// 驗證JWT
+        /// </summary>
+        /// <typeparam name="TJwtPayload">內容類型</typeparam>
+        /// <param name="token">JWT字串</param>
+        /// <param name="signingCredentials">簽名鑰匙</param>
+        /// <param name="result">剖析後的JWT結構</param>
+        /// <returns>是否合法</returns>
         public static bool Verify<TJwtPayload>(
             string token,
             SecurityKey signingCredentials,
@@ -80,6 +103,15 @@ namespace XWidget.Web.Jwt {
             return returnValue;
         }
 
+        /// <summary>
+        /// 驗證JWT
+        /// </summary>
+        /// <typeparam name="TToken">JWT結構類型</typeparam>
+        /// <typeparam name="TJwtPayload">內容類型</typeparam>
+        /// <param name="token">JWT字串</param>
+        /// <param name="signingCredentials">簽名鑰匙</param>
+        /// <param name="result">剖析後的JWT結構</param>
+        /// <returns>是否合法</returns>
         public static bool Verify<TToken, TJwtPayload>(
             string token,
             SecurityKey signingCredentials,
@@ -88,6 +120,16 @@ namespace XWidget.Web.Jwt {
             return Verify<TToken, DefaultJwtHeader, TJwtPayload>(token, signingCredentials, out result);
         }
 
+        /// <summary>
+        /// 驗證JWT
+        /// </summary>
+        /// <typeparam name="TToken">JWT結構類型</typeparam>
+        /// <typeparam name="TJwtHeader">標頭類型</typeparam>
+        /// <typeparam name="TJwtPayload">內容類型</typeparam>
+        /// <param name="token">JWT字串</param>
+        /// <param name="signingCredentials">簽名鑰匙</param>
+        /// <param name="result">剖析後的JWT結構</param>
+        /// <returns>是否合法</returns>
         public static bool Verify<TToken, TJwtHeader, TJwtPayload>(
             string token,
             SecurityKey signingCredentials,
@@ -104,6 +146,16 @@ namespace XWidget.Web.Jwt {
             }, out result);
         }
 
+        /// <summary>
+        /// 驗證JWT
+        /// </summary>
+        /// <typeparam name="TToken">JWT結構類型</typeparam>
+        /// <typeparam name="TJwtHeader">標頭類型</typeparam>
+        /// <typeparam name="TJwtPayload">內容類型</typeparam>
+        /// <param name="token">JWT字串</param>
+        /// <param name="validationParameters">驗證參數</param>
+        /// <param name="result">剖析後的JWT結構</param>
+        /// <returns>是否合法</returns>
         public static bool Verify<TToken, TJwtHeader, TJwtPayload>(
             string token,
             TokenValidationParameters validationParameters,

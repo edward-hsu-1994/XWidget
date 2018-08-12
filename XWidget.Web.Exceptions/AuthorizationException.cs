@@ -13,5 +13,23 @@ namespace XWidget.Web.Exceptions {
             1,
             "授權無效",
             "您目前尚未登入或您目前使用的授權失效，您可以嘗試重新登入或重新取得授權") { }
+
+        public AuthorizationException(string message) : base(
+            HttpStatusCode.Unauthorized,
+            1,
+            "授權無效",
+            message) { }
+
+        public AuthorizationException(string name, string message) : base(
+            HttpStatusCode.Unauthorized,
+            1,
+            name,
+            message) { }
+
+        public AuthorizationException(int code, string name, string message) : base(
+            HttpStatusCode.Unauthorized,
+            code,
+            name,
+            message) { }
     }
 }

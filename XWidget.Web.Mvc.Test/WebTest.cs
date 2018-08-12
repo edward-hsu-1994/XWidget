@@ -9,6 +9,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using Xunit;
+using XWidget.Linq;
 using XWidget.Web.Exceptions;
 
 namespace XWidget.Web.Mvc.Test {
@@ -33,9 +34,9 @@ namespace XWidget.Web.Mvc.Test {
 
             Assert.True(response2.IsSuccessStatusCode);
 
-            var response2Content = JObject.Parse(await response2.Content.ReadAsStringAsync()).ToObject<PaginationResult<IEnumerable<int>>>();
+            var response2ContextJObject = JObject.Parse(await response2.Content.ReadAsStringAsync());
 
-            Assert.Equal(response2Content.Result.Count(), 10);
+            Assert.Equal(response2ContextJObject["result"].Count(), 10);
         }
 
         public static IWebHost BuildWebHost(string[] args) =>

@@ -4,6 +4,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using XWidget.Linq;
 using XWidget.Web.Exceptions;
 
 namespace XWidget.Web.Mvc {
@@ -11,7 +12,6 @@ namespace XWidget.Web.Mvc {
         /// <summary>
         /// 當發生未知例外
         /// </summary>
-        /// <param name="exception">例外</param>
         public virtual void OnUnknowException(ActionExecutedContext context) {
             var unknow = new UnknowException();
             context.Result = new JsonResult(unknow);
@@ -40,13 +40,8 @@ namespace XWidget.Web.Mvc {
         /// <param name="skip">起始索引</param>
         /// <param name="take">取得筆數</param>
         /// <returns>分頁結果</returns>
-        public PaginationResult<IEnumerable<T>> Paging<T>(IEnumerable<T> result, int skip, int take) {
-            return new PaginationResult<IEnumerable<T>>() {
-                Skip = skip,
-                Take = take,
-                Result = result.Skip(skip).Take(take),
-                TotalCount = result.Count()
-            };
+        public Paging<T> Paging<T>(IEnumerable<T> result, int skip, int take) {
+            return result.AsPaging(skip, take);
         }
     }
 }

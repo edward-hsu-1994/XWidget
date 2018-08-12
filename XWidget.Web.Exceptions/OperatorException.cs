@@ -13,5 +13,23 @@ namespace XWidget.Web.Exceptions {
             4,
             "操作錯誤",
             "您的操作有誤") { }
+
+        public OperatorException(string message) : base(
+            HttpStatusCode.BadRequest,
+            4,
+            "操作錯誤",
+            message) { }
+
+        public OperatorException(string name, string message) : base(
+            HttpStatusCode.BadRequest,
+            1,
+            name,
+            message) { }
+
+        public OperatorException(int code, string name, string message) : base(
+            HttpStatusCode.BadRequest,
+            code,
+            name,
+            message) { }
     }
 }

@@ -1,12 +1,10 @@
-﻿XWidget.Web.Mvc.JsonMask
+﻿XWidget.Web.Mvc.PropertyMask
 =====
-[![NuGet](https://img.shields.io/nuget/v/XWidget.Web.Mvc.JsonMask.svg?style=flat-square)](https://www.nuget.org/packages/XWidget.Web.Mvc.JsonMask/)
-[![NuGet](https://img.shields.io/nuget/dt/XWidget.Web.Mvc.JsonMask.svg?style=flat-square)](https://www.nuget.org/packages/XWidget.Web.Mvc.JsonMask/)
+[![NuGet](https://img.shields.io/nuget/v/XWidget.Web.Mvc.PropertyMask.svg?style=flat-square)](https://www.nuget.org/packages/XWidget.Web.Mvc.PropertyMask/)
+[![NuGet](https://img.shields.io/nuget/dt/XWidget.Web.Mvc.PropertyMask.svg?style=flat-square)](https://www.nuget.org/packages/XWidget.Web.Mvc.PropertyMask/)
 [![GitHub](https://img.shields.io/github/license/XuPeiYao/XWidget.svg?style=flat-square)](https://github.com/XuPeiYao/XWidget/blob/master/LICENSE)
 
-> 這個套件已經不再進行更新維護，請改用`XWidget.Web.Mvc.PropertyMask`
-
-JSON資料遮罩
+提供物件屬性遮罩功能，本套件承接自`XWidget.Web.Mvc.JsonMask`
 
 ## 使用情境
 將EF Model作為API結果時，可能發生以下狀況。
@@ -14,16 +12,16 @@ JSON資料遮罩
 ### 場景
 ```csharp
 public class Category{
-    public Guid Id{ get;set; }
+    public virtual Guid Id{ get;set; }
 
-    public string Name {get;set;}
+    public virtual string Name {get;set;}
 
     [JsonIgnore]
-    public Guid? ParentId {get;set;}
+    public virtual Guid? ParentId {get;set;}
     
-    public Category Parent {get;set;}
+    public virtual Category Parent {get;set;}
 
-    public ICollection<Category> Children { get;set; }
+    public virtual ICollection<Category> Children { get;set; }
 }
 
 public class CategoryController: Controller{
@@ -133,7 +131,7 @@ options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
 ```
 
 一般而言可以直接對`Category`中的`Children`加上`[JsonIgnore]`來避免這種情況，但是由於`GetTree()`返回的資料又必須要有這個欄位，所以不能直接使用`[JsonIgnore]`。
-為了應對這種少見的情況，所以寫了這個類別庫，在`Category`的`Children`屬性加上`[JsonPropertyMask]`，如下:
+為了應對這種少見的情況，所以寫了這個類別庫，在`Category`的`Children`屬性加上`[PropertyMask]`，如下:
 
 ```csharp
 public class Category{
@@ -144,19 +142,19 @@ public class Category{
     [JsonIgnore]
     public Guid? ParentId {get;set;}
 
-    [JsonPropertyMask( // 當模式名稱是MyPattern時遮蔽這個屬性
+    [PropertyMask( // 當模式名稱是MyPattern時遮蔽這個屬性
         key: "MyPattern"
         Method = MaskMethods.PatternName)]
-    [JsonPropertyMask( // 當控制器類型是MyController時遮蔽這個屬性
+    [PropertyMask( // 當控制器類型是MyController時遮蔽這個屬性
         key: typeof(MyController)
         Method = MaskMethods.Controller)]
-    [JsonPropertyMask( // 當呼叫的Action返回類行為Paging<Category>時遮蔽這個屬性
+    [PropertyMask( // 當呼叫的Action返回類行為Paging<Category>時遮蔽這個屬性
         key: typeof(Paging<Category>)
         Method = MaskMethods.ReturnType)]
-    [JsonPropertyMask( // 如果呼叫的Action名稱為GetList時遮蔽這個屬性
+    [PropertyMask( // 如果呼叫的Action名稱為GetList時遮蔽這個屬性
         key: nameof(CategoryController.GetList)
         Method = MaskMethods.ActionName)]
-    [JsonPropertyMask( // 如果包裹此類型的類型是IEnumerable<Category>時遮蔽這個屬性
+    [PropertyMask( // 如果包裹此類型的類型是IEnumerable<Category>時遮蔽這個屬性
         key: tyoepf(IEnumerable<Category>)
         Method = MaskMethods.PackageType)]
     public ICollection<Category> Children { get;set; }
@@ -188,3 +186,11 @@ public Paging<Category> GetList(
 ```
 
 除了在`return`前包裝外，也可以在`Controller`的`OnActionExecuted`針對結果進行包裝
+
+## 屏蔽方法(MaskMethod)
+1. Controller: 根據調用Masker的控制器類型
+2. ActionName: 根據調用Masker動作方法名稱
+3. PatternName: 根據自訂模式名稱
+4. ReturnType: 根據調用Masker動作方法回傳類型
+5. PackageType: 根據包裝類型(即上層類型)
+6. DeclaringType: 根據定義類型

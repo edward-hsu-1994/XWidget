@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Xunit;
+using XWidget.Linq;
 
 namespace XWidget.Web.Mvc.Test.Controllers {
     [Route("api/[controller]")]
@@ -14,7 +15,7 @@ namespace XWidget.Web.Mvc.Test.Controllers {
         }
 
         [HttpGet("list")]
-        public PaginationResult<IEnumerable<int>> List() {
+        public Paging<int> List() {
             return Paging(Enumerable.Range(0, 100), 0, 10);
         }
     }
