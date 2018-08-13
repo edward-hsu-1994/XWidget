@@ -27,5 +27,17 @@ namespace XWidget.Utilities {
             builder.Append(str.Last());
             return builder.ToString();
         }
+
+        /// <summary>
+        /// 將字串根據指定區塊大小切割
+        /// </summary>
+        /// <param name="str">字串實例</param>
+        /// <param name="chunkSize">區塊大小</param>
+        /// <returns>切割後的字串</returns>
+        public static string[] Split(string str, int chunkSize) {
+            return Enumerable.Range(0, str.Length / chunkSize)
+                .Select(x => str.Substring(x * chunkSize, chunkSize))
+                .ToArray();
+        }
     }
 }
