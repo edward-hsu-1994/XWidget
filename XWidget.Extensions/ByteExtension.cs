@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 
@@ -9,6 +10,15 @@ namespace System {
     /// 針對<see cref="byte"/>的擴充方法
     /// </summary>
     public static class ByteExtension {
+        /// <summary>
+        /// 將<see cref="byte[]"/>轉換為16進位表示
+        /// </summary>
+        /// <param name="binary">Binary Data</param>
+        /// <returns>16進位表示</returns>
+        public static string ToHex(this byte[] binary, bool upper = false) {
+            return string.Join("", binary.Select(x => x.ToString(upper ? "x2" : "X2")));
+        }
+
         /// <summary>
         /// <see cref="byte[]"/>轉換為<see cref="Stream"/>
         /// </summary>
