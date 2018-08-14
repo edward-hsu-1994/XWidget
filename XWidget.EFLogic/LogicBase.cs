@@ -163,6 +163,11 @@ namespace XWidget.EFLogic {
         public virtual async Task<IQueryable<TEntity>> SearchAsync(
             string likePatten,
             params Expression<Func<TEntity, object>>[] propertySelectors) {
+            if (propertySelectors.Length == 0) {
+                var clrType = Database.Model.FindEntityType(typeof(TEntity));
+                return await SearchAsync(likePatten, clrType.GetProperties().Select(x => x.PropertyInfo.Name).ToArray());
+            }
+
             var dbSet = GetDbSet(this.GetType().GetMethod(
                 nameof(SearchAsync),
                 new Type[] {
@@ -195,10 +200,7 @@ namespace XWidget.EFLogic {
                             likeMethod,
                             new Expression[]{
                                 Expression.Constant(null, typeof(DbFunctions)),
-                                Expression.Property(
-                                    p,
-                                    (x.Body as MemberExpression).Member.Name
-                                ),
+                                x.Body,
                                 Expression.Constant(likePatten)
                             }
                         )
