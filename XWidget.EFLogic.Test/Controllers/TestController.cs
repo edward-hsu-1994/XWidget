@@ -39,6 +39,10 @@ namespace XWidget.EFLogic.Test.Controllers {
             await categoryLogic.DeleteAsync(category.Id);
 
             Assert.Equal(0, (await categoryLogic.ListAsync(x => x.Id == category.Id)).Count());
+
+            Assert.NotEmpty(await categoryLogic.SearchAsync("Test%", x => x.Name));
+
+            Assert.NotEmpty(await categoryLogic.SearchAsync("Test%"));
         }
     }
 }
