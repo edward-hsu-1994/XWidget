@@ -124,16 +124,7 @@ namespace XWidget.EFLogic {
         /// <returns>搜尋結果</returns>
         public virtual async Task<IQueryable<TEntity>> SearchAsync(
             string likePatten) {
-            return await SearchAsync(likePatten, typeof(TEntity).GetProperties()
-                .Where(x => x.PropertyType == typeof(string) && x.GetCustomAttribute<NotMappedAttribute>() == null)
-                .Select(x => x.Name)
-                .Select(x => {
-                    var p = Expression.Parameter(typeof(TEntity), "x");
-
-                    return Expression.Lambda<Func<TEntity, object>>(
-                        Expression.MakeMemberAccess(p, typeof(TEntity).GetMember(x).First()), p
-                    );
-                }).ToArray());
+            return await SearchAsync(likePatten, new Expression<Func<TEntity, object>>[] { });
         }
 
         /// <summary>
@@ -165,7 +156,15 @@ namespace XWidget.EFLogic {
             params Expression<Func<TEntity, object>>[] propertySelectors) {
             if (propertySelectors.Length == 0) {
                 var clrType = Database.Model.FindEntityType(typeof(TEntity));
-                return await SearchAsync(likePatten, clrType.GetProperties().Where(x => x.PropertyInfo.PropertyType == typeof(string)).Select(x => x.PropertyInfo.Name).ToArray());
+                var properties = clrType.GetProperties()
+                    .Where(x => x.PropertyInfo.PropertyType == typeof(string))
+                    .Select(x => x.PropertyInfo.Name).ToArray();
+
+                if (properties.Length == 0) { //防止Loop
+                    return await this.ListAsync(x => false);
+                }
+
+                return await SearchAsync(likePatten, properties);
             }
 
             var dbSet = GetDbSet(this.GetType().GetMethod(
@@ -187,10 +186,23 @@ namespace XWidget.EFLogic {
             // OR串接
             Expression AllOr(IEnumerable<Expression> exps) {
                 Expression result = exps.First();
+
                 foreach (var exp in exps.Skip(1)) {
                     result = Expression.OrElse(result, exp);
                 }
                 return result;
+            }
+
+            var EFFunctionsMember = typeof(EF).GetProperty("Functions");
+
+            MemberExpression ReplaceParameter(MemberExpression expression) {
+                if (expression.Expression is ParameterExpression exp) {
+                    return Expression.MakeMemberAccess(p, expression.Member);
+                } else if (expression.Expression is MemberExpression exm) {
+                    return Expression.MakeMemberAccess(ReplaceParameter(exm), expression.Member);
+                } else {
+                    return expression;
+                }
             }
 
             propertySelectors //轉換MemberEXpression為Like呼叫
@@ -199,8 +211,8 @@ namespace XWidget.EFLogic {
                         Expression.Call(
                             likeMethod,
                             new Expression[]{
-                                Expression.Constant(null, typeof(DbFunctions)),
-                                x.Body,
+                                Expression.MakeMemberAccess(null,EFFunctionsMember),
+                                ReplaceParameter((MemberExpression)x.Body),
                                 Expression.Constant(likePatten)
                             }
                         )
@@ -208,9 +220,10 @@ namespace XWidget.EFLogic {
                     return x;
                 }).ToArray();
 
-            return (IQueryable<TEntity>)Queryable.Where(dbSet, Expression.Lambda<Func<TEntity, bool>>(
+            var queryExpression = Expression.Lambda<Func<TEntity, bool>>(
                 AllOr(equalExpList), p
-            ));
+            );
+            return (IQueryable<TEntity>)Queryable.Where(dbSet, queryExpression);
         }
 
         /// <summary>
