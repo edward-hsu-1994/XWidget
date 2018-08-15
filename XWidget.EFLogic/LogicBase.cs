@@ -165,7 +165,7 @@ namespace XWidget.EFLogic {
             params Expression<Func<TEntity, object>>[] propertySelectors) {
             if (propertySelectors.Length == 0) {
                 var clrType = Database.Model.FindEntityType(typeof(TEntity));
-                return await SearchAsync(likePatten, clrType.GetProperties().Select(x => x.PropertyInfo.Name).ToArray());
+                return await SearchAsync(likePatten, clrType.GetProperties().Where(x => x.PropertyInfo.PropertyType == typeof(string)).Select(x => x.PropertyInfo.Name).ToArray());
             }
 
             var dbSet = GetDbSet(this.GetType().GetMethod(
