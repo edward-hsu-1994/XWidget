@@ -354,6 +354,16 @@ namespace XWidget.EFLogic {
         /// <param name="entity">物件實例</param>
         /// <param name="parameters">參數</param>
         /// <returns>更新後的物件實例</returns>
+        public TEntity Update(object entity, params object[] parameters) {
+            return UpdateAsync(entity, parameters).ToSync();
+        }
+
+        /// <summary>
+        /// 更新指定的物件實例
+        /// </summary>
+        /// <param name="entity">物件實例</param>
+        /// <param name="parameters">參數</param>
+        /// <returns>更新後的物件實例</returns>
         public virtual async Task<TEntity> UpdateAsync(TEntity entity, params object[] parameters) {
             var type = typeof(TEntity);
             TId id = (TId)type.GetProperty(IdentityPropertyName).GetValue(entity);
@@ -379,6 +389,15 @@ namespace XWidget.EFLogic {
             return instance;
         }
 
+        /// <summary>
+        /// 更新指定的物件實例
+        /// </summary>
+        /// <param name="entity">物件實例</param>
+        /// <param name="parameters">參數</param>
+        /// <returns>更新後的物件實例</returns>
+        public virtual TEntity Update(TEntity entity, params object[] parameters) {
+            return UpdateAsync(entity, parameters).ToSync();
+        }
 
         /// <summary>
         /// 刪除指定的物件
