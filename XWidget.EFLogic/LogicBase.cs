@@ -98,6 +98,15 @@ namespace XWidget.EFLogic {
         }
 
         /// <summary>
+        /// 列表
+        /// </summary>
+        /// <param name="cond">條件</param>
+        /// <returns>列表</returns>
+        public virtual IQueryable<TEntity> List(Expression<Func<TEntity, bool>> cond = null) {
+            return ListAsync(cond).ToSync();
+        }
+
+        /// <summary>
         /// 全文搜尋
         /// </summary>
         /// <param name="likePatten">SQL Like模式</param>
@@ -105,6 +114,16 @@ namespace XWidget.EFLogic {
         public virtual async Task<IQueryable<TEntity>> SearchAsync(
             string likePatten) {
             return await SearchAsync(likePatten, new Expression<Func<TEntity, object>>[] { });
+        }
+
+        /// <summary>
+        /// 全文搜尋
+        /// </summary>
+        /// <param name="likePatten">SQL Like模式</param>
+        /// <returns>搜尋結果</returns>
+        public virtual async Task<IQueryable<TEntity>> Search(
+            string likePatten) {
+            return SearchAsync(likePatten).ToSync();
         }
 
         /// <summary>
@@ -123,6 +142,18 @@ namespace XWidget.EFLogic {
                     Expression.MakeMemberAccess(p, typeof(TEntity).GetMember(x).First()), p
                 );
             }).ToArray());
+        }
+
+        /// <summary>
+        /// 搜尋
+        /// </summary>
+        /// <param name="likePatten">SQL Like模式</param>
+        /// <param name="properties">搜尋屬性名稱</param>
+        /// <returns>搜尋結果</returns>
+        public virtual IQueryable<TEntity> Search(
+            string likePatten,
+            params string[] properties) {
+            return SearchAsync(likePatten, properties).ToSync();
         }
 
         /// <summary>
@@ -194,6 +225,18 @@ namespace XWidget.EFLogic {
                 AllOr(equalExpList), p
             );
             return (IQueryable<TEntity>)Queryable.Where(Database.Set<TEntity>(), queryExpression);
+        }
+
+        /// <summary>
+        /// 搜尋
+        /// </summary>
+        /// <param name="likePatten">SQL Like模式</param>
+        /// <param name="propertySelectors">比對屬性選擇器</param>
+        /// <returns>搜尋結果</returns>
+        public virtual IQueryable<TEntity> Search(
+            string likePatten,
+            params Expression<Func<TEntity, object>>[] propertySelectors) {
+            return SearchAsync(likePatten, propertySelectors).ToSync();
         }
 
         /// <summary>
