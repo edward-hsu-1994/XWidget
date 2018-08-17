@@ -88,33 +88,13 @@ namespace XWidget.EFLogic {
         }
 
         /// <summary>
-        /// 取得DbSet
-        /// </summary>
-        /// <param name="caller">執行方法</param>
-        /// <param name="arguments">參數</param>
-        /// <returns>DbSet</returns>
-        protected virtual IQueryable<TEntity> GetDbSet(MethodInfo caller, Dictionary<string, object> arguments) {
-            var prop = Database.GetType().GetProperties().SingleOrDefault(x => x.PropertyType == typeof(DbSet<TEntity>));
-            var dbSet = prop.GetValue(Database) as IQueryable<TEntity>;
-            return dbSet;
-        }
-
-        /// <summary>
         /// 列表
         /// </summary>
         /// <param name="cond">條件</param>
         /// <returns>列表</returns>
         public virtual async Task<IQueryable<TEntity>> ListAsync(Expression<Func<TEntity, bool>> cond = null) {
             if (cond == null) cond = x => true;
-            var dbSet = GetDbSet(this.GetType().GetMethod(
-                nameof(SearchAsync),
-                new Type[] {
-                    typeof(string),
-                    typeof(Expression<Func<TEntity, object>>[])
-                }), new Dictionary<string, object>() {
-                    [nameof(cond)] = cond
-                });
-            return dbSet.Where(cond);
+            return Database.Set<TEntity>().Where(cond);
         }
 
         /// <summary>
@@ -167,16 +147,6 @@ namespace XWidget.EFLogic {
                 return await SearchAsync(likePatten, properties);
             }
 
-            var dbSet = GetDbSet(this.GetType().GetMethod(
-                nameof(SearchAsync),
-                new Type[] {
-                    typeof(string),
-                    typeof(Expression<Func<TEntity, object>>[])
-                }), new Dictionary<string, object>() {
-                    [nameof(likePatten)] = likePatten,
-                    [nameof(propertySelectors)] = propertySelectors
-                });
-
             var p = Expression.Parameter(typeof(TEntity), "x");
 
             var likeMethod = typeof(DbFunctionsExtensions).GetMethod("Like", new Type[] { typeof(DbFunctions), typeof(string), typeof(string) });
@@ -223,7 +193,7 @@ namespace XWidget.EFLogic {
             var queryExpression = Expression.Lambda<Func<TEntity, bool>>(
                 AllOr(equalExpList), p
             );
-            return (IQueryable<TEntity>)Queryable.Where(dbSet, queryExpression);
+            return (IQueryable<TEntity>)Queryable.Where(Database.Set<TEntity>(), queryExpression);
         }
 
         /// <summary>
@@ -243,16 +213,7 @@ namespace XWidget.EFLogic {
         /// <param name="parameters">參數</param>
         /// <returns>物件實例</returns>
         public virtual async Task<TEntity> GetAsync(TId id, object[] parameters = null) {
-            var dbSet = GetDbSet(this.GetType().GetMethod(
-                nameof(GetAsync),
-                new Type[] {
-                    typeof(TId),
-                    typeof(object[])
-                }), new Dictionary<string, object>() {
-                    [nameof(id)] = id
-                });
-
-            var instance = dbSet.SingleOrDefault($"{IdentityPropertyName} == @0", id);
+            var instance = Database.Set<TEntity>().SingleOrDefault($"{IdentityPropertyName} == @0", id);
 
             if (instance == null) {
                 throw new NotFoundException();
