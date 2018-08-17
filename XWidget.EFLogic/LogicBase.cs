@@ -255,6 +255,16 @@ namespace XWidget.EFLogic {
         /// <param name="id">唯一識別號</param>
         /// <param name="parameters">參數</param>
         /// <returns>物件實例</returns>
+        public TEntity Get(object id, object[] parameters = null) {
+            return GetAsync(id, parameters).ToSync();
+        }
+
+        /// <summary>
+        /// 透過唯一識別號取得指定物件實例
+        /// </summary>
+        /// <param name="id">唯一識別號</param>
+        /// <param name="parameters">參數</param>
+        /// <returns>物件實例</returns>
         public virtual async Task<TEntity> GetAsync(TId id, object[] parameters = null) {
             var instance = Database.Set<TEntity>().SingleOrDefault($"{IdentityPropertyName} == @0", id);
 
@@ -264,6 +274,16 @@ namespace XWidget.EFLogic {
 
             await AfterGet(instance, parameters);
             return instance;
+        }
+
+        /// <summary>
+        /// 透過唯一識別號取得指定物件實例
+        /// </summary>
+        /// <param name="id">唯一識別號</param>
+        /// <param name="parameters">參數</param>
+        /// <returns>物件實例</returns>
+        public virtual TEntity Get(TId id, object[] parameters = null) {
+            return GetAsync(id, parameters).ToSync();
         }
 
         /// <summary>
