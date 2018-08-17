@@ -91,6 +91,17 @@ namespace XWidget.EFLogic {
         /// <summary>
         /// 透過唯一識別號取得指定物件實例
         /// </summary>
+        /// <typeparam name="T">實例類型</typeparam>
+        /// <param name="id">唯一識別號</param>
+        /// <param name="parameters">參數</param>
+        /// <returns>物件實例</returns>
+        public T Get<T>(object id, object[] parameters = null) where T : class {
+            return GetAsync<T>(id, parameters).ToSync();
+        }
+
+        /// <summary>
+        /// 透過唯一識別號取得指定物件實例
+        /// </summary>
         /// <param name="type">實例類型</param>
         /// <param name="id">唯一識別號</param>
         /// <param name="parameters">參數</param>
@@ -102,8 +113,20 @@ namespace XWidget.EFLogic {
         }
 
         /// <summary>
+        /// 透過唯一識別號取得指定物件實例
+        /// </summary>
+        /// <param name="type">實例類型</param>
+        /// <param name="id">唯一識別號</param>
+        /// <param name="parameters">參數</param>
+        /// <returns>物件實例</returns>
+        public object Get(Type type, object id, object[] parameters = null) {
+            return GetAsync(type, id, parameters).ToSync();
+        }
+
+        /// <summary>
         /// 加入新的物件實例
         /// </summary>
+        /// <typeparam name="T">實例類型</typeparam>
         /// <param name="entity">物件實例</param>
         /// <param name="parameters">參數</param>
         /// <returns>加入後的物件</returns>
@@ -114,8 +137,20 @@ namespace XWidget.EFLogic {
         }
 
         /// <summary>
+        /// 加入新的物件實例
+        /// </summary>
+        /// <typeparam name="T">實例類型</typeparam>
+        /// <param name="entity">物件實例</param>
+        /// <param name="parameters">參數</param>
+        /// <returns>加入後的物件</returns>
+        public T Create<T>(T entity, object[] parameters = null) where T : class {
+            return CreateAsync(entity, parameters).ToSync();
+        }
+
+        /// <summary>
         /// 更新指定的物件實例
         /// </summary>
+        /// <typeparam name="T">實例類型</typeparam>
         /// <param name="entity">物件實例</param>
         /// <param name="parameters">參數</param>
         /// <returns>加入後的物件</returns>
@@ -126,14 +161,36 @@ namespace XWidget.EFLogic {
         }
 
         /// <summary>
+        /// 更新指定的物件實例
+        /// </summary>
+        /// <typeparam name="T">實例類型</typeparam>
+        /// <param name="entity">物件實例</param>
+        /// <param name="parameters">參數</param>
+        /// <returns>加入後的物件</returns>
+        public T Update<T>(T entity, object[] parameters = null) where T : class {
+            return UpdateAsync(entity, parameters).ToSync();
+        }
+
+        /// <summary>
         /// 刪除指定的物件
         /// </summary>
+        /// <typeparam name="T">實例類型</typeparam>
         /// <param name="id">唯一識別號</param>
         /// <param name="parameters">參數</param>
         public async Task DeleteAsync<T>(object id, object[] parameters = null) where T : class {
             var targetLogic = (dynamic)GetLogicByType(typeof(T));
 
             await targetLogic.DeleteAsync(id, parameters);
+        }
+
+        /// <summary>
+        /// 刪除指定的物件
+        /// </summary>
+        /// <typeparam name="T">實例類型</typeparam>
+        /// <param name="id">唯一識別號</param>
+        /// <param name="parameters">參數</param>
+        public void Delete<T>(object id, object[] parameters = null) where T : class {
+            DeleteAsync<T>(id, parameters).ToSync();
         }
 
         /// <summary>
@@ -146,6 +203,16 @@ namespace XWidget.EFLogic {
             var targetLogic = (dynamic)GetLogicByType(type);
 
             await targetLogic.DeleteAsync(id, parameters);
+        }
+
+        /// <summary>
+        /// 刪除指定的物件
+        /// </summary>
+        /// <param name="type">實例類型</param>
+        /// <param name="id">唯一識別號</param>
+        /// <param name="parameters">參數</param>
+        public void Delete(Type type, object id, object[] parameters = null) {
+            DeleteAsync(type, id, parameters).ToSync();
         }
 
         /// <summary>
