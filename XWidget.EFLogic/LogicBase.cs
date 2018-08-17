@@ -302,6 +302,16 @@ namespace XWidget.EFLogic {
         /// <param name="entity">物件實例</param>
         /// <param name="parameters">參數</param>
         /// <returns>加入後的物件</returns>
+        public TEntity Create(object entity, params object[] parameters) {
+            return CreateAsync(entity, parameters).ToSync();
+        }
+
+        /// <summary>
+        /// 加入新的物件實例
+        /// </summary>
+        /// <param name="entity">物件實例</param>
+        /// <param name="parameters">參數</param>
+        /// <returns>加入後的物件</returns>
         public virtual async Task<TEntity> CreateAsync(TEntity entity, params object[] parameters) {
             if (CreateIgnoreIdentity) {
                 (await Manager.GetEntityIdentityProperty(entity)).SetValue(entity, default(TId));
@@ -316,6 +326,16 @@ namespace XWidget.EFLogic {
             var type = typeof(TEntity);
             TId id = (TId)type.GetProperty(IdentityPropertyName).GetValue(entity);
             return await GetAsync(id, parameters);
+        }
+
+        /// <summary>
+        /// 加入新的物件實例
+        /// </summary>
+        /// <param name="entity">物件實例</param>
+        /// <param name="parameters">參數</param>
+        /// <returns>加入後的物件</returns>
+        public virtual TEntity Create(TEntity entity, params object[] parameters) {
+            return CreateAsync(entity, parameters).ToSync();
         }
 
         /// <summary>
