@@ -88,15 +88,13 @@ namespace XWidget.EFLogic {
         }
 
         /// <summary>
-        /// 取得DbSet
+        /// 列表
         /// </summary>
-        /// <param name="caller">執行方法</param>
-        /// <param name="arguments">參數</param>
-        /// <returns>DbSet</returns>
-        protected virtual IQueryable<TEntity> GetDbSet(MethodInfo caller, Dictionary<string, object> arguments) {
-            var prop = Database.GetType().GetProperties().SingleOrDefault(x => x.PropertyType == typeof(DbSet<TEntity>));
-            var dbSet = prop.GetValue(Database) as IQueryable<TEntity>;
-            return dbSet;
+        /// <param name="cond">條件</param>
+        /// <returns>列表</returns>
+        public virtual async Task<IQueryable<TEntity>> ListAsync(Expression<Func<TEntity, bool>> cond = null) {
+            if (cond == null) cond = x => true;
+            return Database.Set<TEntity>().Where(cond);
         }
 
         /// <summary>
@@ -104,17 +102,8 @@ namespace XWidget.EFLogic {
         /// </summary>
         /// <param name="cond">條件</param>
         /// <returns>列表</returns>
-        public virtual async Task<IQueryable<TEntity>> ListAsync(Expression<Func<TEntity, bool>> cond = null) {
-            if (cond == null) cond = x => true;
-            var dbSet = GetDbSet(this.GetType().GetMethod(
-                nameof(SearchAsync),
-                new Type[] {
-                    typeof(string),
-                    typeof(Expression<Func<TEntity, object>>[])
-                }), new Dictionary<string, object>() {
-                    [nameof(cond)] = cond
-                });
-            return dbSet.Where(cond);
+        public virtual IQueryable<TEntity> List(Expression<Func<TEntity, bool>> cond = null) {
+            return ListAsync(cond).ToSync();
         }
 
         /// <summary>
@@ -125,6 +114,16 @@ namespace XWidget.EFLogic {
         public virtual async Task<IQueryable<TEntity>> SearchAsync(
             string likePatten) {
             return await SearchAsync(likePatten, new Expression<Func<TEntity, object>>[] { });
+        }
+
+        /// <summary>
+        /// 全文搜尋
+        /// </summary>
+        /// <param name="likePatten">SQL Like模式</param>
+        /// <returns>搜尋結果</returns>
+        public virtual async Task<IQueryable<TEntity>> Search(
+            string likePatten) {
+            return SearchAsync(likePatten).ToSync();
         }
 
         /// <summary>
@@ -149,6 +148,18 @@ namespace XWidget.EFLogic {
         /// 搜尋
         /// </summary>
         /// <param name="likePatten">SQL Like模式</param>
+        /// <param name="properties">搜尋屬性名稱</param>
+        /// <returns>搜尋結果</returns>
+        public virtual IQueryable<TEntity> Search(
+            string likePatten,
+            params string[] properties) {
+            return SearchAsync(likePatten, properties).ToSync();
+        }
+
+        /// <summary>
+        /// 搜尋
+        /// </summary>
+        /// <param name="likePatten">SQL Like模式</param>
         /// <param name="propertySelectors">比對屬性選擇器</param>
         /// <returns>搜尋結果</returns>
         public virtual async Task<IQueryable<TEntity>> SearchAsync(
@@ -166,16 +177,6 @@ namespace XWidget.EFLogic {
 
                 return await SearchAsync(likePatten, properties);
             }
-
-            var dbSet = GetDbSet(this.GetType().GetMethod(
-                nameof(SearchAsync),
-                new Type[] {
-                    typeof(string),
-                    typeof(Expression<Func<TEntity, object>>[])
-                }), new Dictionary<string, object>() {
-                    [nameof(likePatten)] = likePatten,
-                    [nameof(propertySelectors)] = propertySelectors
-                });
 
             var p = Expression.Parameter(typeof(TEntity), "x");
 
@@ -223,7 +224,19 @@ namespace XWidget.EFLogic {
             var queryExpression = Expression.Lambda<Func<TEntity, bool>>(
                 AllOr(equalExpList), p
             );
-            return (IQueryable<TEntity>)Queryable.Where(dbSet, queryExpression);
+            return (IQueryable<TEntity>)Queryable.Where(Database.Set<TEntity>(), queryExpression);
+        }
+
+        /// <summary>
+        /// 搜尋
+        /// </summary>
+        /// <param name="likePatten">SQL Like模式</param>
+        /// <param name="propertySelectors">比對屬性選擇器</param>
+        /// <returns>搜尋結果</returns>
+        public virtual IQueryable<TEntity> Search(
+            string likePatten,
+            params Expression<Func<TEntity, object>>[] propertySelectors) {
+            return SearchAsync(likePatten, propertySelectors).ToSync();
         }
 
         /// <summary>
@@ -242,17 +255,18 @@ namespace XWidget.EFLogic {
         /// <param name="id">唯一識別號</param>
         /// <param name="parameters">參數</param>
         /// <returns>物件實例</returns>
-        public virtual async Task<TEntity> GetAsync(TId id, object[] parameters = null) {
-            var dbSet = GetDbSet(this.GetType().GetMethod(
-                nameof(GetAsync),
-                new Type[] {
-                    typeof(TId),
-                    typeof(object[])
-                }), new Dictionary<string, object>() {
-                    [nameof(id)] = id
-                });
+        public TEntity Get(object id, object[] parameters = null) {
+            return GetAsync(id, parameters).ToSync();
+        }
 
-            var instance = dbSet.SingleOrDefault($"{IdentityPropertyName} == @0", id);
+        /// <summary>
+        /// 透過唯一識別號取得指定物件實例
+        /// </summary>
+        /// <param name="id">唯一識別號</param>
+        /// <param name="parameters">參數</param>
+        /// <returns>物件實例</returns>
+        public virtual async Task<TEntity> GetAsync(TId id, object[] parameters = null) {
+            var instance = Database.Set<TEntity>().SingleOrDefault($"{IdentityPropertyName} == @0", id);
 
             if (instance == null) {
                 throw new NotFoundException();
@@ -263,6 +277,16 @@ namespace XWidget.EFLogic {
         }
 
         /// <summary>
+        /// 透過唯一識別號取得指定物件實例
+        /// </summary>
+        /// <param name="id">唯一識別號</param>
+        /// <param name="parameters">參數</param>
+        /// <returns>物件實例</returns>
+        public virtual TEntity Get(TId id, object[] parameters = null) {
+            return GetAsync(id, parameters).ToSync();
+        }
+
+        /// <summary>
         /// 加入新的物件實例
         /// </summary>
         /// <param name="entity">物件實例</param>
@@ -270,6 +294,16 @@ namespace XWidget.EFLogic {
         /// <returns>加入後的物件</returns>
         public async Task<TEntity> CreateAsync(object entity, params object[] parameters) {
             return await CreateAsync((TEntity)entity, parameters);
+        }
+
+        /// <summary>
+        /// 加入新的物件實例
+        /// </summary>
+        /// <param name="entity">物件實例</param>
+        /// <param name="parameters">參數</param>
+        /// <returns>加入後的物件</returns>
+        public TEntity Create(object entity, params object[] parameters) {
+            return CreateAsync(entity, parameters).ToSync();
         }
 
         /// <summary>
@@ -295,6 +329,16 @@ namespace XWidget.EFLogic {
         }
 
         /// <summary>
+        /// 加入新的物件實例
+        /// </summary>
+        /// <param name="entity">物件實例</param>
+        /// <param name="parameters">參數</param>
+        /// <returns>加入後的物件</returns>
+        public virtual TEntity Create(TEntity entity, params object[] parameters) {
+            return CreateAsync(entity, parameters).ToSync();
+        }
+
+        /// <summary>
         /// 更新指定的物件實例
         /// </summary>
         /// <param name="entity">物件實例</param>
@@ -302,6 +346,16 @@ namespace XWidget.EFLogic {
         /// <returns>更新後的物件實例</returns>
         public async Task<TEntity> UpdateAsync(object entity, params object[] parameters) {
             return await UpdateAsync((TEntity)entity, parameters);
+        }
+
+        /// <summary>
+        /// 更新指定的物件實例
+        /// </summary>
+        /// <param name="entity">物件實例</param>
+        /// <param name="parameters">參數</param>
+        /// <returns>更新後的物件實例</returns>
+        public TEntity Update(object entity, params object[] parameters) {
+            return UpdateAsync(entity, parameters).ToSync();
         }
 
         /// <summary>
@@ -335,6 +389,15 @@ namespace XWidget.EFLogic {
             return instance;
         }
 
+        /// <summary>
+        /// 更新指定的物件實例
+        /// </summary>
+        /// <param name="entity">物件實例</param>
+        /// <param name="parameters">參數</param>
+        /// <returns>更新後的物件實例</returns>
+        public virtual TEntity Update(TEntity entity, params object[] parameters) {
+            return UpdateAsync(entity, parameters).ToSync();
+        }
 
         /// <summary>
         /// 刪除指定的物件
@@ -343,6 +406,15 @@ namespace XWidget.EFLogic {
         /// <param name="parameters">參數</param>
         public async Task DeleteAsync(object id, params object[] parameters) {
             await DeleteAsync((TId)id, parameters);
+        }
+
+        /// <summary>
+        /// 刪除指定的物件
+        /// </summary>
+        /// <param name="id">唯一識別號</param>
+        /// <param name="parameters">參數</param>
+        public void Delete(object id, params object[] parameters) {
+            DeleteAsync(id, parameters).ToSync();
         }
 
         /// <summary>
@@ -362,6 +434,16 @@ namespace XWidget.EFLogic {
             await BeforeDelete(instance, parameters);
             await Database.SaveChangesAsync();
             await AfterDelete(instance, parameters);
+        }
+
+
+        /// <summary>
+        /// 刪除指定的物件
+        /// </summary>
+        /// <param name="id">物件唯一識別號</param>
+        /// <param name="parameters">參數</param>
+        public virtual void Delete(TId id, params object[] parameters) {
+            DeleteAsync(id, parameters).ToSync();
         }
 
         #region Hook
