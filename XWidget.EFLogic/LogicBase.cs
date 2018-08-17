@@ -411,6 +411,15 @@ namespace XWidget.EFLogic {
         /// <summary>
         /// 刪除指定的物件
         /// </summary>
+        /// <param name="id">唯一識別號</param>
+        /// <param name="parameters">參數</param>
+        public void Delete(object id, params object[] parameters) {
+            DeleteAsync(id, parameters).ToSync();
+        }
+
+        /// <summary>
+        /// 刪除指定的物件
+        /// </summary>
         /// <param name="id">物件唯一識別號</param>
         /// <param name="parameters">參數</param>
         public virtual async Task DeleteAsync(TId id, params object[] parameters) {
@@ -425,6 +434,16 @@ namespace XWidget.EFLogic {
             await BeforeDelete(instance, parameters);
             await Database.SaveChangesAsync();
             await AfterDelete(instance, parameters);
+        }
+
+
+        /// <summary>
+        /// 刪除指定的物件
+        /// </summary>
+        /// <param name="id">物件唯一識別號</param>
+        /// <param name="parameters">參數</param>
+        public virtual void Delete(TId id, params object[] parameters) {
+            DeleteAsync(id, parameters).ToSync();
         }
 
         #region Hook
