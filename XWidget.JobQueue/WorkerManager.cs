@@ -13,12 +13,22 @@ namespace XWidget.JobQueue {
         /// <summary>
         /// 工作者
         /// </summary>
-        private List<Worker> Workers { get; set; } = new List<Worker>();
+        private List<Worker> _worker { get; set; } = new List<Worker>();
+
+        /// <summary>
+        /// 工作者
+        /// </summary>
+        public IReadOnlyList<Worker> Workers => _worker.AsReadOnly();
 
         /// <summary>
         /// 工作列隊
         /// </summary>
-        public IReadOnlyList<IJob> JobQueue => Workers.SelectMany(x => x.JobQueue).ToList().AsReadOnly();
+        private List<IJob> _jobQueue { get; set; } = new List<IJob>();
+
+        /// <summary>
+        /// 工作列隊
+        /// </summary>
+        public IReadOnlyList<IJob> JobQueue => _jobQueue.AsReadOnly();
 
         /// <summary>
         /// 是否閒置中
@@ -31,13 +41,43 @@ namespace XWidget.JobQueue {
         public bool IsDead => Workers.Any(x => x.IsDead);
 
         /// <summary>
+        /// 當完成一件工作時觸發事件
+        /// </summary>
+        public event WorkCompleteJob OnCompleteJob;
+
+        /// <summary>
         /// 建立工作管理者
         /// </summary>
         /// <param name="workers">工作者數量，至少為1</param>
         public WorkerManager(uint workers = 1) {
             if (workers == 0) throw new ArgumentException(nameof(workers));
             for (int i = 0; i < workers; i++) {
-                Workers.Add(new Worker());
+                var work = new Worker();
+                work.OnCompleteJob += Work_OnCompleteJob;
+                _worker.Add(work);
+            }
+        }
+
+        private void Work_OnCompleteJob(IWorker worker) {
+            AssignJobs(Workers, _jobQueue);
+            OnCompleteJob?.Invoke(this);
+        }
+
+        /// <summary>
+        /// 分配等候中的工作
+        /// </summary>
+        /// <param name="workers">工作者列表</param>
+        /// <param name="jobs">工作列隊</param>
+        private protected virtual void AssignJobs(IReadOnlyList<IWorker> workers, List<IJob> jobs) {
+            lock (_jobQueue) {
+                var targetJob = jobs.FirstOrDefault();
+                if (targetJob == null) return;
+
+                var targetWorker = workers.FirstOrDefault(x => x.IsIdle);
+                if (targetWorker == null) return;
+
+                jobs.Remove(targetJob);
+                targetWorker.Add(targetJob);
             }
         }
 
@@ -46,7 +86,8 @@ namespace XWidget.JobQueue {
         /// </summary>
         /// <param name="job">工作</param>
         public void Add(IJob job) {
-            Workers.OrderBy(x => x.JobQueue.Count).First().Add(job);
+            _jobQueue.Add(job);
+            AssignJobs(Workers, _jobQueue);
         }
 
         /// <summary>
