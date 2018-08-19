@@ -37,6 +37,11 @@ namespace XWidget.JobQueue {
         }
 
         /// <summary>
+        /// 當完成一件工作時觸發事件
+        /// </summary>
+        public event WorkCompleteJob OnCompleteJob;
+
+        /// <summary>
         /// 新增工作
         /// </summary>
         /// <param name="job">工作</param>
@@ -90,8 +95,9 @@ namespace XWidget.JobQueue {
                             current.Task.Wait();
                         } catch { }
 
-
                         Remove(current);
+
+                        OnCompleteJob?.Invoke(this);
                     }
                 });
             }

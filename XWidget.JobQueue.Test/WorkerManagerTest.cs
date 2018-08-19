@@ -25,7 +25,7 @@ namespace XWidget.JobQueue.Test {
 
         [Fact(DisplayName = "XWidget.JobQueue.WorkerManagerTest2")]
         public void Test2() {
-            IWorker worker = new WorkerManager();
+            IWorker worker = new WorkerManager(2);
 
             int value = 0;
             worker.Add(new Job<int>(job => {
