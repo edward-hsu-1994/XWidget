@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 
 namespace XWidget.JobQueue {
+    public delegate void WorkCompleteJob(IWorker worker);
     /// <summary>
     /// 工作者介面
     /// </summary>
@@ -49,5 +50,10 @@ namespace XWidget.JobQueue {
         /// 等候工作者到執行完成
         /// </summary>
         void WaitForIdle();
+
+        /// <summary>
+        /// 當完成一件工作時觸發事件
+        /// </summary>
+        event WorkCompleteJob OnCompleteJob;
     }
 }
