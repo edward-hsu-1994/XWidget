@@ -18,7 +18,7 @@ after_build:
   # For once the build has completed
 clone_depth: 1
 test_script:
-  - ps: Get-ChildItem -Filter "*.Test" -Attributes Directory | Foreach-Object { dotnet test $_.FullName /p:CollectCoverage=true /p:CoverletOutputFormat=opencover; codecov -f .\coverage.opencover.xml -t "6fec9a34-1f39-4274-9570-10404d134c36" }
+  - ps: Get-ChildItem -Filter "*.Test" -Attributes Directory | Foreach-Object { dotnet test $_.FullName /p:CollectCoverage=true /p:CoverletOutputFormat=opencover; codecov -f "$_/coverage.opencover.xml" -t "6fec9a34-1f39-4274-9570-10404d134c36" }
 on_finish :
   # any cleanup in here
 deploy: off
