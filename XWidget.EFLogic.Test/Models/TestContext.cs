@@ -19,6 +19,9 @@ namespace XWidget.EFLogic.Test.Models {
         public static TestContext CreateInstance() {
             var result = new TestContext();
 
+            result.RemoveRange(result.Categories);
+            result.SaveChanges();
+
             var category_A = new Category() {
                 Name = "Category_A"
             };
