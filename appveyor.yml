@@ -1,0 +1,22 @@
+version: '1.0.{build}'
+image: Visual Studio 2017
+branches:
+  only:
+  - master
+install:
+before_build:
+  # Display .NET Core version
+  - cmd: dotnet --version
+  # Display minimal restore text
+  - cmd: dotnet restore
+build_script:
+  # output will be in ./src/bin/debug/netcoreapp1.1/publish
+  - cmd: dotnet publish
+after_build:
+  # For once the build has completed
+clone_depth: 1
+test_script:
+  - cmd: dotnet test
+on_finish :
+  # any cleanup in here
+deploy: off
