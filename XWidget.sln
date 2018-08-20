@@ -11,6 +11,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		.travis.yml = .travis.yml
 		LICENSE = LICENSE
+		README.md = README.md
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XWidget.Web.Mvc.Multipart", "XWidget.Web.Mvc.Multipart\XWidget.Web.Mvc.Multipart.csproj", "{EC61BCC6-D3E5-4B61-8584-3E59901AC627}"
@@ -59,9 +60,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XWidget.Web.Mvc.PropertyMas
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XWidget.Web.Mvc.PropertyMask.Test", "XWidget.Web.Mvc.PropertyMask.Test\XWidget.Web.Mvc.PropertyMask.Test.csproj", "{3509EEED-82D8-454F-8681-F482E83F1EDF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XWidget.JobQueue", "XWidget.JobQueue\XWidget.JobQueue.csproj", "{FFF3703D-2A05-404F-94B4-24BABD9BC47D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XWidget.JobQueue", "XWidget.JobQueue\XWidget.JobQueue.csproj", "{FFF3703D-2A05-404F-94B4-24BABD9BC47D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XWidget.JobQueue.Test", "XWidget.JobQueue.Test\XWidget.JobQueue.Test.csproj", "{377FD2A7-6BC7-4545-AA4B-46AE9BBEABAE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XWidget.JobQueue.Test", "XWidget.JobQueue.Test\XWidget.JobQueue.Test.csproj", "{377FD2A7-6BC7-4545-AA4B-46AE9BBEABAE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
