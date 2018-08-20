@@ -12,4 +12,4 @@ matrix:
 install:
 - dotnet restore
 script:
-- dotnet test XWidget.Web.Mvc.JsonMask.Test
+- for testProject in *.Test; do dotnet test "$testProject"; done
