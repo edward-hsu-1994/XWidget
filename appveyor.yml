@@ -11,7 +11,7 @@ before_build:
   - cmd: dotnet restore
 build_script:
   # output will be in ./src/bin/debug/netcoreapp1.1/publish
-  - cmd: dotnet publish
+  - cmd: dotnet build
 after_build:
   # For once the build has completed
 clone_depth: 1
