@@ -16,7 +16,7 @@ after_build:
   # For once the build has completed
 clone_depth: 1
 test_script:
-  - ps: Get-ChildItem -Filter "*.Test" -Attributes Directory | Foreach-Object { dotnet test $_.FullName }
+  - ps: Get-ChildItem -Filter "*.Test" -Attributes Directory | Foreach-Object { dotnet test $_.FullName /p:CollectCoverage=true /p:CoverletOutputFormat=opencover }
 on_finish :
   # any cleanup in here
 deploy: off

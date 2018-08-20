@@ -262,4 +262,4 @@ __pycache__/
 coverage-hits.txt
 coverage.json
 result.json
-.opencover.xml
+*.opencover.xml
