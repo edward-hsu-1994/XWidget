@@ -13,6 +13,12 @@ namespace XWidget.Linq.Test {
             Assert.Equal(default(int), Enumerable.Range(1, 0).MaxOrDefault(x => x));
 
             Assert.Null(Enumerable.Range(1, 0).MaxOrDefault(x => x, null));
+
+            Assert.Equal(100, Enumerable.Range(1, 100).AsQueryable().MaxOrDefault(x => x));
+
+            Assert.Equal(default(int), Enumerable.Range(1, 0).AsQueryable().MaxOrDefault(x => x));
+
+            Assert.Null(Enumerable.Range(1, 0).AsQueryable().MaxOrDefault(x => x, null));
         }
 
         [Fact(DisplayName = "MaxMinExtensionTest.MinOrDefault")]
@@ -22,6 +28,12 @@ namespace XWidget.Linq.Test {
             Assert.Equal(default(int), Enumerable.Range(1, 0).MaxOrDefault(x => x));
 
             Assert.Null(Enumerable.Range(1, 0).MinOrDefault(x => x, null));
+
+            Assert.Equal(1, Enumerable.Range(1, 100).AsQueryable().MinOrDefault(x => x));
+
+            Assert.Equal(default(int), Enumerable.Range(1, 0).AsQueryable().MaxOrDefault(x => x));
+
+            Assert.Null(Enumerable.Range(1, 0).AsQueryable().MinOrDefault(x => x, null));
         }
     }
 }
