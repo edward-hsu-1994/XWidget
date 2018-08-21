@@ -76,6 +76,28 @@ namespace XWidget.EFLogic {
         }
 
         /// <summary>
+        /// 檢查是否存在指定實例
+        /// </summary>
+        /// <typeparam name="T">實例類型</typeparam>
+        /// <param name="id">唯一識別號</param>
+        /// <returns>是否存在實例</returns>
+        public virtual async Task<bool> ExistsAsync<T>(object id) where T : class {
+            var targetLogic = (dynamic)GetLogicByType(typeof(T));
+
+            return await ((dynamic)targetLogic.ExistsAsync(id));
+        }
+
+        /// <summary>
+        /// 檢查是否存在指定實例
+        /// </summary>
+        /// <typeparam name="T">實例類型</typeparam>
+        /// <param name="id">唯一識別號</param>
+        /// <returns>是否存在實例</returns>
+        public virtual bool Exists<T>(object id) where T : class {
+            return ExistsAsync<T>(id).ToSync();
+        }
+
+        /// <summary>
         /// 透過唯一識別號取得指定物件實例
         /// </summary>
         /// <typeparam name="T">實例類型</typeparam>
