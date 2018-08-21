@@ -77,13 +77,37 @@ namespace XWidget.EFLogic {
         }
 
         /// <summary>
+        /// 列表
+        /// </summary>
+        /// <param name="cond">條件</param>
+        /// <returns>列表</returns>
+        public virtual async Task<IQueryable<TEntity>> ListAsync<TEntity>(
+            Expression<Func<TEntity, bool>> cond = null)
+            where TEntity : class {
+            var targetLogic = (dynamic)GetLogicByType(typeof(TEntity));
+
+            return await ((dynamic)targetLogic.ListAsync(cond));
+        }
+
+        /// <summary>
+        /// 列表
+        /// </summary>
+        /// <param name="cond">條件</param>
+        /// <returns>列表</returns>
+        public virtual IQueryable<TEntity> List<TEntity>(Expression<Func<TEntity, bool>> cond = null)
+            where TEntity : class {
+            return ListAsync(cond).ToSync();
+        }
+
+        /// <summary>
         /// 全文搜尋
         /// </summary>
         /// <param name="likePatten">SQL Like模式</param>
         /// <returns>搜尋結果</returns>
-        public virtual async Task<IQueryable<T>> SearchAsync<T>(
-            string likePatten) {
-            var targetLogic = (dynamic)GetLogicByType(typeof(T));
+        public virtual async Task<IQueryable<TEntity>> SearchAsync<TEntity>(
+            string likePatten)
+            where TEntity : class {
+            var targetLogic = (dynamic)GetLogicByType(typeof(TEntity));
 
             return await ((dynamic)targetLogic.SearchAsync(likePatten));
         }
@@ -93,9 +117,10 @@ namespace XWidget.EFLogic {
         /// </summary>
         /// <param name="likePatten">SQL Like模式</param>
         /// <returns>搜尋結果</returns>
-        public virtual IQueryable<T> Search<T>(
-            string likePatten) {
-            return SearchAsync<T>(likePatten).ToSync();
+        public virtual IQueryable<TEntity> Search<TEntity>(
+            string likePatten)
+            where TEntity : class {
+            return SearchAsync<TEntity>(likePatten).ToSync();
         }
 
         /// <summary>
@@ -104,10 +129,11 @@ namespace XWidget.EFLogic {
         /// <param name="likePatten">SQL Like模式</param>
         /// <param name="properties">搜尋屬性名稱</param>
         /// <returns>搜尋結果</returns>
-        public virtual async Task<IQueryable<T>> SearchAsync<T>(
+        public virtual async Task<IQueryable<TEntity>> SearchAsync<TEntity>(
             string likePatten,
-            params string[] properties) {
-            var targetLogic = (dynamic)GetLogicByType(typeof(T));
+            params string[] properties)
+            where TEntity : class {
+            var targetLogic = (dynamic)GetLogicByType(typeof(TEntity));
 
             return await ((dynamic)targetLogic.SearchAsync(likePatten, properties));
         }
@@ -118,10 +144,11 @@ namespace XWidget.EFLogic {
         /// <param name="likePatten">SQL Like模式</param>
         /// <param name="properties">搜尋屬性名稱</param>
         /// <returns>搜尋結果</returns>
-        public virtual IQueryable<T> Search<T>(
+        public virtual IQueryable<TEntity> Search<TEntity>(
             string likePatten,
-            params string[] properties) {
-            return SearchAsync<T>(likePatten, properties).ToSync();
+            params string[] properties)
+            where TEntity : class {
+            return SearchAsync<TEntity>(likePatten, properties).ToSync();
         }
 
         /// <summary>
@@ -130,10 +157,11 @@ namespace XWidget.EFLogic {
         /// <param name="likePatten">SQL Like模式</param>
         /// <param name="propertySelectors">比對屬性選擇器</param>
         /// <returns>搜尋結果</returns>
-        public virtual async Task<IQueryable<T>> SearchAsync<T>(
+        public virtual async Task<IQueryable<TEntity>> SearchAsync<TEntity>(
             string likePatten,
-            params Expression<Func<T, object>>[] propertySelectors) {
-            var targetLogic = (dynamic)GetLogicByType(typeof(T));
+            params Expression<Func<TEntity, object>>[] propertySelectors)
+            where TEntity : class {
+            var targetLogic = (dynamic)GetLogicByType(typeof(TEntity));
 
             return await ((dynamic)targetLogic.SearchAsync(likePatten, propertySelectors));
         }
@@ -144,10 +172,11 @@ namespace XWidget.EFLogic {
         /// <param name="likePatten">SQL Like模式</param>
         /// <param name="propertySelectors">比對屬性選擇器</param>
         /// <returns>搜尋結果</returns>
-        public virtual IQueryable<T> Search<T>(
+        public virtual IQueryable<TEntity> Search<TEntity>(
             string likePatten,
-            params Expression<Func<T, object>>[] propertySelectors) {
-            return SearchAsync<T>(likePatten, propertySelectors).ToSync();
+            params Expression<Func<TEntity, object>>[] propertySelectors)
+            where TEntity : class {
+            return SearchAsync<TEntity>(likePatten, propertySelectors).ToSync();
         }
 
         /// <summary>
@@ -156,8 +185,8 @@ namespace XWidget.EFLogic {
         /// <typeparam name="T">實例類型</typeparam>
         /// <param name="id">唯一識別號</param>
         /// <returns>是否存在實例</returns>
-        public virtual async Task<bool> ExistsAsync<T>(object id) where T : class {
-            var targetLogic = (dynamic)GetLogicByType(typeof(T));
+        public virtual async Task<bool> ExistsAsync<TEntity>(object id) where TEntity : class {
+            var targetLogic = (dynamic)GetLogicByType(typeof(TEntity));
 
             return await ((dynamic)targetLogic.ExistsAsync(id));
         }
@@ -168,8 +197,8 @@ namespace XWidget.EFLogic {
         /// <typeparam name="T">實例類型</typeparam>
         /// <param name="id">唯一識別號</param>
         /// <returns>是否存在實例</returns>
-        public virtual bool Exists<T>(object id) where T : class {
-            return ExistsAsync<T>(id).ToSync();
+        public virtual bool Exists<TEntity>(object id) where TEntity : class {
+            return ExistsAsync<TEntity>(id).ToSync();
         }
 
         /// <summary>
@@ -179,8 +208,8 @@ namespace XWidget.EFLogic {
         /// <param name="id">唯一識別號</param>
         /// <param name="parameters">參數</param>
         /// <returns>物件實例</returns>
-        public async Task<T> GetAsync<T>(object id, object[] parameters = null) where T : class {
-            var targetLogic = (dynamic)GetLogicByType(typeof(T));
+        public async Task<TEntity> GetAsync<TEntity>(object id, object[] parameters = null) where TEntity : class {
+            var targetLogic = (dynamic)GetLogicByType(typeof(TEntity));
 
             return await ((dynamic)targetLogic).GetAsync(id, parameters);
         }
@@ -192,8 +221,8 @@ namespace XWidget.EFLogic {
         /// <param name="id">唯一識別號</param>
         /// <param name="parameters">參數</param>
         /// <returns>物件實例</returns>
-        public T Get<T>(object id, object[] parameters = null) where T : class {
-            return GetAsync<T>(id, parameters).ToSync();
+        public TEntity Get<TEntity>(object id, object[] parameters = null) where TEntity : class {
+            return GetAsync<TEntity>(id, parameters).ToSync();
         }
 
         /// <summary>
@@ -227,8 +256,8 @@ namespace XWidget.EFLogic {
         /// <param name="entity">物件實例</param>
         /// <param name="parameters">參數</param>
         /// <returns>加入後的物件</returns>
-        public async Task<T> CreateAsync<T>(T entity, object[] parameters = null) where T : class {
-            var targetLogic = (dynamic)GetLogicByType(typeof(T));
+        public async Task<TEntity> CreateAsync<TEntity>(TEntity entity, object[] parameters = null) where TEntity : class {
+            var targetLogic = (dynamic)GetLogicByType(typeof(TEntity));
 
             return await ((dynamic)targetLogic).CreateAsync(entity, parameters);
         }
@@ -240,7 +269,7 @@ namespace XWidget.EFLogic {
         /// <param name="entity">物件實例</param>
         /// <param name="parameters">參數</param>
         /// <returns>加入後的物件</returns>
-        public T Create<T>(T entity, object[] parameters = null) where T : class {
+        public TEntity Create<TEntity>(TEntity entity, object[] parameters = null) where TEntity : class {
             return CreateAsync(entity, parameters).ToSync();
         }
 
@@ -251,8 +280,8 @@ namespace XWidget.EFLogic {
         /// <param name="entity">物件實例</param>
         /// <param name="parameters">參數</param>
         /// <returns>加入後的物件</returns>
-        public async Task<T> UpdateAsync<T>(T entity, object[] parameters = null) where T : class {
-            var targetLogic = (dynamic)GetLogicByType(typeof(T));
+        public async Task<TEntity> UpdateAsync<TEntity>(TEntity entity, object[] parameters = null) where TEntity : class {
+            var targetLogic = (dynamic)GetLogicByType(typeof(TEntity));
 
             return await ((dynamic)targetLogic).UpdateAsync(entity, parameters);
         }
@@ -264,7 +293,7 @@ namespace XWidget.EFLogic {
         /// <param name="entity">物件實例</param>
         /// <param name="parameters">參數</param>
         /// <returns>加入後的物件</returns>
-        public T Update<T>(T entity, object[] parameters = null) where T : class {
+        public TEntity Update<TEntity>(TEntity entity, object[] parameters = null) where TEntity : class {
             return UpdateAsync(entity, parameters).ToSync();
         }
 
@@ -274,8 +303,8 @@ namespace XWidget.EFLogic {
         /// <typeparam name="T">實例類型</typeparam>
         /// <param name="id">唯一識別號</param>
         /// <param name="parameters">參數</param>
-        public async Task DeleteAsync<T>(object id, object[] parameters = null) where T : class {
-            var targetLogic = (dynamic)GetLogicByType(typeof(T));
+        public async Task DeleteAsync<TEntity>(object id, object[] parameters = null) where TEntity : class {
+            var targetLogic = (dynamic)GetLogicByType(typeof(TEntity));
 
             await targetLogic.DeleteAsync(id, parameters);
         }
@@ -286,8 +315,8 @@ namespace XWidget.EFLogic {
         /// <typeparam name="T">實例類型</typeparam>
         /// <param name="id">唯一識別號</param>
         /// <param name="parameters">參數</param>
-        public void Delete<T>(object id, object[] parameters = null) where T : class {
-            DeleteAsync<T>(id, parameters).ToSync();
+        public void Delete<TEntity>(object id, object[] parameters = null) where TEntity : class {
+            DeleteAsync<TEntity>(id, parameters).ToSync();
         }
 
         /// <summary>
