@@ -5,8 +5,8 @@ branches:
   - master
 install:
 before_build:
-  - ps:(New-Object System.Net.WebClient).DownloadFile("https://www.nuget.org/api/v2/package/Codecov/1.0.5", (Join-Path $pwd "Codecov.zip"))
-  - ps:Expand-Archive .\Codecov.zip -DestinationPath
+  - ps: (New-Object System.Net.WebClient).DownloadFile("https://www.nuget.org/api/v2/package/Codecov/1.0.5", (Join-Path $pwd "Codecov.zip"))
+  - ps: Expand-Archive .\Codecov.zip -DestinationPath
   # Display .NET Core version
   - cmd: dotnet --version
   # Display minimal restore text
