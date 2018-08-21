@@ -44,9 +44,9 @@ namespace XWidget.EFLogic.Test.Controllers {
                 Name = "Test03"
             });
 
-            Assert.NotEmpty(categoryLogic.Search("Test%", x => x.Name));
+            Assert.NotEmpty(Manager.Search<Category>("Test%", x => x.Name));
 
-            Assert.NotEmpty(categoryLogic.Search("Test%"));
+            Assert.NotEmpty(Manager.Search<Category>("Test%"));
 
             Assert.NotEmpty(categoryLogic.List(x => x.Notes.Count > 0));
 

@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
 using System.Threading.Tasks;
 
@@ -73,6 +74,80 @@ namespace XWidget.EFLogic {
             }
 
             return prop.GetValue(this);
+        }
+
+        /// <summary>
+        /// 全文搜尋
+        /// </summary>
+        /// <param name="likePatten">SQL Like模式</param>
+        /// <returns>搜尋結果</returns>
+        public virtual async Task<IQueryable<T>> SearchAsync<T>(
+            string likePatten) {
+            var targetLogic = (dynamic)GetLogicByType(typeof(T));
+
+            return await ((dynamic)targetLogic.SearchAsync(likePatten));
+        }
+
+        /// <summary>
+        /// 全文搜尋
+        /// </summary>
+        /// <param name="likePatten">SQL Like模式</param>
+        /// <returns>搜尋結果</returns>
+        public virtual IQueryable<T> Search<T>(
+            string likePatten) {
+            return SearchAsync<T>(likePatten).ToSync();
+        }
+
+        /// <summary>
+        /// 搜尋
+        /// </summary>
+        /// <param name="likePatten">SQL Like模式</param>
+        /// <param name="properties">搜尋屬性名稱</param>
+        /// <returns>搜尋結果</returns>
+        public virtual async Task<IQueryable<T>> SearchAsync<T>(
+            string likePatten,
+            params string[] properties) {
+            var targetLogic = (dynamic)GetLogicByType(typeof(T));
+
+            return await ((dynamic)targetLogic.SearchAsync(likePatten, properties));
+        }
+
+        /// <summary>
+        /// 搜尋
+        /// </summary>
+        /// <param name="likePatten">SQL Like模式</param>
+        /// <param name="properties">搜尋屬性名稱</param>
+        /// <returns>搜尋結果</returns>
+        public virtual IQueryable<T> Search<T>(
+            string likePatten,
+            params string[] properties) {
+            return SearchAsync<T>(likePatten, properties).ToSync();
+        }
+
+        /// <summary>
+        /// 搜尋
+        /// </summary>
+        /// <param name="likePatten">SQL Like模式</param>
+        /// <param name="propertySelectors">比對屬性選擇器</param>
+        /// <returns>搜尋結果</returns>
+        public virtual async Task<IQueryable<T>> SearchAsync<T>(
+            string likePatten,
+            params Expression<Func<T, object>>[] propertySelectors) {
+            var targetLogic = (dynamic)GetLogicByType(typeof(T));
+
+            return await ((dynamic)targetLogic.SearchAsync(likePatten, propertySelectors));
+        }
+
+        /// <summary>
+        /// 搜尋
+        /// </summary>
+        /// <param name="likePatten">SQL Like模式</param>
+        /// <param name="propertySelectors">比對屬性選擇器</param>
+        /// <returns>搜尋結果</returns>
+        public virtual IQueryable<T> Search<T>(
+            string likePatten,
+            params Expression<Func<T, object>>[] propertySelectors) {
+            return SearchAsync<T>(likePatten, propertySelectors).ToSync();
         }
 
         /// <summary>
