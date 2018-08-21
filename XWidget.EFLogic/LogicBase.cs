@@ -121,7 +121,7 @@ namespace XWidget.EFLogic {
         /// </summary>
         /// <param name="likePatten">SQL Like模式</param>
         /// <returns>搜尋結果</returns>
-        public virtual async Task<IQueryable<TEntity>> Search(
+        public virtual IQueryable<TEntity> Search(
             string likePatten) {
             return SearchAsync(likePatten).ToSync();
         }
@@ -237,6 +237,42 @@ namespace XWidget.EFLogic {
             string likePatten,
             params Expression<Func<TEntity, object>>[] propertySelectors) {
             return SearchAsync(likePatten, propertySelectors).ToSync();
+        }
+
+        /// <summary>
+        /// 檢查是否存在指定實例
+        /// </summary>
+        /// <param name="id">唯一識別號</param>
+        /// <returns>是否存在實例</returns>
+        public virtual async Task<bool> ExistsAsync(object id) {
+            return Database.Set<TEntity>().Any($"{IdentityPropertyName} == @0", id);
+        }
+
+        /// <summary>
+        /// 檢查是否存在指定實例
+        /// </summary>
+        /// <param name="id">唯一識別號</param>
+        /// <returns>是否存在實例</returns>
+        public virtual async Task<bool> Exists(object id) {
+            return ExistsAsync(id).ToSync();
+        }
+
+        /// <summary>
+        /// 檢查是否存在指定實例
+        /// </summary>
+        /// <param name="id">唯一識別號</param>
+        /// <returns>是否存在實例</returns>
+        public virtual async Task<bool> ExistsAsync(Guid id) {
+            return Database.Set<TEntity>().Any($"{IdentityPropertyName} == @0", id);
+        }
+
+        /// <summary>
+        /// 檢查是否存在指定實例
+        /// </summary>
+        /// <param name="id">唯一識別號</param>
+        /// <returns>是否存在實例</returns>
+        public virtual bool Exists(Guid id) {
+            return ExistsAsync(id).ToSync();
         }
 
         /// <summary>

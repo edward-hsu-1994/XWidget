@@ -5,7 +5,7 @@ XWidget
 
 通用.net輔助開發套件
 
-| Branch  | Status                                                                                                               |
+| Branch  | Build Status                                                                                                               |
 |---------|----------------------------------------------------------------------------------------------------------------------|
 | master  | [![Build Status](https://travis-ci.org/XuPeiYao/XWidget.svg?branch=master)](https://travis-ci.org/XuPeiYao/XWidget)  |
 | develop | [![Build Status](https://travis-ci.org/XuPeiYao/XWidget.svg?branch=develop)](https://travis-ci.org/XuPeiYao/XWidget) |

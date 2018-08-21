@@ -19,34 +19,51 @@ namespace XWidget.EFLogic.Test.Controllers {
         public async void Test() {
             var categoryLogic = Manager.GetLogicByType<Category, Guid>();
 
-            var category = await categoryLogic.CreateAsync(new Category() {
+            var category = categoryLogic.Create(new Category() {
                 Name = "Test01"
             });
 
-            category = await categoryLogic.UpdateAsync(new Category() {
+            category = categoryLogic.Update(new Category() {
                 Id = category.Id,
                 Name = "Test02"
             });
 
             Assert.Equal("Test02", category.Name);
 
-            category = await categoryLogic.GetAsync(category.Id);
+            category = categoryLogic.Get(category.Id);
 
             Assert.Equal("Test02", category.Name);
 
-            Assert.Equal(1, (await categoryLogic.ListAsync(x => x.Id == category.Id)).Count());
+            Assert.Equal(1, categoryLogic.List(x => x.Id == category.Id).Count());
 
-            await categoryLogic.DeleteAsync(category.Id);
+            categoryLogic.Delete(category.Id);
 
-            Assert.Equal(0, (await categoryLogic.ListAsync(x => x.Id == category.Id)).Count());
+            Assert.Equal(0, categoryLogic.List(x => x.Id == category.Id).Count());
 
-            var category2 = await categoryLogic.CreateAsync(new Category() {
+            var category2 = categoryLogic.Create(new Category() {
                 Name = "Test03"
             });
 
-            Assert.NotEmpty(await categoryLogic.SearchAsync("Test%", x => x.Name));
+            Assert.NotEmpty(Manager.Search<Category>("Test%", x => x.Name));
 
-            Assert.NotEmpty(await categoryLogic.SearchAsync("Test%"));
+            Assert.NotEmpty(Manager.Search<Category>("Test%"));
+
+            Assert.NotEmpty(categoryLogic.List(x => x.Notes.Count > 0));
+
+            var noteLogic = Manager.GetLogicByType<Note, Guid>();
+
+            Assert.NotEmpty(noteLogic.List());
+
+            var deleteTargets = categoryLogic.List(x => x.Notes.Count > 0).ToArray();
+            foreach (var cate in deleteTargets) {
+                if (categoryLogic.Exists(cate.Id) && Manager.Exists<Category>(cate.Id)) {
+                    Manager.Delete<Category>(cate.Id);
+                }
+            }
+
+            Assert.Empty(noteLogic.List());
+
+            Assert.Empty(categoryLogic.List(x => x.Notes.Count > 0));
         }
     }
 }
