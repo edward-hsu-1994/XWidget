@@ -59,7 +59,7 @@ namespace System.Linq {
         /// <param name="source">目前實例</param>
         /// <param name="keyNames">主鍵屬性名稱</param>
         /// <returns>使用指定KeySelectors排序結果</returns>
-        public static IOrderedQueryable<TSource> OrderBy<TSource, TKey>(this IQueryable<TSource> source, params string[] keyNames) {
+        public static IOrderedQueryable<TSource> OrderBy<TSource>(this IQueryable<TSource> source, params string[] keyNames) {
             if (keyNames.Length == 0) throw new ArgumentNullException($"{nameof(keyNames)}不該為空");
 
             var keySelectors = keyNames.Select(x => (isDec: false, selector: AccessExpressionUtility.CreateAccessFunc<TSource>(x)));
@@ -75,7 +75,7 @@ namespace System.Linq {
         /// <param name="source">目前實例</param>
         /// <param name="keyNames">主鍵屬性名稱</param>
         /// <returns>使用指定KeySelectors排序結果</returns>
-        public static IOrderedQueryable<TSource> OrderByDescending<TSource, TKey>(this IQueryable<TSource> source, params string[] keyNames) {
+        public static IOrderedQueryable<TSource> OrderByDescending<TSource>(this IQueryable<TSource> source, params string[] keyNames) {
             if (keyNames.Length == 0) throw new ArgumentNullException($"{nameof(keyNames)}不該為空");
 
             var keySelectors = keyNames.Select(x => (isDec: true, selector: AccessExpressionUtility.CreateAccessFunc<TSource>(x)));
@@ -91,7 +91,7 @@ namespace System.Linq {
         /// <param name="source">目前實例</param>
         /// <param name="keySelectors">主鍵選擇器</param>
         /// <returns>使用指定KeySelectors排序結果</returns>
-        public static IOrderedQueryable<TSource> OrderBy<TSource, TKey>(this IQueryable<TSource> source, Expression<Func<TSource, TKey>>[] keySelectors) {
+        public static IOrderedQueryable<TSource> OrderBy<TSource>(this IQueryable<TSource> source, params Expression<Func<TSource, object>>[] keySelectors) {
             return source.OrderBy(keySelectors.Select(x => (isDec: false, selector: x)).ToArray());
         }
 
@@ -103,7 +103,7 @@ namespace System.Linq {
         /// <param name="source">目前實例</param>
         /// <param name="keySelectors">主鍵選擇器</param>
         /// <returns>使用指定KeySelectors排序結果</returns>
-        public static IOrderedQueryable<TSource> OrderByDescending<TSource, TKey>(this IQueryable<TSource> source, Expression<Func<TSource, TKey>>[] keySelectors) {
+        public static IOrderedQueryable<TSource> OrderByDescending<TSource>(this IQueryable<TSource> source, params Expression<Func<TSource, object>>[] keySelectors) {
             return source.OrderBy(keySelectors.Select(x => (isDec: true, selector: x)).ToArray());
         }
     }
