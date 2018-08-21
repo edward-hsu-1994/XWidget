@@ -5,7 +5,6 @@ branches:
   - master
 install:
 before_build:
-  - choco install opencover.portable
   - choco install codecov
   # Display .NET Core version
   - cmd: dotnet --version
