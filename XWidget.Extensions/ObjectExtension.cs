@@ -57,5 +57,19 @@ namespace XWidget.Extensions {
 
             return instance;
         }
+
+        /// <summary>
+        /// 針對物件處理
+        /// </summary>
+        /// <typeparam name="T">物件類型</typeparam>
+        /// <param name="obj">物件實力</param>
+        /// <param name="action">物件實例</param>
+        /// <returns>物件實例</returns>
+        public static T Process<T>(this T obj, Action<T> action)
+            where T : class {
+            action(obj);
+
+            return obj;
+        }
     }
 }
