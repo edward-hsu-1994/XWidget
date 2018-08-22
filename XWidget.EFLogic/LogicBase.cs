@@ -421,6 +421,7 @@ namespace XWidget.EFLogic {
 
             await BeforeUpdate(instance, parameters);
             Database.Update(instance);
+            await Database.SaveChangesAsync();
             await AfterUpdate(instance, parameters);
             return instance;
         }
