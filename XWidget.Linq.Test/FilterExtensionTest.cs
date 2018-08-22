@@ -24,6 +24,10 @@ namespace XWidget.Linq.Test {
             Assert.True(test.Select(x => new TestRefType(x)).AsQueryable().Filter(x => x.Value, (bool?)true).All(x => x.Value));
             Assert.True(test.Select(x => new TestRefType(x)).AsQueryable().Filter(x => x.Value, (bool?)false).All(x => !x.Value));
             Assert.False(test.Select(x => new TestRefType(x)).AsQueryable().Filter(x => x.Value, null).All(x => x.Value));
+
+
+            string[] test2 = new string[] { "aaa", "bbb", "aaa", "ccc" };
+            Assert.True(test2.AsQueryable().Filter(x => x, "aaa").All(x => x == "aaa"));
         }
     }
 }
