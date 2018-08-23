@@ -254,7 +254,7 @@ namespace XWidget.EFLogic {
         /// </summary>
         /// <param name="id">唯一識別號</param>
         /// <returns>是否存在實例</returns>
-        public virtual async Task<bool> Exists(object id) {
+        public virtual bool Exists(object id) {
             return ExistsAsync(id).ToSync();
         }
 
@@ -396,6 +396,30 @@ namespace XWidget.EFLogic {
         }
 
         /// <summary>
+        /// 更新或建立指定的物件實例
+        /// </summary>
+        /// <param name="entity">物件實例</param>
+        /// <param name="parameters">參數</param>
+        /// <returns>更新後的物件實例</returns>
+        public async Task<TEntity> UpdateOrCreateAsync(object entity, params object[] parameters) {
+            if (await ExistsAsync(entity)) {
+                return await UpdateAsync((TEntity)entity, parameters);
+            } else {
+                return await CreateAsync((TEntity)entity, parameters);
+            }
+        }
+
+        /// <summary>
+        /// 更新或建立指定的物件實例
+        /// </summary>
+        /// <param name="entity">物件實例</param>
+        /// <param name="parameters">參數</param>
+        /// <returns>更新後的物件實例</returns>
+        public TEntity UpdateOrCreate(object entity, params object[] parameters) {
+            return UpdateOrCreateAsync(entity, parameters).ToSync();
+        }
+
+        /// <summary>
         /// 更新指定的物件實例
         /// </summary>
         /// <param name="entity">物件實例</param>
@@ -435,6 +459,30 @@ namespace XWidget.EFLogic {
         /// <returns>更新後的物件實例</returns>
         public virtual TEntity Update(TEntity entity, params object[] parameters) {
             return UpdateAsync(entity, parameters).ToSync();
+        }
+
+        /// <summary>
+        /// 更新或建立指定的物件實例
+        /// </summary>
+        /// <param name="entity">物件實例</param>
+        /// <param name="parameters">參數</param>
+        /// <returns>更新後的物件實例</returns>
+        public async Task<TEntity> UpdateOrCreateAsync(TEntity entity, params object[] parameters) {
+            if (await ExistsAsync(entity)) {
+                return await UpdateAsync(entity, parameters);
+            } else {
+                return await CreateAsync(entity, parameters);
+            }
+        }
+
+        /// <summary>
+        /// 更新或建立指定的物件實例
+        /// </summary>
+        /// <param name="entity">物件實例</param>
+        /// <param name="parameters">參數</param>
+        /// <returns>更新後的物件實例</returns>
+        public TEntity UpdateOrCreate(TEntity entity, params object[] parameters) {
+            return UpdateOrCreateAsync(entity, parameters).ToSync();
         }
 
         /// <summary>

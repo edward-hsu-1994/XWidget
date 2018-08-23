@@ -299,6 +299,32 @@ namespace XWidget.EFLogic {
         }
 
         /// <summary>
+        /// 更新或建立指定的物件實例
+        /// </summary>
+        /// <param name="entity">物件實例</param>
+        /// <param name="parameters">參數</param>
+        /// <returns>更新後的物件實例</returns>
+        public async Task<TEntity> UpdateOrCreateAsync<TEntity>(TEntity entity, params object[] parameters)
+            where TEntity : class {
+            if (await ExistsAsync<TEntity>(entity)) {
+                return await UpdateAsync<TEntity>(entity, parameters);
+            } else {
+                return await CreateAsync<TEntity>(entity, parameters);
+            }
+        }
+
+        /// <summary>
+        /// 更新或建立指定的物件實例
+        /// </summary>
+        /// <param name="entity">物件實例</param>
+        /// <param name="parameters">參數</param>
+        /// <returns>更新後的物件實例</returns>
+        public TEntity UpdateOrCreate<TEntity>(TEntity entity, params object[] parameters)
+            where TEntity : class {
+            return UpdateOrCreateAsync(entity, parameters).ToSync();
+        }
+
+        /// <summary>
         /// 刪除指定的物件
         /// </summary>
         /// <typeparam name="T">實例類型</typeparam>
