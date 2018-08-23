@@ -62,6 +62,8 @@ namespace XWidget.Web.Mvc.PropertyMask.Test {
             foreach (var category in maskedResult) {
                 Assert.Null(category.Children);
             }
+
+            controller.JsonByMask(Category_Controller.GetCategories(), null, null);
         }
 
         /// <summary>
