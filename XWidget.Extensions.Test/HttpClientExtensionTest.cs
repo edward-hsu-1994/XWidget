@@ -10,7 +10,9 @@ namespace XWidget.Extensions.Test {
         [Fact(DisplayName = "HttpClientExtension.GetJsonAsync")]
         public async Task GetJsonAsync() {
             HttpClient client = new HttpClient();
-            var result = await client.GetJsonAsync("https://jsonplaceholder.typicode.com/posts/1");
+            var result1 = await client.GetJsonAsync("https://jsonplaceholder.typicode.com/posts/1");
+
+            var result2 = await client.GetJsonAsync(new Uri("https://jsonplaceholder.typicode.com/posts/1"));
         }
 
         [Fact(DisplayName = "HttpClientExtension.GetJsonAsync")]
