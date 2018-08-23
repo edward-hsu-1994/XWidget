@@ -8,6 +8,7 @@ using System.Reflection;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq.Dynamic.Core;
 using XWidget.Web.Exceptions;
+using Z.EntityFramework.Plus;
 
 namespace XWidget.EFLogic {
     /// <summary>
@@ -481,6 +482,24 @@ namespace XWidget.EFLogic {
         /// <param name="parameters">參數</param>
         public virtual void Delete(TId id, params object[] parameters) {
             DeleteAsync(id, parameters).ToSync();
+        }
+
+        /// <summary>
+        /// 刪除物件唯一識別號集合的所有物件
+        /// </summary>
+        /// <param name="ids">物件唯一識別號集合</param>
+        public virtual async Task BatchDeleteRangeAsync(IEnumerable<TId> ids) {
+            await Task.Run(() => {
+                Database.Set<TEntity>().Where($"@0.Contains({IdentityPropertyName})", ids).Delete();
+            });
+        }
+
+        /// <summary>
+        /// 刪除物件唯一識別號集合的所有物件
+        /// </summary>
+        /// <param name="ids">物件唯一識別號集合</param>
+        public virtual void BatchDeleteRange(IEnumerable<TId> ids) {
+            BatchDeleteRangeAsync(ids).ToSync();
         }
 
         #region Hook
