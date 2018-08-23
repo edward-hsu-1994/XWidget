@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using Xunit;
 
@@ -38,6 +39,18 @@ namespace XWidget.Extensions.Test {
             for (int i = 0; i < data.Length; i++) {
                 Assert.Equal(data[i], arys[i]);
             }
+        }
+
+        [Fact(DisplayName = "ByteExtension.ToHex")]
+        public void ToHex() {
+            var data = new byte[] { 0, 1, 2, 3, 4 };
+
+            var dataSegments = data.ToHex()
+                .Split<char>(2)
+                .Select(x => new string(x.ToArray()))
+                .Select(x => byte.Parse(x, System.Globalization.NumberStyles.HexNumber));
+
+            Assert.Equal(data, dataSegments);
         }
     }
 }

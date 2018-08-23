@@ -5,11 +5,13 @@ using Xunit;
 
 namespace XWidget.Extensions.Test {
     public class ObjectExtensionTest {
+        [Serializable]
         public class TestClass {
             private string _PrivateValue = "aabbcc";
             public string _PublicValue_0 = "";
         }
 
+        [Serializable]
         public class TestClassChild : TestClass {
             public string _PublicValue_1 = "112233";
         }
@@ -47,6 +49,12 @@ namespace XWidget.Extensions.Test {
 
             Assert.Equal("bbbb", obj._PublicValue_0);
             Assert.Equal("cccc", obj._PublicValue_1);
+        }
+
+        [Fact(DisplayName = "ObjectExtensionTest.ToBinaryAndToObject")]
+        public void ToBinaryAndToObject() {
+            var obj1 = "aaaabbbbsdfaesr1@@#!$#";
+            Assert.Equal(obj1.Serialize().Deserialize<string>(), obj1);
         }
     }
 }

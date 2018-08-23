@@ -35,7 +35,7 @@ namespace System {
         /// <typeparam name="T">目標類別</typeparam>
         /// <param name="bytes">Binary Data</param>
         /// <returns>目標類別實例</returns>
-        public static T ToObject<T>(this byte[] bytes) {
+        public static T Deserialize<T>(this byte[] bytes) {
             BinaryFormatter sf = new BinaryFormatter();
             return (T)sf.Deserialize(bytes.ToStream());
         }

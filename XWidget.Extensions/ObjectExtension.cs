@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 
 namespace XWidget.Extensions {
@@ -70,6 +71,16 @@ namespace XWidget.Extensions {
             action(obj);
 
             return obj;
+        }
+
+        /// <summary>
+        /// 將物件轉換為<see cref="byte[]"/>
+        /// </summary>
+        /// <param name="obj">物件實例</param>
+        /// <returns>Binary Data</returns>
+        public static byte[] Serialize(this object obj) {
+            BinaryFormatter sf = new BinaryFormatter();
+            return sf.Serialize(obj);
         }
     }
 }

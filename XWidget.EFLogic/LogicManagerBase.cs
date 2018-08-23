@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -298,6 +299,32 @@ namespace XWidget.EFLogic {
         }
 
         /// <summary>
+        /// 更新或建立指定的物件實例
+        /// </summary>
+        /// <param name="entity">物件實例</param>
+        /// <param name="parameters">參數</param>
+        /// <returns>更新後的物件實例</returns>
+        public async Task<TEntity> UpdateOrCreateAsync<TEntity>(TEntity entity, params object[] parameters)
+            where TEntity : class {
+            if (await ExistsAsync<TEntity>(entity)) {
+                return await UpdateAsync<TEntity>(entity, parameters);
+            } else {
+                return await CreateAsync<TEntity>(entity, parameters);
+            }
+        }
+
+        /// <summary>
+        /// 更新或建立指定的物件實例
+        /// </summary>
+        /// <param name="entity">物件實例</param>
+        /// <param name="parameters">參數</param>
+        /// <returns>更新後的物件實例</returns>
+        public TEntity UpdateOrCreate<TEntity>(TEntity entity, params object[] parameters)
+            where TEntity : class {
+            return UpdateOrCreateAsync(entity, parameters).ToSync();
+        }
+
+        /// <summary>
         /// 刪除指定的物件
         /// </summary>
         /// <typeparam name="T">實例類型</typeparam>
@@ -339,6 +366,42 @@ namespace XWidget.EFLogic {
         /// <param name="parameters">參數</param>
         public void Delete(Type type, object id, object[] parameters = null) {
             DeleteAsync(type, id, parameters).ToSync();
+        }
+
+        /// <summary>
+        /// 刪除物件唯一識別號集合的所有物件
+        /// </summary>
+        /// <param name="ids">物件唯一識別號集合</param>
+        public virtual async Task BatchDeleteRangeAsync<TEntity, TId>(IEnumerable<TId> ids) {
+            await BatchDeleteRangeAsync(typeof(TEntity), ids);
+        }
+
+        /// <summary>
+        /// 刪除物件唯一識別號集合的所有物件
+        /// </summary>
+        /// <param name="ids">物件唯一識別號集合</param>
+        public virtual void BatchDeleteRange<TEntity, TId>(IEnumerable<TId> ids) {
+            BatchDeleteRangeAsync<TEntity, TId>(ids).ToSync();
+        }
+
+        /// <summary>
+        /// 刪除物件唯一識別號集合的所有物件
+        /// </summary>
+        /// <param name="type">實例類型</param>
+        /// <param name="ids">物件唯一識別號集合</param>
+        public virtual async Task BatchDeleteRangeAsync<TId>(Type type, IEnumerable<TId> ids) {
+            var targetLogic = (dynamic)GetLogicByType(type);
+
+            await targetLogic.BatchDeleteRangeAsync(ids);
+        }
+
+        /// <summary>
+        /// 刪除物件唯一識別號集合的所有物件
+        /// </summary>
+        /// <param name="type">實例類型</param>
+        /// <param name="ids">物件唯一識別號集合</param>
+        public virtual void BatchDeleteRange<TId>(Type type, IEnumerable<TId> ids) {
+            BatchDeleteRangeAsync<TId>(type, ids).ToSync();
         }
 
         /// <summary>

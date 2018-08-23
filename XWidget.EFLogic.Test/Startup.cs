@@ -22,7 +22,7 @@ namespace XWidget.EFLogic.Test {
         public void ConfigureServices(IServiceCollection services) {
             services.AddScoped<TestContext>(x => TestContext.CreateInstance());
 
-            services.AddLogic<TestLogicManager, TestContext>().AddFromDbContext();
+            services.AddLogic<TestLogicManager, TestContext>().AddFromDbContext().AddFromDbContext("Id");
 
             services.AddMvc()
                 .AddApplicationPart(typeof(TestController).GetTypeInfo().Assembly)
