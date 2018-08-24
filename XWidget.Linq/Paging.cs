@@ -103,7 +103,7 @@ namespace XWidget.Linq {
         }
 
         /// <summary>
-        /// 取得移動所在分頁索引至指定索引後的新的分頁物件，如無下個分頁則返回<see cref="null"/>
+        /// 取得指定分頁索引的分頁物件，如無下個分頁則返回<see cref="null"/>
         /// </summary>
         /// <param name="pageIndex">頁數索引</param>
         /// <returns>分頁物件</returns>
