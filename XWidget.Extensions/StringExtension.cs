@@ -80,5 +80,44 @@ namespace System {
             string result = obj.SafeSubstring(obj.IndexOf(start) + start.Length);
             return result.SafeSubstring(0, result.IndexOf(end));
         }
+
+        /// <summary>
+        /// 在指定的索引位置切割字串
+        /// </summary>
+        /// <param name="obj">字串實例</param>
+        /// <param name="sliceIndexes">切割索引</param>
+        /// <returns>切割後的字串陣列</returns>
+        public static string[] Slice(this string obj, params int[] sliceIndexes) {
+            List<string> result = new List<string>();
+
+            string temp = obj;
+
+            int preIndex = 0;
+            foreach (var index in sliceIndexes) {
+                result.Add(temp.SafeSubstring(0, index - preIndex));
+                temp = temp.SafeSubstring(index - preIndex);
+
+                preIndex = index;
+            }
+
+            result.Add(temp);
+
+            return result.ToArray();
+        }
+
+        /// <summary>
+        /// 取代指定字串索引範圍內的字串
+        /// </summary>
+        /// <param name="obj">字串實例</param>
+        /// <param name="index">起始索引</param>
+        /// <param name="length">長度</param>
+        /// <param name="newValue">取代字串</param>
+        /// <returns>取代後的字串</returns>
+        public static string ReplaceRange(this string obj, int index, int length, string newValue) {
+            string[] segments = obj.Slice(index, index + length);
+            segments[1] = newValue;
+
+            return string.Join("", segments);
+        }
     }
 }
