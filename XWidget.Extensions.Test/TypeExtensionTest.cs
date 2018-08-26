@@ -6,7 +6,7 @@ using System.Text;
 using System.Reflection;
 using Xunit;
 
-namespace XWidget.Extensions {
+namespace XWidget.Extensions.Test {
     public class TypeExtensionTest {
         [Theory(DisplayName = "TypeExtension.GetAllBaseTypes")]
         [InlineData(typeof(TestClass1), "Object,TestClass1")]

@@ -67,5 +67,14 @@ namespace XWidget.Extensions.Test {
         public void InnerString(string text, string start, string end, string result) {
             Assert.Equal(text.InnerString(start, end), result);
         }
+
+        [Theory(DisplayName = "StringExtension.Slice")]
+        [InlineData("0123456789", new int[] { 1, 2 }, new string[] { "0", "1", "23456789" })]
+        [InlineData("0123456789", new int[] { 4, 8, 9 }, new string[] { "01234", "567", "8", "9" })]
+        [InlineData("0123456789", new int[] { 5 }, new string[] { "01234", "56789" })]
+
+        public void Slice(string text, int[] indexes, string[] result) {
+            Assert.Equal(text.Slice(indexes), result);
+        }
     }
 }
