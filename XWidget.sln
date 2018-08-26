@@ -65,6 +65,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XWidget.JobQueue", "XWidget
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XWidget.JobQueue.Test", "XWidget.JobQueue.Test\XWidget.JobQueue.Test.csproj", "{377FD2A7-6BC7-4545-AA4B-46AE9BBEABAE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XWidget.Rest", "XWidget.Rest\XWidget.Rest.csproj", "{D1C937CD-BB80-4A4E-BA6C-6769D2A27A4E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -179,6 +181,10 @@ Global
 		{377FD2A7-6BC7-4545-AA4B-46AE9BBEABAE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{377FD2A7-6BC7-4545-AA4B-46AE9BBEABAE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{377FD2A7-6BC7-4545-AA4B-46AE9BBEABAE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D1C937CD-BB80-4A4E-BA6C-6769D2A27A4E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D1C937CD-BB80-4A4E-BA6C-6769D2A27A4E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D1C937CD-BB80-4A4E-BA6C-6769D2A27A4E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D1C937CD-BB80-4A4E-BA6C-6769D2A27A4E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
