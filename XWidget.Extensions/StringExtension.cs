@@ -104,5 +104,20 @@ namespace System {
 
             return result.ToArray();
         }
+
+        /// <summary>
+        /// 取代指定字串索引範圍內的字串
+        /// </summary>
+        /// <param name="obj">字串實例</param>
+        /// <param name="index">起始索引</param>
+        /// <param name="length">長度</param>
+        /// <param name="newValue">取代字串</param>
+        /// <returns>取代後的字串</returns>
+        public static string ReplaceRange(this string obj, int index, int length, string newValue) {
+            string[] segments = obj.Slice(index, index + length);
+            segments[1] = newValue;
+
+            return string.Join("", segments);
+        }
     }
 }

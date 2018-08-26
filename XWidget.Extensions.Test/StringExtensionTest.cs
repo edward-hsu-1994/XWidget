@@ -70,11 +70,20 @@ namespace XWidget.Extensions.Test {
 
         [Theory(DisplayName = "StringExtension.Slice")]
         [InlineData("0123456789", new int[] { 1, 2 }, new string[] { "0", "1", "23456789" })]
-        [InlineData("0123456789", new int[] { 4, 8, 9 }, new string[] { "01234", "567", "8", "9" })]
+        [InlineData("0123456789", new int[] { 4, 8, 9 }, new string[] { "0123", "4567", "8", "9" })]
         [InlineData("0123456789", new int[] { 5 }, new string[] { "01234", "56789" })]
 
         public void Slice(string text, int[] indexes, string[] result) {
             Assert.Equal(text.Slice(indexes), result);
+        }
+
+        [Theory(DisplayName = "StringExtension.ReplaceRange")]
+        [InlineData("0123456789", 1, 2, "", "03456789")]
+        [InlineData("0123456789", 4, 8, "00000", "012300000")]
+        [InlineData("0123456789", 0, 5, "000", "00056789")]
+
+        public void ReplaceRange(string text, int index, int length, string newValue, string result) {
+            Assert.Equal(text.ReplaceRange(index, length, newValue), result);
         }
     }
 }
