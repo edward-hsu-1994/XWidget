@@ -30,6 +30,8 @@ namespace XWidget.Linq.Test {
             Assert.Equal(noPaging.Result, Enumerable.Range(0, 100));
 
             Assert.Equal(Enumerable.Range(0, 100).AsPaging().Result, Enumerable.Range(0, 10));
+
+            Assert.Equal(Enumerable.Range(0, 100).AsPaging().GetMoveToPage(1).Result, Enumerable.Range(10, 10));
         }
     }
 }
