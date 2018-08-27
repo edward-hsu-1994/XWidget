@@ -429,11 +429,11 @@ namespace XWidget.EFLogic {
             Database.Set<TEntity>().Attach(entity);
             Database.Entry(entity).State = EntityState.Modified;
             
-            await BeforeUpdate(instance, parameters);
-            Database.Update(instance);
+            await BeforeUpdate(entity, parameters);
+            Database.Update(entity);
             await Database.SaveChangesAsync();
-            await AfterUpdate(instance, parameters);
-            return instance;
+            await AfterUpdate(entity, parameters);
+            return entity;
         }
 
         /// <summary>
