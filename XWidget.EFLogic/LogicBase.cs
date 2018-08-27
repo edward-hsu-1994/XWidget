@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
 using System.Collections.Generic;
@@ -426,29 +426,14 @@ namespace XWidget.EFLogic {
         /// <param name="parameters">參數</param>
         /// <returns>更新後的物件實例</returns>
         public virtual async Task<TEntity> UpdateAsync(TEntity entity, params object[] parameters) {
-            var type = typeof(TEntity);
-            TId id = (TId)type.GetProperty(IdentityPropertyName).GetValue(entity);
-            var instance = await GetAsync(id, parameters);
-
-            if (instance == null) {
-                throw new NotFoundException();
-            }
-
-            var mappingProps = type.GetProperties().Where(x => {
-                return
-                    x.GetCustomAttribute<NotMappedAttribute>() == null &&
-                    x.PropertyType.Namespace == "System";
-            });
-
-            foreach (var mappingProp in mappingProps) {
-                mappingProp.SetValue(instance, mappingProp.GetValue(entity));
-            }
-
-            await BeforeUpdate(instance, parameters);
-            Database.Update(instance);
+            Database.Set<TEntity>().Attach(entity);
+            Database.Entry(entity).State = EntityState.Modified;
+            
+            await BeforeUpdate(entity, parameters);
+            Database.Update(entity);
             await Database.SaveChangesAsync();
-            await AfterUpdate(instance, parameters);
-            return instance;
+            await AfterUpdate(entity, parameters);
+            return entity;
         }
 
         /// <summary>
