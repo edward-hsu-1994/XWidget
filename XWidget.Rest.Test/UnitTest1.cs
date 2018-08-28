@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Xunit;
 using XWidget.Rest.Test.Models;
@@ -6,7 +7,7 @@ using XWidget.Rest.Test.Models;
 namespace XWidget.Rest.Test {
     public class UnitTest1 {
         [Fact]
-        public void Test1() {
+        public async Task Test1() {
             var client = new RestClientBuilder<TestClient>()
                 .Build();
 
@@ -30,11 +31,11 @@ namespace XWidget.Rest.Test {
             firstPost.title = "aaaa";
             firstPost.body = "bbbb";
 
-            Post updatedPost = client.UpdatePost(1, firstPost);
+            Post updatedPost = await client.UpdatePost(1, firstPost);
 
             Assert.Equal(JsonConvert.SerializeObject(firstPost), JsonConvert.SerializeObject(updatedPost));
 
-            client.DeletePost(createResult.id);
+            await client.DeletePost(1);
         }
     }
 }

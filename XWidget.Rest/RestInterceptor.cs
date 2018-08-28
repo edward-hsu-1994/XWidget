@@ -9,6 +9,7 @@ using Castle.DynamicProxy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Routing;
 using Newtonsoft.Json;
+using XWidget.Reflection;
 using XWidget.Utilities;
 
 namespace XWidget.Rest {
@@ -24,7 +25,8 @@ namespace XWidget.Rest {
 
             return UriUtility.Render(url, routeOrQueryArgs);
         }
-        public void Intercept(IInvocation invocation) {
+
+        public async Task InterceptAsync(IInvocation invocation) {
             var client = new HttpClient();
 
             var route = invocation.TargetType.GetCustomAttribute<RouteAttribute>();
@@ -132,16 +134,31 @@ namespace XWidget.Rest {
                 requestMessage.Content = bodyContent ?? formContent;
             }
 
-            var response = client.SendAsync(requestMessage).ToSync();
+            var response = await client.SendAsync(requestMessage);
 
             if (invocation.Method.ReturnType == typeof(void)) {
                 return;
+            } else if (invocation.Method.ReturnType == typeof(Task)) {
+                invocation.ReturnValue = Task.Run(() => { });
+                return;
+            } else if (invocation.Method.ReturnType.IsGenericType &&
+                 invocation.Method.ReturnType.GetGenericTypeDefinition() == typeof(Task<>)) {
+                var result = JsonConvert.DeserializeObject(
+                       await response.Content.ReadAsStringAsync(),
+                       invocation.Method.ReturnType.GetGenericArguments()[0]);
+                invocation.ReturnValue = typeof(Task).GetMethod("FromResult")
+                    .InvokeGeneric(invocation.Method.ReturnType.GetGenericArguments()[0].BoxingToArray(),
+                    result.BoxingToArray());
             } else {
                 invocation.ReturnValue =
-                    JsonConvert.DeserializeObject(
-                        response.Content.ReadAsStringAsync().ToSync(),
-                        invocation.Method.ReturnType);
+                   JsonConvert.DeserializeObject(
+                       await response.Content.ReadAsStringAsync(),
+                       invocation.Method.ReturnType);
             }
+        }
+
+        public void Intercept(IInvocation invocation) {
+            InterceptAsync(invocation).ToSync();
         }
     }
 }

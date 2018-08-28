@@ -16,6 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\XWidget.Reflection\XWidget.Reflection.csproj" />
     <ProjectReference Include="..\XWidget.Utilities\XWidget.Utilities.csproj" />
   </ItemGroup>
 

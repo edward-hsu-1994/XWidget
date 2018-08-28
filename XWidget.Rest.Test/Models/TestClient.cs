@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 
 namespace XWidget.Rest.Test.Models {
@@ -16,9 +17,9 @@ namespace XWidget.Rest.Test.Models {
         public abstract Post CreatePost([FromBody]Post post);
 
         [HttpPut("posts/{id}")]
-        public abstract Post UpdatePost([FromRoute(Name = "id")]int postId, [FromBody]Post post);
+        public abstract Task<Post> UpdatePost([FromRoute(Name = "id")]int postId, [FromBody]Post post);
 
         [HttpDelete("posts/{id}")]
-        public abstract void DeletePost([FromRoute(Name = "id")]int postId);
+        public abstract Task DeletePost([FromRoute(Name = "id")]int postId);
     }
 }
