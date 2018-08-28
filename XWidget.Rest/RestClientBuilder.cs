@@ -21,10 +21,7 @@ namespace XWidget.Rest {
         /// </summary>
         /// <returns></returns>
         public T Build() {
-            List<IInterceptor> interceptors = new List<IInterceptor>();
-
-
-            return new ProxyGenerator().CreateInterfaceProxyWithoutTarget<T>(interceptors.ToArray());
+            return new ProxyGenerator().CreateInterfaceProxyWithoutTarget<T>(new RestInterceptor());
         }
     }
 }
