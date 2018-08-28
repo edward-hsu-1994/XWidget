@@ -44,6 +44,11 @@ namespace XWidget.Rest {
             } else if (httpDelete != null) {
                 method = HttpMethod.Delete;
             } else {
+                if (invocation.TargetType.IsClass &&
+                    !invocation.Method.IsAbstract) {
+                    invocation.Proceed();
+                    return;
+                }
                 throw new NotSupportedException();
             }
 
@@ -52,7 +57,6 @@ namespace XWidget.Rest {
             Dictionary<string, object> routeOrQueryArgs = new Dictionary<string, object>();
             bool isForm = false, isBody = false;
 
-            //var formContent = new FormUrlEncodedContent();
             var formContent = new MultipartFormDataContent();
             HttpContent bodyContent = null;
 
@@ -67,6 +71,16 @@ namespace XWidget.Rest {
                 var paramName = query_arg?.Name ?? route_arg?.Name ?? form_arg?.Name ?? header_arg?.Name ?? param.Name;
 
                 var paramValue = invocation.GetArgumentValue(param.Position);
+
+                if (paramValue == null) {
+                    if (param.HasDefaultValue) {
+                        paramValue = param.DefaultValue;
+                    }
+
+                    if (paramValue == null) {
+                        continue;
+                    }
+                }
 
                 if (query_arg != null || route_arg != null) {
                     routeOrQueryArgs[paramName] = paramValue;
@@ -85,7 +99,7 @@ namespace XWidget.Rest {
                     if (paramValue is Stream) {
                         throw new NotSupportedException();
                     } else {
-                        bodyContent = new StringContent(JsonConvert.SerializeObject(paramValue));
+                        bodyContent = new StringContent(JsonConvert.SerializeObject(paramValue), Encoding.UTF8, "application/json");
                     }
                     isBody = true;
                 } else if (header_arg != null) {

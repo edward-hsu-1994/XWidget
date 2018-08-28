@@ -21,7 +21,13 @@ namespace XWidget.Rest {
         /// </summary>
         /// <returns></returns>
         public T Build() {
-            return new ProxyGenerator().CreateInterfaceProxyWithoutTarget<T>(new RestInterceptor());
+            if (typeof(T).IsClass) {
+                return new ProxyGenerator().CreateClassProxy<T>(new RestInterceptor());
+            } else if (typeof(T).IsInterface) {
+                return new ProxyGenerator().CreateInterfaceProxyWithoutTarget<T>(new RestInterceptor());
+            } else {
+                throw new NotSupportedException();
+            }
         }
     }
 }
