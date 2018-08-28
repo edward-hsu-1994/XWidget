@@ -87,8 +87,7 @@ namespace XWidget.Utilities {
 
             List<string> queryString = new List<string>();
             foreach (string key in query.Keys) {
-                if (query[key] is IEnumerable enumData &&
-                    !(query[key] is string)) {
+                if (query[key] is IEnumerable enumData) {
                     foreach (var queryItem in enumData) {
                         queryString.Add($"{key}={Uri.EscapeDataString(queryItem.ToString())}");
                     }
