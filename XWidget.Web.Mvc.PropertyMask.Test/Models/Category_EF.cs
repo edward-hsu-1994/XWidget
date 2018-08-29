@@ -24,7 +24,7 @@ namespace XWidget.Web.Mvc.PropertyMask.Test.Models {
         /// <summary>
         /// 父節點
         /// </summary>
-        [PropertyMask(key: "Mask", Method = MaskMethod.PatternName)]
+        [PropertyMask]
         public virtual Category_EF Parent { get; set; }
 
         /// <summary>
