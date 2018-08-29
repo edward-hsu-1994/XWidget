@@ -8,6 +8,8 @@ using System.Reflection;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq.Dynamic.Core;
 using XWidget.Web.Exceptions;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
+using System.Collections;
 
 namespace XWidget.EFLogic {
     /// <summary>
@@ -429,8 +431,24 @@ namespace XWidget.EFLogic {
             TId id = (TId)type.GetProperty(IdentityPropertyName).GetValue(entity);
             var instance = await GetAsync(id, parameters);
 
-            foreach (var property in Database.Entry(instance).Members.Select(x => x.Metadata.PropertyInfo)) {
-                property.SetValue(instance, property.GetValue(entity));
+            foreach (var member in Database.Entry(instance).Members) {
+                if (member is ReferenceEntry) {
+                    ((dynamic)Manager.GetLogicByType(member.Metadata.PropertyInfo.PropertyType)).Update(
+                        member.Metadata.PropertyInfo.GetValue(entity)
+                        );
+                } else if (member is CollectionEntry) {
+                    var collection = (IEnumerable)member.Metadata.PropertyInfo.GetValue(entity);
+
+                    foreach (var item in collection) {
+                        ((dynamic)Manager.GetLogicByType(item.GetType())).Update(
+                            item
+                        );
+                    }
+                } else {
+                    member.Metadata.PropertyInfo.SetValue(
+                        instance,
+                        member.Metadata.PropertyInfo.GetValue(entity));
+                }
             }
 
             await BeforeUpdate(entity, parameters);
