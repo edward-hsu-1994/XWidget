@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Reflection;
 
 namespace XWidget.EFLogic {
     /// <summary>
@@ -45,6 +46,10 @@ namespace XWidget.EFLogic {
                     continue;
                 }
 
+                if(property.GetCustomAttribute<RemoveCascadeStopperAttribute>() != null){
+                    continue;
+                }
+                    
                 var value = property.GetValue(entity);
 
                 if (value == null) {
@@ -65,6 +70,10 @@ namespace XWidget.EFLogic {
                     continue;
                 }
 
+                if(field.GetCustomAttribute<RemoveCascadeStopperAttribute>() != null){
+                    continue;
+                }
+                
                 var value = field.GetValue(entity);
 
                 if (value == null) {

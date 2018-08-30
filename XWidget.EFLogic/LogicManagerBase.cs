@@ -369,42 +369,6 @@ namespace XWidget.EFLogic {
         }
 
         /// <summary>
-        /// 刪除物件唯一識別號集合的所有物件
-        /// </summary>
-        /// <param name="ids">物件唯一識別號集合</param>
-        public virtual async Task BatchDeleteRangeAsync<TEntity, TId>(IEnumerable<TId> ids) {
-            await BatchDeleteRangeAsync(typeof(TEntity), ids);
-        }
-
-        /// <summary>
-        /// 刪除物件唯一識別號集合的所有物件
-        /// </summary>
-        /// <param name="ids">物件唯一識別號集合</param>
-        public virtual void BatchDeleteRange<TEntity, TId>(IEnumerable<TId> ids) {
-            BatchDeleteRangeAsync<TEntity, TId>(ids).ToSync();
-        }
-
-        /// <summary>
-        /// 刪除物件唯一識別號集合的所有物件
-        /// </summary>
-        /// <param name="type">實例類型</param>
-        /// <param name="ids">物件唯一識別號集合</param>
-        public virtual async Task BatchDeleteRangeAsync<TId>(Type type, IEnumerable<TId> ids) {
-            var targetLogic = (dynamic)GetLogicByType(type);
-
-            await targetLogic.BatchDeleteRangeAsync(ids);
-        }
-
-        /// <summary>
-        /// 刪除物件唯一識別號集合的所有物件
-        /// </summary>
-        /// <param name="type">實例類型</param>
-        /// <param name="ids">物件唯一識別號集合</param>
-        public virtual void BatchDeleteRange<TId>(Type type, IEnumerable<TId> ids) {
-            BatchDeleteRangeAsync<TId>(type, ids).ToSync();
-        }
-
-        /// <summary>
         /// 取得指定實例唯一識別號值
         /// </summary>
         /// <param name="entity">物件實例</param>

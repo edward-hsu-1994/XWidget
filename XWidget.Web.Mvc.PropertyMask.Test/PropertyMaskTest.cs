@@ -154,6 +154,7 @@ namespace XWidget.Web.Mvc.PropertyMask.Test {
                     "Mask");
 
                 foreach (var category in data) {
+                    Assert.NotNull(category.Name);
                     Assert.Null(category.Children);
                     Assert.Null(category.Parent);
                 }
