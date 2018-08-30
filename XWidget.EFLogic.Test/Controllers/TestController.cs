@@ -65,21 +65,6 @@ namespace XWidget.EFLogic.Test.Controllers {
 
             Assert.Empty(categoryLogic.List(x => x.Notes.Count > 0));
 
-
-            categoryLogic.Create(new Category() { Name = "AAAA" });
-            categoryLogic.Create(new Category() { Name = "BBBB" });
-
-            Manager.BatchDeleteRange<Category, Guid>(categoryLogic.List().Select(x => x.Id));
-
-            Assert.Empty(categoryLogic.List());
-
-            categoryLogic.Create(new Category() { Name = "AAAA" });
-            categoryLogic.Create(new Category() { Name = "BBBB" });
-
-            Manager.BatchDeleteRange<Guid>(typeof(Category), categoryLogic.List().Select(x => x.Id));
-
-            Assert.Empty(categoryLogic.List());
-
             var newObj = categoryLogic.Create(new Category() { Name = "CCCC" });
 
             Manager.UpdateOrCreate(new Category() {
