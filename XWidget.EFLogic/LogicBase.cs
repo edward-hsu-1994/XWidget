@@ -432,17 +432,19 @@ namespace XWidget.EFLogic {
             var instance = await GetAsync(id, parameters);
 
             foreach (var member in Database.Entry(instance).Members) {
+                var obj = member.Metadata.PropertyInfo.GetValue(entity);
+
                 if (member is ReferenceEntry) {
-                    ((dynamic)Manager.GetLogicByType(member.Metadata.PropertyInfo.PropertyType)).Update(
-                        member.Metadata.PropertyInfo.GetValue(entity)
-                        );
+                    if (obj == null) continue;
+
+                    ((dynamic)Manager.GetLogicByType(member.Metadata.PropertyInfo.PropertyType)).Update(obj);
                 } else if (member is CollectionEntry) {
-                    var collection = (IEnumerable)member.Metadata.PropertyInfo.GetValue(entity);
+                    var collection = (IEnumerable)obj;
+
+                    if (obj == null) continue;
 
                     foreach (var item in collection) {
-                        ((dynamic)Manager.GetLogicByType(item.GetType())).Update(
-                            item
-                        );
+                        ((dynamic)Manager.GetLogicByType(item.GetType())).Update(item);
                     }
                 } else {
                     member.Metadata.PropertyInfo.SetValue(
