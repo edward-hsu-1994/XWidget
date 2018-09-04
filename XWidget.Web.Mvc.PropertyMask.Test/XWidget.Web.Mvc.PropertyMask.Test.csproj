@@ -17,6 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\XWidget.Linq\XWidget.Linq.csproj" />
     <ProjectReference Include="..\XWidget.Web.Mvc.PropertyMask\XWidget.Web.Mvc.PropertyMask.csproj" />
   </ItemGroup>
 

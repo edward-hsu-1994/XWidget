@@ -166,6 +166,12 @@ namespace XWidget.Web.Mvc.PropertyMask.Test {
             using (var context = new TestContext(options)) {
                 Assert.True(context.Categories.Any(x => x.Children.Count > 0));
             }
+
+
+            var data2 = new MyPaging<User>(User.GetList(), 0, 10);
+            foreach (var item in data2.Result) {
+                Assert.Null(item.Password);
+            }
         }
     }
 }
