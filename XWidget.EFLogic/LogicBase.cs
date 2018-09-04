@@ -427,6 +427,16 @@ namespace XWidget.EFLogic {
         /// <param name="parameters">參數</param>
         /// <returns>更新後的物件實例</returns>
         public virtual async Task<TEntity> UpdateAsync(TEntity entity, params object[] parameters) {
+            return await InternalUpdateAsync(entity, new List<object>(), parameters);
+        }
+
+        /// <summary>
+        /// 更新指定的物件實例
+        /// </summary>
+        /// <param name="entity">物件實例</param>
+        /// <param name="parameters">參數</param>
+        /// <returns>更新後的物件實例</returns>
+        private async Task<TEntity> InternalUpdateAsync(TEntity entity, List<object> refList, params object[] parameters) {
             var type = typeof(TEntity);
             TId id = (TId)type.GetProperty(IdentityPropertyName).GetValue(entity);
             var instance = await GetAsync(id, parameters);
@@ -434,8 +444,18 @@ namespace XWidget.EFLogic {
             foreach (var member in Database.Entry(instance).Members) {
                 var obj = member.Metadata.PropertyInfo.GetValue(entity);
 
+                if (obj != null) {
+                    if (refList.Contains(obj)) { // 防止循環參照
+                        continue;
+                    }
+
+                    refList.Add(obj);
+                }
+
                 if (member is ReferenceEntry) {
                     if (obj == null) continue;
+
+                    if (Database.Model.FindEntityType(obj.GetType()) == null) continue;
 
                     ((dynamic)Manager.GetLogicByType(member.Metadata.PropertyInfo.PropertyType)).Update(obj);
                 } else if (member is CollectionEntry) {
@@ -444,6 +464,8 @@ namespace XWidget.EFLogic {
                     if (obj == null) continue;
 
                     foreach (var item in collection) {
+                        if (item == null) continue;
+                        if (Database.Model.FindEntityType(item.GetType()) == null) continue;
                         ((dynamic)Manager.GetLogicByType(item.GetType())).Update(item);
                     }
                 } else {
