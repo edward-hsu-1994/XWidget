@@ -28,7 +28,7 @@ namespace Microsoft.AspNetCore.Mvc {
         /// <summary>
         /// 取得屬性屏蔽後的結果
         /// </summary>
-        /// <typeparam name="T">資料類型</typeparam>
+        /// <typeparam name="TData">資料類型</typeparam>
         /// <param name="data">資料</param>
         /// <param name="patternName">模式名稱</param>
         /// <returns>屏蔽後的資料</returns>
@@ -43,7 +43,8 @@ namespace Microsoft.AspNetCore.Mvc {
         /// <summary>
         /// 取得屬性屏蔽後的結果
         /// </summary>
-        /// <typeparam name="T">資料類型</typeparam>
+        /// <typeparam name="TData">資料類型</typeparam>
+        /// <typeparam name="TController">控制器類型</typeparam>
         /// <param name="data">資料</param>
         /// <param name="controller">控制實例</param>
         /// <param name="patternName">模式名稱</param>
@@ -61,7 +62,7 @@ namespace Microsoft.AspNetCore.Mvc {
         /// <summary>
         /// 取得屬性屏蔽後的結果
         /// </summary>
-        /// <typeparam name="T">資料類型</typeparam>
+        /// <typeparam name="TData">資料類型</typeparam>
         /// <param name="data">資料</param>
         /// <param name="patternName">模式名稱</param>
         /// <returns>屏蔽後的資料</returns>
@@ -76,7 +77,21 @@ namespace Microsoft.AspNetCore.Mvc {
         /// <summary>
         /// 取得屬性屏蔽後的結果
         /// </summary>
-        /// <typeparam name="T">資料類型</typeparam>
+        /// <typeparam name="TData">資料類型</typeparam>
+        /// <param name="data">資料</param>
+        /// <returns>屏蔽後的資料</returns>
+        public static IEnumerable<TData> Mask<TData>(
+            IEnumerable<TData> data)
+            where TData : class {
+            // 引動內部屏蔽方法，並深層複製原始資料，中斷參考關係
+            return InternalMask(null, data.GetType(), data, null, null, new List<object>());
+        }
+
+        /// <summary>
+        /// 取得屬性屏蔽後的結果
+        /// </summary>
+        /// <typeparam name="TData">資料類型</typeparam>
+        /// <typeparam name="TController">控制器類型</typeparam>
         /// <param name="data">資料</param>
         /// <param name="controller">控制實例</param>
         /// <param name="patternName">模式名稱</param>
@@ -118,7 +133,7 @@ namespace Microsoft.AspNetCore.Mvc {
             List<object> refList)
             where TData : class {
 
-            var type = typeof(TData);
+            var type = data.GetType();
 
             if (!MaskCondition(type)) {
                 return data;
@@ -168,7 +183,7 @@ namespace Microsoft.AspNetCore.Mvc {
                 } else {
                     // 該屬性找不到屏蔽設定，檢查該屬性的屬性類型是否有屏蔽選項
                     var propertyType = property.PropertyType;
-                    if (propertyType.IsValueType || propertyType.Namespace.StartsWith("System")) continue;
+                    if (propertyType.IsValueType || propertyType == typeof(string)) continue;
 
                     if (!MaskCondition(propertyType)) {
                         continue;
