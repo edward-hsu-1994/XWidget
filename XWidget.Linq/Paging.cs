@@ -58,7 +58,7 @@ namespace XWidget.Linq {
         /// <summary>
         /// 分頁結果
         /// </summary>
-        public IEnumerable<TSource> Result {
+        public virtual IEnumerable<TSource> Result {
             get {
                 if (Take == -1) return Source.Skip(Skip);
                 return Source.Skip(Skip).Take(Take);
