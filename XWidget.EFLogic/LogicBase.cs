@@ -264,7 +264,7 @@ namespace XWidget.EFLogic {
         /// </summary>
         /// <param name="id">唯一識別號</param>
         /// <returns>是否存在實例</returns>
-        public virtual async Task<bool> ExistsAsync(Guid id) {
+        public virtual async Task<bool> ExistsAsync(TId id) {
             return Database.Set<TEntity>().Any($"{IdentityPropertyName} == @0", id);
         }
 
@@ -273,7 +273,7 @@ namespace XWidget.EFLogic {
         /// </summary>
         /// <param name="id">唯一識別號</param>
         /// <returns>是否存在實例</returns>
-        public virtual bool Exists(Guid id) {
+        public virtual bool Exists(TId id) {
             return ExistsAsync(id).ToSync();
         }
 
