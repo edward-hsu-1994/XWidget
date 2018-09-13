@@ -306,11 +306,9 @@ namespace XWidget.EFLogic {
         /// <returns>更新後的物件實例</returns>
         public async Task<TEntity> UpdateOrCreateAsync<TEntity>(TEntity entity, params object[] parameters)
             where TEntity : class {
-            if (await ExistsAsync<TEntity>(entity)) {
-                return await UpdateAsync<TEntity>(entity, parameters);
-            } else {
-                return await CreateAsync<TEntity>(entity, parameters);
-            }
+            var targetLogic = (dynamic)GetLogicByType(typeof(TEntity));
+
+            return await ((dynamic)targetLogic).UpdateOrCreateAsync(entity, parameters);
         }
 
         /// <summary>
