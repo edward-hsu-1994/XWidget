@@ -569,6 +569,34 @@ namespace XWidget.EFLogic {
             DeleteAsync(id, parameters).ToSync();
         }
 
+        /// <summary>
+        /// 取得更新物件與資料庫內物件的資料差異
+        /// </summary>
+        /// <param name="entity">物件實例</param>
+        /// <returns>物件差異集合</returns>
+        public virtual async Task<ICollection<Difference>> GetDifferencesAsync(TEntity entity) {
+            var type = typeof(TEntity);
+            TId id = (TId)type.GetProperty(IdentityPropertyName).GetValue(entity);
+
+            var instance = Database.Set<TEntity>().AsNoTracking().SingleOrDefault($"{IdentityPropertyName} == @0", id);
+            if (instance == null) {
+                throw new NotFoundException();
+            }
+
+            var differences = AutoCompare.Comparer.Compare<TEntity>(instance, entity);
+
+            return differences;
+        }
+
+        /// <summary>
+        /// 取得更新物件與資料庫內物件的資料差異
+        /// </summary>
+        /// <param name="entity">物件實例</param>
+        /// <returns>物件差異集合</returns>
+        public virtual ICollection<Difference> GetDifferences(TEntity entity) {
+            return GetDifferencesAsync(entity).ToSync();
+        }
+
         #region Hook
         /// <summary>
         /// 建立前處理
