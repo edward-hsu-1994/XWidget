@@ -92,7 +92,7 @@ namespace XWidget.EFLogic.Test.Controllers {
 
             newObj.Name = "_____";
 
-            var diff = await Manager.Category.GetDifferencesAsync(newObj);
+            var diff = Manager.GetDifferences(newObj);
 
             Assert.NotEqual(0, diff.Count);
         }

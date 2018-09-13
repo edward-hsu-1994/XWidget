@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using AutoCompare;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -388,6 +389,25 @@ namespace XWidget.EFLogic {
             return entryType.GetProperty((string)logic.IdentityPropertyName);
         }
 
+        /// <summary>
+        /// 取得更新物件與資料庫內物件的資料差異
+        /// </summary>
+        /// <param name="entity">物件實例</param>
+        /// <returns>物件差異集合</returns>
+        public virtual async Task<ICollection<Difference>> GetDifferencesAsync<TEntity>(TEntity entity) {
+            var targetLogic = (dynamic)GetLogicByType(typeof(TEntity));
+
+            return await targetLogic.GetDifferencesAsync(entity);
+        }
+
+        /// <summary>
+        /// 取得更新物件與資料庫內物件的資料差異
+        /// </summary>
+        /// <param name="entity">物件實例</param>
+        /// <returns>物件差異集合</returns>
+        public virtual ICollection<Difference> GetDifferences<TEntity>(TEntity entity) {
+            return GetDifferencesAsync(entity).ToSync();
+        }
 
         /// <summary>
         /// 取得直接關聯物件鏈中所有物件包含自身，如類型A有一對多的B類型屬性，則使用其中B類型物鍵取得直接關聯物件鏈則為[B,A]
