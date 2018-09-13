@@ -10,6 +10,7 @@ using System.Linq.Dynamic.Core;
 using XWidget.Web.Exceptions;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using System.Collections;
+using AutoCompare;
 
 namespace XWidget.EFLogic {
     /// <summary>
@@ -403,7 +404,10 @@ namespace XWidget.EFLogic {
         /// <param name="parameters">參數</param>
         /// <returns>更新後的物件實例</returns>
         public async Task<TEntity> UpdateOrCreateAsync(object entity, params object[] parameters) {
-            if (await ExistsAsync(entity)) {
+            var type = typeof(TEntity);
+            TId id = (TId)type.GetProperty(IdentityPropertyName).GetValue(entity);
+
+            if (await ExistsAsync(id)) {
                 return await UpdateAsync((TEntity)entity, parameters);
             } else {
                 return await CreateAsync((TEntity)entity, parameters);
@@ -498,7 +502,10 @@ namespace XWidget.EFLogic {
         /// <param name="parameters">參數</param>
         /// <returns>更新後的物件實例</returns>
         public async Task<TEntity> UpdateOrCreateAsync(TEntity entity, params object[] parameters) {
-            if (await ExistsAsync(entity)) {
+            var type = typeof(TEntity);
+            TId id = (TId)type.GetProperty(IdentityPropertyName).GetValue(entity);
+
+            if (await ExistsAsync(id)) {
                 return await UpdateAsync(entity, parameters);
             } else {
                 return await CreateAsync(entity, parameters);
@@ -560,6 +567,34 @@ namespace XWidget.EFLogic {
         /// <param name="parameters">參數</param>
         public virtual void Delete(TId id, params object[] parameters) {
             DeleteAsync(id, parameters).ToSync();
+        }
+
+        /// <summary>
+        /// 取得更新物件與資料庫內物件的資料差異
+        /// </summary>
+        /// <param name="entity">物件實例</param>
+        /// <returns>物件差異集合</returns>
+        public virtual async Task<ICollection<Difference>> GetDifferencesAsync(TEntity entity) {
+            var type = typeof(TEntity);
+            TId id = (TId)type.GetProperty(IdentityPropertyName).GetValue(entity);
+
+            var instance = Database.Set<TEntity>().AsNoTracking().SingleOrDefault($"{IdentityPropertyName} == @0", id);
+            if (instance == null) {
+                throw new NotFoundException();
+            }
+
+            var differences = AutoCompare.Comparer.Compare<TEntity>(instance, entity);
+
+            return differences;
+        }
+
+        /// <summary>
+        /// 取得更新物件與資料庫內物件的資料差異
+        /// </summary>
+        /// <param name="entity">物件實例</param>
+        /// <returns>物件差異集合</returns>
+        public virtual ICollection<Difference> GetDifferences(TEntity entity) {
+            return GetDifferencesAsync(entity).ToSync();
         }
 
         #region Hook

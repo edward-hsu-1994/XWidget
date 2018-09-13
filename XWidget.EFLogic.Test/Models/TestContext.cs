@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +14,7 @@ namespace XWidget.EFLogic.Test.Models {
             if (!optionsBuilder.IsConfigured) {
                 optionsBuilder.UseLazyLoadingProxies();
                 optionsBuilder.UseInMemoryDatabase("TestDatabase");
+                optionsBuilder.ConfigureWarnings(warnnings => warnnings.Ignore(CoreEventId.DetachedLazyLoadingWarning));
             }
         }
 
