@@ -88,6 +88,13 @@ namespace XWidget.EFLogic.Test.Controllers {
             });
 
             Assert.Equal(1, Manager.List<Category>(x => x.Name == "FFFF").Count());
+
+
+            newObj.Name = "_____";
+
+            var diff = await Manager.Category.GetDifferencesAsync(newObj);
+
+            Assert.NotEqual(0, diff.Count);
         }
     }
 }
