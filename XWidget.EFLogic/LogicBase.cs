@@ -480,6 +480,7 @@ namespace XWidget.EFLogic {
             }
 
             await BeforeUpdate(entity, parameters);
+            Database.Update(entity);
             await Database.SaveChangesAsync();
             await AfterUpdate(entity, parameters);
             return entity;
