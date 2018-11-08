@@ -17,5 +17,9 @@ namespace XWidget.Web.Jwt {
         /// 類型
         /// </summary>
         public string Type => "JWT";
+
+        public string ContentType { get; set; }
+
+        public string KeyId { get; set; }
     }
 }
