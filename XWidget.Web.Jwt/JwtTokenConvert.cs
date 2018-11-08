@@ -2,7 +2,7 @@
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
-using JWT = System.IdentityModel.Tokens.Jwt;
+using SystemJWT = System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Text;
 using System.Runtime.Serialization;
@@ -13,12 +13,14 @@ namespace XWidget.Web.Jwt {
     /// JWT轉換類別
     /// </summary>
     public static class JwtTokenConvert {
+
+        #region Private Method
         private class TempToken<TJwtPayload> : IJwtToken<DefaultJwtHeader, TJwtPayload> {
             public DefaultJwtHeader Header { get; set; }
             public TJwtPayload Payload { get; set; }
         }
 
-        private static void SetToJwtHeader(IJwtHeader source, JWT.JwtHeader target) {
+        private static void SetToJwtHeader(IJwtHeader source, SystemJWT.JwtHeader target) {
             var headerJObj = JObject.FromObject(source);
 
             foreach (var key in headerJObj.Properties().Select(x => x.Name)) {
@@ -27,7 +29,7 @@ namespace XWidget.Web.Jwt {
 
         }
 
-        private static void SetToJwtPayload(object source, JWT.JwtPayload target) {
+        private static void SetToJwtPayload(object source, SystemJWT.JwtPayload target) {
             var headerJObj = JObject.FromObject(source);
 
             foreach (var key in headerJObj.Properties().Select(x => x.Name).OrderByDescending(x => x.Length).ThenBy(x => x)) {
@@ -44,6 +46,7 @@ namespace XWidget.Web.Jwt {
 
             return result;
         }
+        #endregion
 
         /// <summary>
         /// 簽名並產生JWT字串
@@ -57,11 +60,11 @@ namespace XWidget.Web.Jwt {
             this IJwtToken<TJwtHeader, TJwtPayload> token,
             SecurityKey signingCredentials)
             where TJwtHeader : IJwtHeader {
-            var nToken = new JWT.JwtSecurityToken(signingCredentials: new SigningCredentials(signingCredentials, token.Header.Algorithm));
+            var nToken = new SystemJWT.JwtSecurityToken(signingCredentials: new SigningCredentials(signingCredentials, token.Header.Algorithm));
             SetToJwtHeader(token.Header, nToken.Header);
             SetToJwtPayload(token.Payload, nToken.Payload);
 
-            return "bearer " + new JWT.JwtSecurityTokenHandler().WriteToken(
+            return "bearer " + new SystemJWT.JwtSecurityTokenHandler().WriteToken(
                 nToken
             );
         }
@@ -79,6 +82,27 @@ namespace XWidget.Web.Jwt {
             out IJwtToken<DefaultJwtHeader, dynamic> result) {
             var tempResult = new TempToken<dynamic>();
             var returnValue = Verify<TempToken<dynamic>, DefaultJwtHeader, dynamic>(token, signingCredentials, out tempResult);
+
+            result = tempResult;
+            return returnValue;
+        }
+
+        #region 驗證JWT
+        /// <summary>
+        /// 驗證JWT
+        /// </summary>
+        /// <param name="token">JWT字串</param>
+        /// <param name="signingCredentials">簽名鑰匙</param>
+        /// <param name="result">剖析後的JWT結構</param>
+        /// <param name="exception">例外</param>
+        /// <returns>是否合法</returns>
+        public static bool Verify(
+            string token,
+            SecurityKey signingCredentials,
+            out IJwtToken<DefaultJwtHeader, dynamic> result,
+            out Exception exception) {
+            var tempResult = new TempToken<dynamic>();
+            var returnValue = Verify<TempToken<dynamic>, DefaultJwtHeader, dynamic>(token, signingCredentials, out tempResult, out exception);
 
             result = tempResult;
             return returnValue;
@@ -106,6 +130,27 @@ namespace XWidget.Web.Jwt {
         /// <summary>
         /// 驗證JWT
         /// </summary>
+        /// <typeparam name="TJwtPayload">內容類型</typeparam>
+        /// <param name="token">JWT字串</param>
+        /// <param name="signingCredentials">簽名鑰匙</param>
+        /// <param name="result">剖析後的JWT結構</param>
+        /// <param name="exception">例外</param>
+        /// <returns>是否合法</returns>
+        public static bool Verify<TJwtPayload>(
+            string token,
+            SecurityKey signingCredentials,
+            out IJwtToken<DefaultJwtHeader, TJwtPayload> result,
+            out Exception exception) {
+            var tempResult = new TempToken<TJwtPayload>();
+            var returnValue = Verify<TempToken<TJwtPayload>, DefaultJwtHeader, TJwtPayload>(token, signingCredentials, out tempResult, out exception);
+
+            result = tempResult;
+            return returnValue;
+        }
+
+        /// <summary>
+        /// 驗證JWT
+        /// </summary>
         /// <typeparam name="TToken">JWT結構類型</typeparam>
         /// <typeparam name="TJwtPayload">內容類型</typeparam>
         /// <param name="token">JWT字串</param>
@@ -118,6 +163,25 @@ namespace XWidget.Web.Jwt {
             out TToken result)
             where TToken : class, IJwtToken<DefaultJwtHeader, TJwtPayload> {
             return Verify<TToken, DefaultJwtHeader, TJwtPayload>(token, signingCredentials, out result);
+        }
+
+        /// <summary>
+        /// 驗證JWT
+        /// </summary>
+        /// <typeparam name="TToken">JWT結構類型</typeparam>
+        /// <typeparam name="TJwtPayload">內容類型</typeparam>
+        /// <param name="token">JWT字串</param>
+        /// <param name="signingCredentials">簽名鑰匙</param>
+        /// <param name="result">剖析後的JWT結構</param>
+        /// <param name="exception">例外</param>
+        /// <returns>是否合法</returns>
+        public static bool Verify<TToken, TJwtPayload>(
+            string token,
+            SecurityKey signingCredentials,
+            out TToken result,
+            out Exception exception)
+            where TToken : class, IJwtToken<DefaultJwtHeader, TJwtPayload> {
+            return Verify<TToken, DefaultJwtHeader, TJwtPayload>(token, signingCredentials, out result, out exception);
         }
 
         /// <summary>
@@ -153,6 +217,38 @@ namespace XWidget.Web.Jwt {
         /// <typeparam name="TJwtHeader">標頭類型</typeparam>
         /// <typeparam name="TJwtPayload">內容類型</typeparam>
         /// <param name="token">JWT字串</param>
+        /// <param name="signingCredentials">簽名鑰匙</param>
+        /// <param name="result">剖析後的JWT結構</param>
+        /// <param name="exception">例外</param>
+        /// <returns>是否合法</returns>
+        public static bool Verify<TToken, TJwtHeader, TJwtPayload>(
+            string token,
+            SecurityKey signingCredentials,
+            out TToken result,
+            out Exception exception)
+            where TToken : class, IJwtToken<TJwtHeader, TJwtPayload>
+            where TJwtHeader : IJwtHeader {
+            return Verify<TToken, TJwtHeader, TJwtPayload>(
+                token,
+                new TokenValidationParameters() {
+                    IssuerSigningKey = signingCredentials,
+                    ValidateAudience = false,
+                    ValidateIssuer = false,
+                    ValidateActor = false,
+                    ValidateLifetime = false,
+                    ValidateTokenReplay = false
+                },
+                out result,
+                out exception);
+        }
+
+        /// <summary>
+        /// 驗證JWT
+        /// </summary>
+        /// <typeparam name="TToken">JWT結構類型</typeparam>
+        /// <typeparam name="TJwtHeader">標頭類型</typeparam>
+        /// <typeparam name="TJwtPayload">內容類型</typeparam>
+        /// <param name="token">JWT字串</param>
         /// <param name="validationParameters">驗證參數</param>
         /// <param name="result">剖析後的JWT結構</param>
         /// <returns>是否合法</returns>
@@ -162,10 +258,36 @@ namespace XWidget.Web.Jwt {
             out TToken result)
             where TToken : class, IJwtToken<TJwtHeader, TJwtPayload>
             where TJwtHeader : IJwtHeader {
+            return Verify<TToken, TJwtHeader, TJwtPayload>(
+                token,
+                validationParameters,
+                out result,
+                out _);
+        }
+
+        /// <summary>
+        /// 驗證JWT
+        /// </summary>
+        /// <typeparam name="TToken">JWT結構類型</typeparam>
+        /// <typeparam name="TJwtHeader">標頭類型</typeparam>
+        /// <typeparam name="TJwtPayload">內容類型</typeparam>
+        /// <param name="token">JWT字串</param>
+        /// <param name="validationParameters">驗證參數</param>
+        /// <param name="result">剖析後的JWT結構</param>
+        /// <param name="exception">例外</param>
+        /// <returns>是否合法</returns>
+        public static bool Verify<TToken, TJwtHeader, TJwtPayload>(
+            string token,
+            TokenValidationParameters validationParameters,
+            out TToken result,
+            out Exception exception)
+            where TToken : class, IJwtToken<TJwtHeader, TJwtPayload>
+            where TJwtHeader : IJwtHeader {
             result = default(TToken);
+            exception = null;
 
             try {
-                var nToken = new JWT.JwtSecurityToken(token.Split(' ').Last());
+                var nToken = new SystemJWT.JwtSecurityToken(token.Split(' ').Last());
 
                 var header = (TJwtHeader)DictionaryToJObject(nToken.Header).ToObject(typeof(TJwtHeader));
                 var payload = (TJwtPayload)DictionaryToJObject(nToken.Payload).ToObject(typeof(TJwtPayload));
@@ -183,9 +305,11 @@ namespace XWidget.Web.Jwt {
                 tokenHandler.ValidateToken(token.Split(' ').Last(), validationParameters, out _);
 
                 return true;
-            } catch {
+            } catch (Exception e) {
+                exception = e;
                 return false;
             }
         }
+        #endregion
     }
 }
