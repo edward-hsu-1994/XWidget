@@ -26,19 +26,7 @@ namespace Microsoft.Extensions.DependencyInjection {
             where TContext : DbContext {
             services.AddDbContext<TContext>(optionsAction);
 
-            var builder = new DynamicLogicMapBuilder<TContext>();
-
-            services.AddScoped<TLogic>(serviceProvider => {
-                var constructors = typeof(TLogic).GetConstructors().FirstOrDefault();
-                var createServices = constructors.GetParameters().Select(x => x.ParameterType)
-                    .Select(x => serviceProvider.GetService(x)).ToArray();
-                var instance = (TLogic)constructors.Invoke(createServices);
-                instance.MapBuilder = builder;
-
-                return instance;
-            });
-
-            return builder;
+            return services.GetDynamicLogicMapBuilder<TLogic, TContext>();
         }
 
         /// <summary>
@@ -56,19 +44,7 @@ namespace Microsoft.Extensions.DependencyInjection {
             where TContext : DbContext {
             services.AddDbContext<TContext>(optionsAction);
 
-            var builder = new DynamicLogicMapBuilder<TContext>();
-
-            services.AddScoped<TLogic>(serviceProvider => {
-                var constructors = typeof(TLogic).GetConstructors().FirstOrDefault();
-                var createServices = constructors.GetParameters().Select(x => x.ParameterType)
-                    .Select(x => serviceProvider.GetService(x)).ToArray();
-                var instance = (TLogic)constructors.Invoke(createServices);
-                instance.MapBuilder = builder;
-
-                return instance;
-            });
-
-            return builder;
+            return services.GetDynamicLogicMapBuilder<TLogic, TContext>();
         }
 
         /// <summary>
@@ -84,6 +60,13 @@ namespace Microsoft.Extensions.DependencyInjection {
             where TContext : DbContext {
             services.AddDbContext<TContext>();
 
+            return services.GetDynamicLogicMapBuilder<TLogic, TContext>();
+        }
+
+        private static DynamicLogicMapBuilder<TContext> GetDynamicLogicMapBuilder<TLogic, TContext>(
+            this IServiceCollection services)
+            where TLogic : LogicManagerBase<TContext>
+            where TContext : DbContext {
             var builder = new DynamicLogicMapBuilder<TContext>();
 
             services.AddScoped<InternalLogicManagerContainer<TContext>>();
