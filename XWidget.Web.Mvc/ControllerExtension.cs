@@ -16,15 +16,15 @@ namespace Microsoft.AspNetCore.Mvc {
         /// <param name="url">目標網址</param>
         /// <param name="formData">FormData</param>
         /// <returns>重定向HTML</returns>
-        public static IActionResult RedirectWithClientPostFormData(this Controller obj, string url, Dictionary<string, string> formData) {
+        public static IActionResult TestRedirectWithClientPostFormData(this Controller obj, string url, Dictionary<string, string> formData) {
             HtmlDocument doc = new HtmlDocument();
-            doc.LoadHtml(@"<html><head></head><body onload=""document.frm1.submit()""><form id=""frm1"" name=""frm1""></form></body></html>");
+            doc.LoadHtml(@"<html><head></head><body><form id=""frm1"" name=""frm1""></form><script>document.frm1.submit()</script></body></html>");
 
             HtmlNode formNode = doc.DocumentNode.SelectSingleNode("//form");
 
             if (formNode != null) {
-                formNode.Attributes["method"].Value = "POST";
-                formNode.Attributes["action"].Value = url;
+                formNode.SetAttributeValue("method", "POST");
+                formNode.SetAttributeValue("action", url);
                 formData.Keys.ForEach(key => formNode.AppendChild(HtmlNode.CreateNode($"<input type=\"hidden\" name=\"{key}\" value=\"{formData[key]}\" />")));
             }
 
