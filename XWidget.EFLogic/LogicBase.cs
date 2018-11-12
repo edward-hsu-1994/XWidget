@@ -279,6 +279,25 @@ namespace XWidget.EFLogic {
         }
 
         /// <summary>
+        /// 尋找一個項目
+        /// </summary>
+        /// <param name="cond">條件</param>
+        /// <returns>尋找目標</returns>
+        public virtual async Task<TEntity> FindOneAsync(Expression<Func<TEntity, bool>> cond = null) {
+            if (cond == null) cond = x => true;
+            return (await ListAsync(cond)).SingleOrDefault();
+        }
+
+        /// <summary>
+        /// 尋找一個項目
+        /// </summary>
+        /// <param name="cond">條件</param>
+        /// <returns>尋找目標</returns>
+        public virtual TEntity FindOne(Expression<Func<TEntity, bool>> cond = null) {
+            return FindOneAsync(cond).ToSync();
+        }
+
+        /// <summary>
         /// 透過唯一識別號取得指定物件實例
         /// </summary>
         /// <param name="id">唯一識別號</param>

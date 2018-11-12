@@ -28,6 +28,8 @@ namespace XWidget.EFLogic.Test.Controllers {
                 Name = "Test02"
             });
 
+            Assert.NotNull(categoryLogic.FindOne(x => x.Name == "Test02"));
+
             Assert.Equal("Test02", category.Name);
 
             category = categoryLogic.Get(category.Id);
