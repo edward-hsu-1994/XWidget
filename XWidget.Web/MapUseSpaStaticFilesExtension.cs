@@ -86,10 +86,23 @@ namespace XWidget.Web {
                         warpStream.Seek(0, SeekOrigin.Begin);
 
                         context.Response.Body = originStream;
+
+                        #region Backup Response Properties
+                        var backup = new {
+                            context.Response.ContentType,
+                            context.Response.StatusCode
+                        };
+                        #endregion
+
                         context.Response.Clear();
 
                         await warpStream.CopyToAsync(context.Response.Body);
+
+                        #region Reset Response Properties
                         context.Response.ContentLength = warpStream.Length;
+                        context.Response.ContentType = backup.ContentType;
+                        context.Response.StatusCode = backup.StatusCode;
+                        #endregion
                     });
 
                     configuration?.Invoke(app2);
