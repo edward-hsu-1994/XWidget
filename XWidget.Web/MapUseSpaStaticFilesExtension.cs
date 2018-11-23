@@ -96,13 +96,13 @@ namespace XWidget.Web {
 
                         context.Response.Clear();
 
-                        await warpStream.CopyToAsync(context.Response.Body);
-
                         #region Reset Response Properties
-                        context.Response.ContentLength = warpStream.Length;
                         context.Response.ContentType = backup.ContentType;
                         context.Response.StatusCode = backup.StatusCode;
                         #endregion
+
+                        await warpStream.CopyToAsync(context.Response.Body);
+                        context.Response.ContentLength = warpStream.Length;
                     });
 
                     configuration?.Invoke(app2);
