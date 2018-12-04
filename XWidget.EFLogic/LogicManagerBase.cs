@@ -454,5 +454,63 @@ namespace XWidget.EFLogic {
             var logic = (dynamic)GetLogicByType(type);
             return await logic.GetDirectChain(entity, parameters);
         }
+
+        #region GlobalHook
+        /// <summary>
+        /// 建立前處理
+        /// </summary>
+        /// <param name="entity">實例</param>
+        /// <param name="parameters">參數</param>
+        /// <returns>實例</returns>
+        public virtual async Task BeforeCreate(object entity, params object[] parameters) { }
+
+        /// <summary>
+        /// 建立後處理
+        /// </summary>
+        /// <param name="entity">實例</param>
+        /// <param name="parameters">參數</param>
+        /// <returns>實例</returns>
+        public virtual async Task BeforeUpdate(object entity, params object[] parameters) { }
+
+        /// <summary>
+        /// 刪除前處理
+        /// </summary>
+        /// <param name="entity">實例</param>
+        /// <param name="parameters">參數</param>
+        /// <returns>實例</returns>
+        public virtual async Task BeforeDelete(object entity, params object[] parameters) { }
+
+        /// <summary>
+        /// 取得後處理
+        /// </summary>
+        /// <param name="entity">實例</param>
+        /// <param name="parameters">參數</param>
+        /// <returns>實例</returns>
+        public virtual async Task AfterGet(object entity, params object[] parameters) { }
+
+        /// <summary>
+        /// 建立後處理
+        /// </summary>
+        /// <param name="entity">實例</param>
+        /// <param name="parameters">參數</param>
+        /// <returns>實例</returns>
+        public virtual async Task AfterCreate(object entity, params object[] parameters) { }
+
+        /// <summary>
+        /// 更新後處理
+        /// </summary>
+        /// <param name="entity">實例</param>
+        /// <param name="parameters">參數</param>
+        /// <returns>實例</returns>
+        public virtual async Task AfterUpdate(object entity, params object[] parameters) { }
+
+        /// <summary>
+        /// 刪除後處理
+        /// </summary>
+        /// <param name="entity">實例</param>
+        /// <param name="parameters">參數</param>
+        /// <returns>實例</returns>
+        public virtual async Task AfterDelete(object entity, params object[] parameters) { }
+        #endregion
     }
 }

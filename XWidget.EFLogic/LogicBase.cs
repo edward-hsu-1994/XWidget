@@ -330,6 +330,7 @@ namespace XWidget.EFLogic {
                 throw new NotFoundException();
             }
 
+            await Manager.AfterGet(instance, parameters);
             await AfterGet(instance, parameters);
             return instance;
         }
@@ -377,9 +378,11 @@ namespace XWidget.EFLogic {
 
             Database.Add(entity);
 
+            await Manager.BeforeCreate(entity, parameters);
             await BeforeCreate(entity, parameters);
             await Database.SaveChangesAsync();
             await AfterCreate(entity, parameters);
+            await Manager.AfterCreate(entity, parameters);
 
             var type = typeof(TEntity);
             TId id = (TId)type.GetProperty(IdentityPropertyName).GetValue(entity);
@@ -498,11 +501,14 @@ namespace XWidget.EFLogic {
                 }
             }
 
+            await Manager.BeforeUpdate(entity, parameters);
             await BeforeUpdate(entity, parameters);
             Database.Update(entity);
             await Database.SaveChangesAsync();
             await AfterUpdate(entity, parameters);
+            await Manager.AfterUpdate(entity, parameters);
             return entity;
+
         }
 
         /// <summary>
@@ -574,9 +580,11 @@ namespace XWidget.EFLogic {
 
             Database.RemoveCascade(instance);
 
+            await Manager.BeforeDelete(instance, parameters);
             await BeforeDelete(instance, parameters);
             await Database.SaveChangesAsync();
             await AfterDelete(instance, parameters);
+            await Manager.AfterDelete(instance, parameters);
         }
 
 
