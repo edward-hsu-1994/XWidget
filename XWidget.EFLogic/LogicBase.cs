@@ -501,14 +501,13 @@ namespace XWidget.EFLogic {
                 }
             }
 
-            await Manager.BeforeUpdate(entity, parameters);
-            await BeforeUpdate(entity, parameters);
-            Database.Update(entity);
+            await Manager.BeforeUpdate(instance, parameters);
+            await BeforeUpdate(instance, parameters);
+            Database.Update(instance);
             await Database.SaveChangesAsync();
-            await AfterUpdate(entity, parameters);
-            await Manager.AfterUpdate(entity, parameters);
-            return entity;
-
+            await AfterUpdate(instance, parameters);
+            await Manager.AfterUpdate(instance, parameters);
+            return instance;
         }
 
         /// <summary>
