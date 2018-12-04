@@ -3,20 +3,21 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using Xunit;
 using XWidget.EFLogic.Test.Logic;
 using XWidget.EFLogic.Test.Models;
 
 namespace XWidget.EFLogic.Test.Controllers {
     [Route("api/[controller]")]
-    public class TestController : ControllerBase {
+    public class TestController : Controller {
         public TestLogicManager Manager { get; set; }
         public TestController(TestLogicManager manager) {
             Manager = manager;
         }
 
         [HttpGet]
-        public async void Test() {
+        public async Task Test() {
             var categoryLogic = Manager.GetLogicByType<Category, Guid>();
 
             var category = categoryLogic.Create(new Category() {

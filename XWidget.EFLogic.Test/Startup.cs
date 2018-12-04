@@ -4,6 +4,7 @@ using System.Reflection;
 using System.Text;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using XWidget.EFLogic.Test.Controllers;
@@ -22,7 +23,8 @@ namespace XWidget.EFLogic.Test {
         public void ConfigureServices(IServiceCollection services) {
             services.AddScoped<TestContext>(x => TestContext.CreateInstance());
 
-            services.AddLogic<TestLogicManager, TestContext>().AddFromDbContext().AddFromDbContext("Id");
+            services.AddLogic<TestLogicManager, TestContext>()
+            .AddFromDbContext("Id");
 
             services.AddMvc()
                 .AddApplicationPart(typeof(TestController).GetTypeInfo().Assembly)
