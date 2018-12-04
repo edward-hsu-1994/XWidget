@@ -1,4 +1,5 @@
 ﻿using AutoCompare;
+using Castle.DynamicProxy;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -55,9 +56,9 @@ namespace XWidget.EFLogic {
         }
 
         internal object GetLogicByType(Type type) {
-            // EFCore LazyLoad Support
-            if (type.Namespace == "Castle.Proxies") {
-                type = type.BaseType;
+            // EFCore LazyLoad Proxy Support
+            if (ProxyUtil.IsProxyType(type)) {
+                return GetLogicByType(type.BaseType);
             }
 
             var prop = this.GetType()
