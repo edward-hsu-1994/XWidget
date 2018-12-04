@@ -55,6 +55,11 @@ namespace XWidget.EFLogic {
         }
 
         internal object GetLogicByType(Type type) {
+            // EFCore LazyLoad Support
+            if (type.Namespace == "Castle.Proxies") {
+                type = type.BaseType;
+            }
+
             var prop = this.GetType()
                 .GetProperties()
                 .SingleOrDefault(
