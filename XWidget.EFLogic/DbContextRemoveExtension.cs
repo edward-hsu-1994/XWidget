@@ -46,10 +46,19 @@ namespace XWidget.EFLogic {
                     continue;
                 }
 
-                if(property.GetCustomAttribute<RemoveCascadeStopperAttribute>() != null){
+                if (property.GetCustomAttribute<RemoveCascadeStopperAttribute>() != null) {
                     continue;
                 }
-                    
+
+                var shouldRemoveCascade = type.GetMethod(
+                    $"ShouldRemoveCascade{property.Name}",
+                    BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase);
+
+                if (shouldRemoveCascade != null && //如果存在連鎖刪除判斷方法且不允許連鎖刪除
+                    false.Equals(shouldRemoveCascade.Invoke(entity, new object[0]))) {
+                    continue;
+                }
+
                 var value = property.GetValue(entity);
 
                 if (value == null) {
@@ -70,10 +79,19 @@ namespace XWidget.EFLogic {
                     continue;
                 }
 
-                if(field.GetCustomAttribute<RemoveCascadeStopperAttribute>() != null){
+                if (field.GetCustomAttribute<RemoveCascadeStopperAttribute>() != null) {
                     continue;
                 }
-                
+
+                var shouldRemoveCascade = type.GetMethod(
+                    $"ShouldRemoveCascade{field.Name}",
+                    BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase);
+
+                if (shouldRemoveCascade != null && //如果存在連鎖刪除判斷方法且不允許連鎖刪除
+                    false.Equals(shouldRemoveCascade.Invoke(entity, new object[0]))) {
+                    continue;
+                }
+
                 var value = field.GetValue(entity);
 
                 if (value == null) {
