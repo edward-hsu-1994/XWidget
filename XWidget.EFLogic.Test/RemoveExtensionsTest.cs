@@ -12,6 +12,26 @@ using XWidget.EFLogic.Test.Models;
 namespace XWidget.EFLogic.Test {
     public class RemoveExtensionsTest {
         [Fact]
+        public void RemoveCascadeTypeTest() {
+            var context = TestContext.CreateInstance();
+
+            Assert.Empty(
+                new Type[] { typeof(Category), typeof(Note), typeof(UserData) }.Except(
+                    context.GetRemoveCascadeTypes(typeof(Category))
+                ));
+
+            Assert.Empty(
+                new Type[] { typeof(Note), typeof(UserData) }.Except(
+                    context.GetRemoveCascadeTypes(typeof(Note))
+                ));
+
+            Assert.Empty(
+                new Type[] { typeof(UserData) }.Except(
+                    context.GetRemoveCascadeTypes(typeof(UserData))
+                ));
+        }
+
+        [Fact]
         public void RemoveCascadeTest() {
             var context = TestContext.CreateInstance();
 

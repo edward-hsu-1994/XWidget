@@ -13,7 +13,7 @@ namespace XWidget.EFLogic.Test.Models {
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) {
             if (!optionsBuilder.IsConfigured) {
                 optionsBuilder.UseLazyLoadingProxies();
-                optionsBuilder.UseInMemoryDatabase("TestDatabase");
+                optionsBuilder.UseInMemoryDatabase("TestDatabase" + Guid.NewGuid());
                 optionsBuilder.ConfigureWarnings(warnnings => warnnings.Ignore(CoreEventId.DetachedLazyLoadingWarning));
             }
         }
