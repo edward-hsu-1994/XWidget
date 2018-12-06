@@ -105,7 +105,7 @@ namespace XWidget.EFLogic {
         /// </summary>
         /// <param name="cond">條件</param>
         /// <returns>列表</returns>
-        public virtual IQueryable<TEntity> List(Expression<Func<TEntity, bool>> cond = null) {
+        public IQueryable<TEntity> List(Expression<Func<TEntity, bool>> cond = null) {
             return ListAsync(cond).ToSync();
         }
 
@@ -124,7 +124,7 @@ namespace XWidget.EFLogic {
         /// </summary>
         /// <param name="likePatten">SQL Like模式</param>
         /// <returns>搜尋結果</returns>
-        public virtual IQueryable<TEntity> Search(
+        public IQueryable<TEntity> Search(
             string likePatten) {
             return SearchAsync(likePatten).ToSync();
         }
@@ -153,7 +153,7 @@ namespace XWidget.EFLogic {
         /// <param name="likePatten">SQL Like模式</param>
         /// <param name="properties">搜尋屬性名稱</param>
         /// <returns>搜尋結果</returns>
-        public virtual IQueryable<TEntity> Search(
+        public IQueryable<TEntity> Search(
             string likePatten,
             params string[] properties) {
             return SearchAsync(likePatten, properties).ToSync();
@@ -236,7 +236,7 @@ namespace XWidget.EFLogic {
         /// <param name="likePatten">SQL Like模式</param>
         /// <param name="propertySelectors">比對屬性選擇器</param>
         /// <returns>搜尋結果</returns>
-        public virtual IQueryable<TEntity> Search(
+        public IQueryable<TEntity> Search(
             string likePatten,
             params Expression<Func<TEntity, object>>[] propertySelectors) {
             return SearchAsync(likePatten, propertySelectors).ToSync();
@@ -256,7 +256,7 @@ namespace XWidget.EFLogic {
         /// </summary>
         /// <param name="id">唯一識別號</param>
         /// <returns>是否存在實例</returns>
-        public virtual bool Exists(object id) {
+        public bool Exists(object id) {
             return ExistsAsync(id).ToSync();
         }
 
@@ -274,7 +274,7 @@ namespace XWidget.EFLogic {
         /// </summary>
         /// <param name="id">唯一識別號</param>
         /// <returns>是否存在實例</returns>
-        public virtual bool Exists(TId id) {
+        public bool Exists(TId id) {
             return ExistsAsync(id).ToSync();
         }
 
@@ -293,7 +293,7 @@ namespace XWidget.EFLogic {
         /// </summary>
         /// <param name="cond">條件</param>
         /// <returns>尋找目標</returns>
-        public virtual TEntity FindOne(Expression<Func<TEntity, bool>> cond = null) {
+        public TEntity FindOne(Expression<Func<TEntity, bool>> cond = null) {
             return FindOneAsync(cond).ToSync();
         }
 
@@ -341,7 +341,7 @@ namespace XWidget.EFLogic {
         /// <param name="id">唯一識別號</param>
         /// <param name="parameters">參數</param>
         /// <returns>物件實例</returns>
-        public virtual TEntity Get(TId id, object[] parameters = null) {
+        public TEntity Get(TId id, object[] parameters = null) {
             return GetAsync(id, parameters).ToSync();
         }
 
@@ -395,7 +395,7 @@ namespace XWidget.EFLogic {
         /// <param name="entity">物件實例</param>
         /// <param name="parameters">參數</param>
         /// <returns>加入後的物件</returns>
-        public virtual TEntity Create(TEntity entity, params object[] parameters) {
+        public TEntity Create(TEntity entity, params object[] parameters) {
             return CreateAsync(entity, parameters).ToSync();
         }
 
@@ -425,7 +425,7 @@ namespace XWidget.EFLogic {
         /// <param name="entity">物件實例</param>
         /// <param name="parameters">參數</param>
         /// <returns>更新後的物件實例</returns>
-        public async Task<TEntity> UpdateOrCreateAsync(object entity, params object[] parameters) {
+        public virtual async Task<TEntity> UpdateOrCreateAsync(object entity, params object[] parameters) {
             var type = typeof(TEntity);
             TId id = (TId)type.GetProperty(IdentityPropertyName).GetValue(entity);
 
@@ -516,7 +516,7 @@ namespace XWidget.EFLogic {
         /// <param name="entity">物件實例</param>
         /// <param name="parameters">參數</param>
         /// <returns>更新後的物件實例</returns>
-        public virtual TEntity Update(TEntity entity, params object[] parameters) {
+        public TEntity Update(TEntity entity, params object[] parameters) {
             return UpdateAsync(entity, parameters).ToSync();
         }
 
@@ -526,7 +526,7 @@ namespace XWidget.EFLogic {
         /// <param name="entity">物件實例</param>
         /// <param name="parameters">參數</param>
         /// <returns>更新後的物件實例</returns>
-        public async Task<TEntity> UpdateOrCreateAsync(TEntity entity, params object[] parameters) {
+        public virtual async Task<TEntity> UpdateOrCreateAsync(TEntity entity, params object[] parameters) {
             var type = typeof(TEntity);
             TId id = (TId)type.GetProperty(IdentityPropertyName).GetValue(entity);
 
@@ -592,7 +592,7 @@ namespace XWidget.EFLogic {
         /// </summary>
         /// <param name="id">物件唯一識別號</param>
         /// <param name="parameters">參數</param>
-        public virtual void Delete(TId id, params object[] parameters) {
+        public void Delete(TId id, params object[] parameters) {
             DeleteAsync(id, parameters).ToSync();
         }
 
