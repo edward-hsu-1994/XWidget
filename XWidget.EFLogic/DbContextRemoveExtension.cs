@@ -32,8 +32,6 @@ namespace XWidget.EFLogic {
                 if (entityType.IsGenericType &&
                     entityType.GetGenericTypeDefinition() == typeof(ICollection<>)) {
                     entityType = entityType.GetGenericArguments()[0];
-                } else {
-                    return false;
                 }
                 return entitiesTypes
                     .Contains(entityType);
