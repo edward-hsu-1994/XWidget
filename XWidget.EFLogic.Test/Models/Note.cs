@@ -18,5 +18,10 @@ namespace XWidget.EFLogic.Test.Models {
         [ForeignKey("CategoryId")]
         [InverseProperty("Notes")]
         public virtual Category Category { get; set; }
+
+        [InverseProperty("Note")]
+        public virtual UserData UserData { get; set; }
+
+        public bool ShouldRemoveCascadeCategory() => false;
     }
 }

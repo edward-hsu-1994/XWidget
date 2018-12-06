@@ -25,5 +25,7 @@ namespace XWidget.EFLogic.Test.Models {
 
         [InverseProperty("Category")]
         public virtual ICollection<Note> Notes { get; set; }
+
+        public bool ShouldRemoveCascadeParent() => false;
     }
 }

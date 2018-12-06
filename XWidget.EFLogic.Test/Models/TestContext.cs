@@ -9,7 +9,7 @@ namespace XWidget.EFLogic.Test.Models {
     public class TestContext : DbContext {
         public DbSet<Category> Categories { get; set; }
         public DbSet<Note> Notes { get; set; }
-
+        public DbSet<UserData> UserDatas { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) {
             if (!optionsBuilder.IsConfigured) {
                 optionsBuilder.UseLazyLoadingProxies();
@@ -95,6 +95,24 @@ namespace XWidget.EFLogic.Test.Models {
             result.Notes.Add(new Note() {
                 Id = Guid.NewGuid(),
                 Title = "Note_6",
+                Category = category_B,
+                Context = "Test Context"
+            });
+            result.Notes.Add(new Note() {
+                Id = Guid.NewGuid(),
+                Title = "Note_7",
+                UserData = new UserData() {
+                    Name = "User1"
+                },
+                Category = category_B,
+                Context = "Test Context"
+            });
+            result.Notes.Add(new Note() {
+                Id = Guid.NewGuid(),
+                Title = "Note_8",
+                UserData = new UserData() {
+                    Name = "User2"
+                },
                 Category = category_B,
                 Context = "Test Context"
             });

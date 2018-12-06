@@ -46,6 +46,20 @@ namespace XWidget.EFLogic.Test {
 
             Assert.NotEmpty(context.Notes.Where(x => x.Category == category_B));
             Assert.NotEmpty(context.Categories.Where(x => x.ParentId == category_B.Id));
+
+
+            Assert.NotEmpty(context.Notes.Where(x => x.Title == "Note_8"));
+            Assert.NotEmpty(context.UserDatas.Where(x => x.Name == "User2"));
+            context.RemoveCascade(context.UserDatas.First(x => x.Name == "User2"));
+            context.SaveChanges();
+            Assert.NotEmpty(context.Notes.Where(x => x.Title == "Note_8"));
+            Assert.Empty(context.UserDatas.Where(x => x.Name == "User2"));
+
+
+            Assert.NotEmpty(context.Notes.Where(x => x.Title == "Note_7"));
+            context.RemoveCascade(category_B);
+            context.SaveChanges();
+            Assert.Empty(context.Notes.Where(x => x.Title == "Note_7"));
         }
     }
 }
