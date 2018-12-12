@@ -85,10 +85,10 @@ public async void Test() {
 ## LogicBase掛勾
 LogicBase類別提供事件處理掛勾，提供CRUD操作前後的處理，可以使用override複寫方法使用
 
-1. 建立前處理: Task BeforeCreate(TEntity entity, params object[] parameters)
-2. 建立後處理: Task BeforeUpdate(TEntity entity, params object[] parameters)
-3. 刪除前處理: Task BeforeDelete(TEntity entity, params object[] parameters)
-4. 取得後處理: Task AfterGet(TEntity entity, params object[] parameters)
-5. 建立後處理: Task AfterCreate(TEntity entity, params object[] parameters)
-6. 更新後處理: Task AfterUpdate(TEntity entity, params object[] parameters)
-7. 刪除後處理: Task AfterDelete(TEntity entity, params object[] parameters)
+1. 建立前處理: Task BeforeCreate(TEntity entity, TParameters parameters = default(TParameters))
+2. 建立後處理: Task BeforeUpdate(TEntity entity, TParameters parameters = default(TParameters))
+3. 刪除前處理: Task BeforeDelete(TEntity entity, TParameters parameters = default(TParameters))
+4. 取得後處理: Task AfterGet(TEntity entity, TParameters parameters = default(TParameters))
+5. 建立後處理: Task AfterCreate(TEntity entity, TParameters parameters = default(TParameters))
+6. 更新後處理: Task AfterUpdate(TEntity entity, TParameters parameters = default(TParameters))
+7. 刪除後處理: Task AfterDelete(TEntity entity, TParameters parameters = default(TParameters))

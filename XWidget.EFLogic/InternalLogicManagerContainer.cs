@@ -4,8 +4,8 @@ using System.Collections.Generic;
 using System.Text;
 
 namespace XWidget.EFLogic {
-    internal class InternalLogicManagerContainer<TContext>
+    internal class InternalLogicManagerContainer<TContext, TParameters>
         where TContext : DbContext {
-        public LogicManagerBase<TContext> Manager { get; set; }
+        public LogicManagerBase<TContext, TParameters> Manager { get; set; }
     }
 }

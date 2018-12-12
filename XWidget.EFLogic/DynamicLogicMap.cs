@@ -9,7 +9,7 @@ namespace XWidget.EFLogic {
     /// <summary>
     /// 動態邏輯處理對應
     /// </summary>
-    public class DynamicLogicMap<TContext>
+    public class DynamicLogicMap<TContext, TParameters>
         where TContext : DbContext {
         /// <summary>
         /// 型別與主鍵對應
@@ -29,14 +29,14 @@ namespace XWidget.EFLogic {
         /// <param name="logicManager">邏輯管理器</param>
         /// <param name="type">型別</param>
         /// <returns>指定型別的Logic實例</returns>
-        public object GetLogicByType(LogicManagerBase<TContext> logicManager, Type type) {
+        public object GetLogicByType(LogicManagerBase<TContext, TParameters> logicManager, Type type) {
             if (!runtimeLogicMaps.ContainsKey(type)) {
                 CreateLogicByType(logicManager, type);
             }
             return runtimeLogicMaps[type];
         }
 
-        private void CreateLogicByType(LogicManagerBase<TContext> logicManager, Type type) {
+        private void CreateLogicByType(LogicManagerBase<TContext, TParameters> logicManager, Type type) {
             if (!Maps.ContainsKey(type)) {
                 throw new NotSupportedException($"Not support type {type.Name}");
             }
@@ -51,7 +51,7 @@ namespace XWidget.EFLogic {
                 .DefineDynamicModule("TempModule_" + Guid.NewGuid().ToString().Replace('-', '_'));
 
 
-            var logicType = typeof(LogicBase<,,>).MakeGenericType(typeof(TContext), type, type.GetProperty(Maps[type]).PropertyType);
+            var logicType = typeof(LogicBase<,,,>).MakeGenericType(typeof(TContext), type, type.GetProperty(Maps[type]).PropertyType, typeof(TParameters));
 
 
             //建構實作介面類別

@@ -18,7 +18,7 @@ namespace XWidget.EFLogic.Test.Controllers {
 
         [HttpGet]
         public async Task Test() {
-            var categoryLogic = Manager.GetLogicByType<Category, Guid>();
+            var categoryLogic = Manager.GetLogicByType<Category, Guid, object[]>();
 
             var category = categoryLogic.Create(new Category() {
                 Name = "Test01"
@@ -53,7 +53,7 @@ namespace XWidget.EFLogic.Test.Controllers {
 
             Assert.NotEmpty(categoryLogic.List(x => x.Notes.Count > 0));
 
-            var noteLogic = Manager.GetLogicByType<Note, Guid>();
+            var noteLogic = Manager.GetLogicByType<Note, Guid, object[]>();
 
             Assert.NotEmpty(noteLogic.List());
 

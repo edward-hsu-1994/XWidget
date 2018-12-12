@@ -4,7 +4,7 @@ using System.Text;
 using XWidget.EFLogic.Test.Models;
 
 namespace XWidget.EFLogic.Test.Logic {
-    public class TestLogicManager : LogicManagerBase<TestContext> {
+    public class TestLogicManager : LogicManagerBase<TestContext, object[]> {
         // public NoteLogic Note { get; set; }
         public CategoryLogic Category { get; set; }
 

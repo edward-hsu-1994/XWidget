@@ -19,14 +19,14 @@ namespace Microsoft.Extensions.DependencyInjection {
         /// <param name="services">服務集合</param>
         /// <param name="optionsAction">EntityFramework選項</param>
         /// <returns>動態邏輯建構器</returns>
-        public static DynamicLogicMapBuilder<TContext> AddLogic<TLogic, TContext>(
+        public static DynamicLogicMapBuilder<TContext> AddLogic<TLogic, TContext, TParameters>(
             this IServiceCollection services,
             Action<IServiceProvider, DbContextOptionsBuilder> optionsAction)
-            where TLogic : LogicManagerBase<TContext>
+            where TLogic : LogicManagerBase<TContext, TParameters>
             where TContext : DbContext {
             services.AddDbContext<TContext>(optionsAction);
 
-            return services.GetDynamicLogicMapBuilder<TLogic, TContext>();
+            return services.GetDynamicLogicMapBuilder<TLogic, TContext, TParameters>();
         }
 
         /// <summary>
@@ -37,14 +37,14 @@ namespace Microsoft.Extensions.DependencyInjection {
         /// <param name="services">服務集合</param>
         /// <param name="optionsAction">EntityFramework選項</param>
         /// <returns>動態邏輯建構器</returns>
-        public static DynamicLogicMapBuilder<TContext> AddLogic<TLogic, TContext>(
+        public static DynamicLogicMapBuilder<TContext> AddLogic<TLogic, TContext, TParameters>(
             this IServiceCollection services,
             Action<DbContextOptionsBuilder> optionsAction)
-            where TLogic : LogicManagerBase<TContext>
+            where TLogic : LogicManagerBase<TContext, TParameters>
             where TContext : DbContext {
             services.AddDbContext<TContext>(optionsAction);
 
-            return services.GetDynamicLogicMapBuilder<TLogic, TContext>();
+            return services.GetDynamicLogicMapBuilder<TLogic, TContext, TParameters>();
         }
 
         /// <summary>
@@ -54,22 +54,22 @@ namespace Microsoft.Extensions.DependencyInjection {
         /// <typeparam name="TContext">資料庫內容類型</typeparam>
         /// <param name="services">服務集合</param>
         /// <returns>動態邏輯建構器</returns>
-        public static DynamicLogicMapBuilder<TContext> AddLogic<TLogic, TContext>(
+        public static DynamicLogicMapBuilder<TContext> AddLogic<TLogic, TContext, TParameters>(
             this IServiceCollection services)
-            where TLogic : LogicManagerBase<TContext>
+            where TLogic : LogicManagerBase<TContext, TParameters>
             where TContext : DbContext {
             services.AddDbContext<TContext>();
 
-            return services.GetDynamicLogicMapBuilder<TLogic, TContext>();
+            return services.GetDynamicLogicMapBuilder<TLogic, TContext, TParameters>();
         }
 
-        private static DynamicLogicMapBuilder<TContext> GetDynamicLogicMapBuilder<TLogic, TContext>(
+        private static DynamicLogicMapBuilder<TContext> GetDynamicLogicMapBuilder<TLogic, TContext, TParameters>(
             this IServiceCollection services)
-            where TLogic : LogicManagerBase<TContext>
+            where TLogic : LogicManagerBase<TContext, TParameters>
             where TContext : DbContext {
             var builder = new DynamicLogicMapBuilder<TContext>();
 
-            services.AddScoped<InternalLogicManagerContainer<TContext>>();
+            services.AddScoped<InternalLogicManagerContainer<TContext, TParameters>>();
 
             services.AddScoped<TLogic>(serviceProvider => {
                 var constructors = typeof(TLogic).GetConstructors().FirstOrDefault();
@@ -79,11 +79,11 @@ namespace Microsoft.Extensions.DependencyInjection {
                 instance.MapBuilder = builder;
                 instance.ServiceProvider = serviceProvider;
 
-                var scopeContainer = serviceProvider.GetService<InternalLogicManagerContainer<TContext>>();
+                var scopeContainer = serviceProvider.GetService<InternalLogicManagerContainer<TContext, TParameters>>();
                 scopeContainer.Manager = instance;
 
                 foreach (var property in typeof(TLogic).GetProperties()) {
-                    var isLogic = GetAllBaseTypes(property.PropertyType).Where(x => x.IsGenericType).Select(x => x.GetGenericTypeDefinition()).Contains(typeof(LogicBase<,,>));
+                    var isLogic = GetAllBaseTypes(property.PropertyType).Where(x => x.IsGenericType).Select(x => x.GetGenericTypeDefinition()).Contains(typeof(LogicBase<,,,>));
 
                     if (!isLogic) continue;
 
@@ -96,18 +96,18 @@ namespace Microsoft.Extensions.DependencyInjection {
             });
 
             foreach (var property in typeof(TLogic).GetProperties()) {
-                var isLogic = GetAllBaseTypes(property.PropertyType).Where(x => x.IsGenericType).Select(x => x.GetGenericTypeDefinition()).Contains(typeof(LogicBase<,,>));
+                var isLogic = GetAllBaseTypes(property.PropertyType).Where(x => x.IsGenericType).Select(x => x.GetGenericTypeDefinition()).Contains(typeof(LogicBase<,,,>));
 
                 if (!isLogic) continue;
 
                 services.AddScoped(property.PropertyType, serviceProvider => {
-                    var scopeContainer = serviceProvider.GetService<InternalLogicManagerContainer<TContext>>();
+                    var scopeContainer = serviceProvider.GetService<InternalLogicManagerContainer<TContext, TParameters>>();
 
                     var constuctor = property.PropertyType.GetConstructors().Single();
 
                     var parameterValues = new List<object>();
                     foreach (var param in constuctor.GetParameters()) {
-                        var isLogicManager = param.ParameterType.GetAllBaseTypes().Where(x => x.IsGenericType).Select(x => x.GetGenericTypeDefinition()).Contains(typeof(LogicManagerBase<>));
+                        var isLogicManager = param.ParameterType.GetAllBaseTypes().Where(x => x.IsGenericType).Select(x => x.GetGenericTypeDefinition()).Contains(typeof(LogicManagerBase<,>));
 
                         if (isLogicManager) {
                             parameterValues.Add(scopeContainer.Manager ?? serviceProvider.GetService(param.ParameterType));
