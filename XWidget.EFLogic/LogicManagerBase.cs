@@ -12,6 +12,19 @@ namespace XWidget.EFLogic {
     /// <summary>
     /// 邏輯管理器
     /// </summary>
+    public abstract class LogicManagerBase<TContext> : LogicManagerBase<TContext, object[]>
+        where TContext : DbContext {
+        /// <summary>
+        /// 邏輯管理器建構子
+        /// </summary>
+        /// <param name="database">資料庫上下文</param>
+        public LogicManagerBase(TContext database) : base(database) {
+        }
+    }
+
+    /// <summary>
+    /// 邏輯管理器
+    /// </summary>
     public abstract class LogicManagerBase<TContext, TParameters> where TContext : DbContext {
         internal DynamicLogicMapBuilder<TContext> MapBuilder { get; set; }
 
@@ -49,9 +62,8 @@ namespace XWidget.EFLogic {
         /// </summary>
         /// <typeparam name="TEntity">實例類型</typeparam>
         /// <typeparam name="TId">唯一識別號類型</typeparam>
-        /// <typeparam name="TParameters">傳遞參數</typeparam>
         /// <returns>操作邏輯</returns>
-        public LogicBase<TContext, TEntity, TId, TParameters> GetLogicByType<TEntity, TId, TParameters>()
+        public LogicBase<TContext, TEntity, TId, TParameters> GetLogicByType<TEntity, TId>()
             where TEntity : class {
             return (LogicBase<TContext, TEntity, TId, TParameters>)GetLogicByType(typeof(TEntity));
         }

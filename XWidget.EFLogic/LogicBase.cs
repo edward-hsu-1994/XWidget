@@ -16,9 +16,41 @@ namespace XWidget.EFLogic {
     /// <summary>
     /// 基礎邏輯操作器基礎
     /// </summary>
-    public abstract class LogicBase<TContext, TEntity, TId, TParameters>
+    public abstract class LogicBase<TContext, TEntity, TId>
+        : LogicBase<TContext, TEntity, TId, object[]>
         where TEntity : class
         where TContext : DbContext {
+
+        /// <summary>
+        /// 基礎邏輯操作器基礎建構子，預設的主鍵為Id
+        /// </summary>
+        /// <param name="logicManager">資料庫操作邏輯管理器實例</param>
+        public LogicBase(LogicManagerBase<TContext, object[]> logicManager) : base(logicManager, "Id") {
+        }
+
+        /// <summary>
+        /// 基礎邏輯操作器基礎建構子
+        /// </summary>
+        /// <param name="logicManager">資料庫操作邏輯管理器實例</param>
+        /// <param name="identityPropertyName">唯一識別號屬性選擇器</param>
+        public LogicBase(LogicManagerBase<TContext, object[]> logicManager, string identityPropertyName) : base(logicManager, identityPropertyName) {
+        }
+
+        /// <summary>
+        /// 基礎邏輯操作器基礎建構子
+        /// </summary>
+        /// <param name="logicManager">資料庫操作邏輯管理器實例</param>
+        /// <param name="identitySelector">唯一識別號屬性選擇器</param>
+        public LogicBase(LogicManagerBase<TContext, object[]> logicManager, Expression<Func<TEntity, TId>> identitySelector) : base(logicManager, identitySelector) {
+        }
+    }
+
+    /// <summary>
+    /// 基礎邏輯操作器基礎
+    /// </summary>
+    public abstract class LogicBase<TContext, TEntity, TId, TParameters>
+    where TEntity : class
+    where TContext : DbContext {
         /// <summary>
         /// 資料庫操作邏輯管理器
         /// </summary>

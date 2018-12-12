@@ -16,6 +16,22 @@ namespace Microsoft.Extensions.DependencyInjection {
         /// </summary>
         /// <typeparam name="TLogic">邏輯管理器類型</typeparam>
         /// <typeparam name="TContext">資料庫內容類型</typeparam>
+        /// <param name="services">服務集合</param>
+        /// <param name="optionsAction">EntityFramework選項</param>
+        /// <returns>動態邏輯建構器</returns>
+        public static DynamicLogicMapBuilder<TContext> AddLogic<TLogic, TContext>(
+            this IServiceCollection services,
+            Action<IServiceProvider, DbContextOptionsBuilder> optionsAction)
+            where TLogic : LogicManagerBase<TContext, object[]>
+            where TContext : DbContext {
+            return AddLogic<TLogic, TContext, object[]>(services, optionsAction);
+        }
+
+        /// <summary>
+        /// 加入邏輯管理
+        /// </summary>
+        /// <typeparam name="TLogic">邏輯管理器類型</typeparam>
+        /// <typeparam name="TContext">資料庫內容類型</typeparam>
         /// <typeparam name="TParameters">傳遞參數類型</typeparam>
         /// <param name="services">服務集合</param>
         /// <param name="optionsAction">EntityFramework選項</param>
@@ -35,6 +51,22 @@ namespace Microsoft.Extensions.DependencyInjection {
         /// </summary>
         /// <typeparam name="TLogic">邏輯管理器類型</typeparam>
         /// <typeparam name="TContext">資料庫內容類型</typeparam>
+        /// <param name="services">服務集合</param>
+        /// <param name="optionsAction">EntityFramework選項</param>
+        /// <returns>動態邏輯建構器</returns>
+        public static DynamicLogicMapBuilder<TContext> AddLogic<TLogic, TContext>(
+            this IServiceCollection services,
+            Action<DbContextOptionsBuilder> optionsAction)
+            where TLogic : LogicManagerBase<TContext, object[]>
+            where TContext : DbContext {
+            return AddLogic<TLogic, TContext, object[]>(services, optionsAction);
+        }
+
+        /// <summary>
+        /// 加入邏輯管理
+        /// </summary>
+        /// <typeparam name="TLogic">邏輯管理器類型</typeparam>
+        /// <typeparam name="TContext">資料庫內容類型</typeparam>
         /// <typeparam name="TParameters">傳遞參數類型</typeparam>
         /// <param name="services">服務集合</param>
         /// <param name="optionsAction">EntityFramework選項</param>
@@ -47,6 +79,22 @@ namespace Microsoft.Extensions.DependencyInjection {
             services.AddDbContext<TContext>(optionsAction);
 
             return services.GetDynamicLogicMapBuilder<TLogic, TContext, TParameters>();
+        }
+
+        /// <summary>
+        /// 加入邏輯管理
+        /// </summary>
+        /// <typeparam name="TLogic">邏輯管理器類型</typeparam>
+        /// <typeparam name="TContext">資料庫內容類型</typeparam>
+        /// <param name="services">服務集合</param>
+        /// <returns>動態邏輯建構器</returns>
+        public static DynamicLogicMapBuilder<TContext> AddLogic<TLogic, TContext>(
+            this IServiceCollection services)
+            where TLogic : LogicManagerBase<TContext, object[]>
+            where TContext : DbContext {
+            services.AddDbContext<TContext>();
+
+            return AddLogic<TLogic, TContext, object[]>(services);
         }
 
         /// <summary>
