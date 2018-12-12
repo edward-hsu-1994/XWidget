@@ -16,6 +16,7 @@ namespace Microsoft.Extensions.DependencyInjection {
         /// </summary>
         /// <typeparam name="TLogic">邏輯管理器類型</typeparam>
         /// <typeparam name="TContext">資料庫內容類型</typeparam>
+        /// <typeparam name="TParameters">傳遞參數類型</typeparam>
         /// <param name="services">服務集合</param>
         /// <param name="optionsAction">EntityFramework選項</param>
         /// <returns>動態邏輯建構器</returns>
@@ -34,6 +35,7 @@ namespace Microsoft.Extensions.DependencyInjection {
         /// </summary>
         /// <typeparam name="TLogic">邏輯管理器類型</typeparam>
         /// <typeparam name="TContext">資料庫內容類型</typeparam>
+        /// <typeparam name="TParameters">傳遞參數類型</typeparam>
         /// <param name="services">服務集合</param>
         /// <param name="optionsAction">EntityFramework選項</param>
         /// <returns>動態邏輯建構器</returns>
@@ -52,6 +54,7 @@ namespace Microsoft.Extensions.DependencyInjection {
         /// </summary>
         /// <typeparam name="TLogic">邏輯管理器類型</typeparam>
         /// <typeparam name="TContext">資料庫內容類型</typeparam>
+        /// <typeparam name="TParameters">傳遞參數類型</typeparam>
         /// <param name="services">服務集合</param>
         /// <returns>動態邏輯建構器</returns>
         public static DynamicLogicMapBuilder<TContext> AddLogic<TLogic, TContext, TParameters>(
