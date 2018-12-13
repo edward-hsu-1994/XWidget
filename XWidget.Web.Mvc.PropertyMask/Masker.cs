@@ -140,7 +140,7 @@ namespace Microsoft.AspNetCore.Mvc {
             }
 
             // 檢查是否發生參考循環
-            if (refList.Contains(data)) {
+            if (!data.GetType().IsValueType && refList.Contains(data)) {
                 // 發生參考循環則直接返回
                 return data;
             }
