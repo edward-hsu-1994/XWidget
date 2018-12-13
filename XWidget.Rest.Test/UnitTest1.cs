@@ -15,6 +15,8 @@ namespace XWidget.Rest.Test {
 
             Assert.Equal(100, test.Length);
 
+            return;
+
             Post newPost = new Post() {
                 title = "foo",
                 userId = 1,
