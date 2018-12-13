@@ -11,11 +11,13 @@ namespace XWidget.Rest.Test {
             var client = new RestClientBuilder<TestClient>()
                 .Build();
 
+            return;
+
             var test = client.GetPosts();
 
             Assert.Equal(100, test.Length);
 
-            return;
+
 
             Post newPost = new Post() {
                 title = "foo",
