@@ -471,7 +471,7 @@ namespace XWidget.EFLogic {
                 var obj = member.Metadata.PropertyInfo.GetValue(entity);
 
                 if (obj != null) {
-                    if (refList.Contains(obj)) { // 防止循環參照
+                    if (!obj.GetType().IsValueType && refList.Contains(obj)) { // 防止循環參照
                         continue;
                     }
 
