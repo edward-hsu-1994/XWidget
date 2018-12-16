@@ -177,6 +177,19 @@ namespace Microsoft.AspNetCore.Mvc {
                 // 取得該屬性的JsonPropertyMaskAttribute集合，如果未設定則應該為空集合
                 var attrs = property.GetCustomAttributes<PropertyMaskAttribute>();
 
+                // 假設未設定Attribute，則尋找Mask方法調用
+                if (attrs.Count() == 0) {
+                    //ShouldRemoveCascade
+
+                    var maskMethod = type.GetMethod($"Get{property.Name}Mask",
+                    BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase);
+
+                    if (maskMethod != null &&
+                        maskMethod.ReturnType == typeof(IEnumerable<PropertyMaskAttribute>)) {
+                        attrs = (IEnumerable<PropertyMaskAttribute>)maskMethod.Invoke(data, new object[0]);
+                    }
+                }
+
                 // 在JsonMask設定集合中尋找是否有符合項目
                 if (attrs.Any(x => x.IsMatch(controller as Controller, type, packageType, patternName))) {
                     interceptor.MaskedProperties.Add(property.Name);

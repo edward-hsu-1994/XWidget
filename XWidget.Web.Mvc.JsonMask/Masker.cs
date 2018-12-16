@@ -46,7 +46,7 @@ namespace XWidget.Web.Mvc.JsonMask {
         /// <summary>
         /// 取得屬性屏蔽後的結果
         /// </summary>
-        /// <typeparam name="T">資料類型</typeparam>
+        /// <typeparam name="TData">資料類型</typeparam>
         /// <param name="data">資料</param>
         /// <param name="patternName">模式名稱</param>
         /// <returns>屏蔽後的資料</returns>
@@ -60,7 +60,8 @@ namespace XWidget.Web.Mvc.JsonMask {
         /// <summary>
         /// 取得屬性屏蔽後的結果
         /// </summary>
-        /// <typeparam name="T">資料類型</typeparam>
+        /// <typeparam name="TData">資料類型</typeparam>
+        /// <typeparam name="TController">控制器類型</typeparam>
         /// <param name="data">資料</param>
         /// <param name="controller">控制實例</param>
         /// <param name="patternName">模式名稱</param>
