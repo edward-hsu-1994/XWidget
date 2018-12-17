@@ -27,8 +27,16 @@ namespace XWidget.Web.Mvc.PropertyMask.Test.Models {
         /// <summary>
         /// 子分類
         /// </summary>
-        [PropertyMask(key: typeof(IEnumerable<Category_PackageType>), Method = MaskMethod.PackageType)]
+        // [PropertyMask(key: typeof(IEnumerable<Category_PackageType>), Method = MaskMethod.PackageType)]
         public virtual ICollection<Category_PackageType> Children { get; set; }
+
+        public IEnumerable<PropertyMaskAttribute> GetChildrenMask() {
+            return new PropertyMaskAttribute[]{
+                new PropertyMaskAttribute(key: typeof(IEnumerable<Category_PackageType>)) {
+                    Method = MaskMethod.PackageType
+                }
+            };
+        }
 
         /// <summary>
         /// 取得分類樹狀結構
