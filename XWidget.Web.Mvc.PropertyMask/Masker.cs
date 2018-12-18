@@ -173,7 +173,11 @@ namespace Microsoft.AspNetCore.Mvc {
             var interceptor = new PropertyMaskInterceptor();
 
             #region 取得該類型中非靜態的所有屬性
-            foreach (var property in type.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)) {
+            foreach (var property in type.GetProperties(BindingFlags.Instance | BindingFlags.Public)) {
+                if (!property.GetMethod.IsVirtual) {
+                    continue;
+                }
+
                 // 取得該屬性的JsonPropertyMaskAttribute集合，如果未設定則應該為空集合
                 var attrs = property.GetCustomAttributes<PropertyMaskAttribute>();
 
