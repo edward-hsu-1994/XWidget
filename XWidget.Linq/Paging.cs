@@ -56,12 +56,24 @@ namespace XWidget.Linq {
         public virtual bool HasNextPage => CurrentPageIndex < TotalPageCount - 1;
 
         /// <summary>
+        /// 對應方法
+        /// </summary>
+        [JsonIgnore]
+        public Func<TSource, TSource> Selector { get; set; }
+
+        /// <summary>
         /// 分頁結果
         /// </summary>
         public virtual IEnumerable<TSource> Result {
             get {
                 if (Take == -1) return Source.Skip(Skip);
-                return Source.Skip(Skip).Take(Take);
+                var result = Source.Skip(Skip).Take(Take).ToArray();
+
+                if (Selector != null) {
+                    return result.Select(x => Selector(x));
+                }
+
+                return result;
             }
         }
 
