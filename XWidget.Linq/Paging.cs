@@ -72,6 +72,12 @@ namespace XWidget.Linq {
         public virtual IEnumerable<TSource> Source { get; private set; }
 
         /// <summary>
+        /// 預設建構子
+        /// </summary>
+        [Obsolete("此建構子僅供Proxy使用", true)]
+        public Paging() { }
+
+        /// <summary>
         /// 分頁建構子
         /// </summary>
         /// <param name="source">分頁資料來源</param>
