@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.Serialization;
 using System.Text;
 
 namespace XWidget.Web.Mvc.PropertyMask {
@@ -17,7 +18,7 @@ namespace XWidget.Web.Mvc.PropertyMask {
                 var propertyName = invocation.Method.Name.Split(new char[] { '_' }, 2)[1];
 
                 if (MaskedProperties.Contains(propertyName)) {
-                    invocation.ReturnValue = invocation.Method.ReturnType.IsValueType ? Activator.CreateInstance(invocation.Method.ReturnType) : null;
+                    invocation.ReturnValue = invocation.Method.ReturnType.IsValueType ? FormatterServices.GetUninitializedObject(invocation.Method.ReturnType) : null;
                     return;
                 }
 

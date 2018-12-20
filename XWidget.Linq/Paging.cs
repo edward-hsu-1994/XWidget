@@ -13,22 +13,22 @@ namespace XWidget.Linq {
         /// <summary>
         /// 起始索引
         /// </summary>
-        public int Skip { get; private set; }
+        public virtual int Skip { get; private set; }
 
         /// <summary>
         /// 取得筆數
         /// </summary>
-        public int Take { get; private set; }
+        public virtual int Take { get; private set; }
 
         /// <summary>
         /// 資料總筆數
         /// </summary>
-        public int TotalCount => Source.Count();
+        public virtual int TotalCount => Source.Count();
 
         /// <summary>
         /// 目前所在分頁索引
         /// </summary>
-        public int CurrentPageIndex {
+        public virtual int CurrentPageIndex {
             get {
                 if (Take == -1) return 0;
                 return (int)Math.Floor(Skip / (double)Take);
@@ -38,7 +38,7 @@ namespace XWidget.Linq {
         /// <summary>
         /// 總頁數
         /// </summary>
-        public int TotalPageCount {
+        public virtual int TotalPageCount {
             get {
                 if (Take == -1) return 1;
                 return (int)Math.Ceiling(TotalCount / (double)Take);
@@ -48,12 +48,18 @@ namespace XWidget.Linq {
         /// <summary>
         /// 是否有上一頁
         /// </summary>
-        public bool HasPreviousPage => CurrentPageIndex > 0;
+        public virtual bool HasPreviousPage => CurrentPageIndex > 0;
 
         /// <summary>
         /// 是否有下一頁
         /// </summary>
-        public bool HasNextPage => CurrentPageIndex < TotalPageCount - 1;
+        public virtual bool HasNextPage => CurrentPageIndex < TotalPageCount - 1;
+
+        /// <summary>
+        /// 對應方法
+        /// </summary>
+        [JsonIgnore]
+        public Func<TSource, TSource> Selector { get; set; }
 
         /// <summary>
         /// 分頁結果
@@ -61,7 +67,13 @@ namespace XWidget.Linq {
         public virtual IEnumerable<TSource> Result {
             get {
                 if (Take == -1) return Source.Skip(Skip);
-                return Source.Skip(Skip).Take(Take);
+                var result = Source.Skip(Skip).Take(Take).ToArray();
+
+                if (Selector != null) {
+                    return result.Select(x => Selector(x));
+                }
+
+                return result;
             }
         }
 
@@ -69,7 +81,13 @@ namespace XWidget.Linq {
         /// 分頁資料來源
         /// </summary>
         [JsonIgnore]
-        public IEnumerable<TSource> Source { get; private set; }
+        public virtual IEnumerable<TSource> Source { get; private set; }
+
+        /// <summary>
+        /// 預設建構子
+        /// </summary>
+        [Obsolete("此建構子僅供Proxy使用", true)]
+        public Paging() { }
 
         /// <summary>
         /// 分頁建構子
