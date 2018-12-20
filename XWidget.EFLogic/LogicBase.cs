@@ -515,7 +515,7 @@ namespace XWidget.EFLogic {
 
                     if (Database.Model.FindEntityType(obj.GetType()) == null) continue;
 
-                    ((dynamic)Manager.GetLogicByType(member.Metadata.PropertyInfo.PropertyType)).Update(obj);
+                    ((dynamic)Manager.GetLogicByType(member.Metadata.PropertyInfo.PropertyType)).UpdateOrCreate(obj);
                 } else if (member is CollectionEntry) {
                     var collection = (IEnumerable)obj;
 
@@ -524,7 +524,7 @@ namespace XWidget.EFLogic {
                     foreach (var item in collection) {
                         if (item == null) continue;
                         if (Database.Model.FindEntityType(item.GetType()) == null) continue;
-                        ((dynamic)Manager.GetLogicByType(item.GetType())).Update(item);
+                        ((dynamic)Manager.GetLogicByType(item.GetType())).UpdateOrCreate(item);
                     }
                 } else {
                     member.Metadata.PropertyInfo.SetValue(
