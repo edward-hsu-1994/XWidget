@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc.Testing;
 using System;
 using System.Collections.Generic;
 using System.Net;
@@ -9,27 +10,15 @@ using System.Threading.Tasks;
 using Xunit;
 
 namespace XWidget.EFLogic.Test {
-    public class WebTest {
+    public class WebTest : TestBase {
+        public WebTest(TestWebFactory factory) : base(factory) {
+        }
 
         [Fact]
         public async Task LogicTest() {
-            var webhost = BuildWebHost(new string[0]);
-
-            await webhost.StartAsync();
-
-            var client = new HttpClient();
-
-            var response1 = await client.GetAsync("http://localhost:9995/api/test");
+            var response1 = await Client.GetAsync("/api/test");
 
             Assert.True(response1.IsSuccessStatusCode);
         }
-
-        public static IWebHost BuildWebHost(string[] args) =>
-            WebHost.CreateDefaultBuilder(args)
-                .UseKestrel(options => {
-                    options.Listen(IPAddress.Loopback, 9995);
-                })
-                .UseStartup<Startup>()
-                .Build();
     }
 }

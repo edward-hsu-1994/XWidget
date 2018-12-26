@@ -12,8 +12,7 @@ namespace XWidget.EFLogic.Test.Models {
         public virtual string Name { get; set; }
 
         [RemoveCascadeStopper]
-        [ForeignKey("Id")]
         [InverseProperty("UserData")]
-        public virtual Note Note { get; set; }
+        public virtual ICollection<Note> Note { get; set; }
     }
 }
