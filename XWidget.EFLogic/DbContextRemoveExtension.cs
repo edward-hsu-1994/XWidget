@@ -8,6 +8,7 @@ using System.Reflection;
 using System.Runtime.Serialization;
 using System.ComponentModel.DataAnnotations.Schema;
 using XWidget.Utilities;
+using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace XWidget.EFLogic {
     /// <summary>
@@ -50,12 +51,12 @@ namespace XWidget.EFLogic {
             }
 
             // 清除外來鍵
-            void ClearFK(Type currentType, Type propertyOrFieldType, object value) {
+            void ClearFK(Type currentType, Type propertyType, object value) {
                 var runtimeType = context.Model.FindRuntimeEntityType(currentType);
-                var propertyType = context.Model.FindRuntimeEntityType(GetRawType(propertyOrFieldType));
+                var propertyType0 = context.Model.FindRuntimeEntityType(GetRawType(propertyType));
 
                 var fks_Prop = runtimeType.GetReferencingForeignKeys()
-                    .Where(x => x.DeclaringEntityType == propertyType)
+                    .Where(x => x.DeclaringEntityType == propertyType0)
                     .SelectMany(x => x.Properties)
                     .Select(x => x.PropertyInfo)
                     .Where(x => x != null);
@@ -75,10 +76,10 @@ namespace XWidget.EFLogic {
 
             Type type = entity.GetType();
             var entityType = context.Model.FindRuntimeEntityType(type);
-            var navProperties = entityType.GetNavigations().Select(x => x.PropertyInfo).Where(x => x != null);
+            var navProperties = entityType.GetNavigations();
 
             foreach (var property in navProperties) {
-                var value = property.GetValue(entity);
+                var value = property.PropertyInfo.GetValue(entity);
 
                 #region 省略無需處理屬性
                 if (value == null) {
@@ -86,17 +87,17 @@ namespace XWidget.EFLogic {
                 }
 
                 // 略過無對應屬性
-                if (property.GetCustomAttribute<NotMappedAttribute>() != null) {
+                if (property.PropertyInfo.GetCustomAttribute<NotMappedAttribute>() != null) {
                     continue;
                 }
 
-                if (!TypeCheck(property.PropertyType)) {
+                if (!TypeCheck(property.PropertyInfo.PropertyType)) {
                     continue;
                 }
                 #endregion
 
-                if (property.GetCustomAttribute<RemoveCascadeStopperAttribute>() != null) {
-                    ClearFK(type, property.PropertyType, value);
+                if (property.PropertyInfo.GetCustomAttribute<RemoveCascadeStopperAttribute>() != null) {
+                    ClearFK(type, property.PropertyInfo.PropertyType, value);
                     continue;
                 }
 
@@ -106,7 +107,7 @@ namespace XWidget.EFLogic {
 
                 if (shouldRemoveCascade != null && //如果存在連鎖刪除判斷方法且不允許連鎖刪除
                     false.Equals(shouldRemoveCascade.Invoke(entity, new object[0]))) {
-                    ClearFK(type, property.PropertyType, value);
+                    ClearFK(type, property.PropertyInfo.PropertyType, value);
                     continue;
                 }
 
