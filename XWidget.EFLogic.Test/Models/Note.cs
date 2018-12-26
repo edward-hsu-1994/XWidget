@@ -15,10 +15,12 @@ namespace XWidget.EFLogic.Test.Models {
         public virtual string Title { get; set; }
         public virtual string Context { get; set; }
 
+        public virtual Guid? UserDataId { get; set; }
         [ForeignKey("CategoryId")]
         [InverseProperty("Notes")]
         public virtual Category Category { get; set; }
 
+        [ForeignKey("UserDataId")]
         [InverseProperty("Note")]
         public virtual UserData UserData { get; set; }
 

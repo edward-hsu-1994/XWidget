@@ -39,9 +39,68 @@ namespace XWidget.EFLogic {
                     .Contains(entityType);
             }
 
+            // 取得基礎類型
+            Type GetRawType(Type _type) {
+                if (_type.IsGenericType &&
+                    _type.GetGenericTypeDefinition() == typeof(ICollection<>)) {
+                    _type = _type.GetGenericArguments()[0];
+                }
+                return _type;
+            }
+
+            // 取得預設值
+            object GetDefault(Type _type) {
+                if (_type.IsValueType) {
+                    return Activator.CreateInstance(_type);
+                }
+                return null;
+            }
+
+            // 清除外來鍵
+            void ClearFK(Type currentType, Type propertyOrFieldType, object value) {
+                var entityType = context.Model.FindRuntimeEntityType(currentType);
+                var propertyType = context.Model.FindRuntimeEntityType(GetRawType(propertyOrFieldType));
+
+                var fks_Prop = entityType.GetReferencingForeignKeys()
+                    .Where(x => x.DeclaringEntityType == propertyType)
+                    .SelectMany(x => x.Properties)
+                    .Select(x => x.PropertyInfo)
+                    .Where(x => x != null);
+                var fks_Field = entityType.GetReferencingForeignKeys()
+                    .Where(x => x.DeclaringEntityType == propertyType)
+                    .SelectMany(x => x.Properties)
+                    .Select(x => x.FieldInfo)
+                    .Where(x => x != null);
+
+                if (value is IEnumerable _enumValue) {
+                    foreach (var element in _enumValue) {
+                        foreach (var fk in fks_Prop) {
+                            fk.SetValue(element, GetDefault(fk.PropertyType));
+                        }
+                        foreach (var fk in fks_Field) {
+                            fk.SetValue(element, GetDefault(fk.FieldType));
+                        }
+                    }
+                } else {
+                    foreach (var fk in fks_Prop) {
+                        fk.SetValue(value, GetDefault(fk.PropertyType));
+                    }
+                    foreach (var fk in fks_Field) {
+                        fk.SetValue(value, GetDefault(fk.FieldType));
+                    }
+                }
+            }
+
             Type type = entity.GetType();
 
             foreach (var property in type.GetProperties()) {
+                var value = property.GetValue(entity);
+
+                #region 省略無需處理屬性
+                if (value == null) {
+                    continue;
+                }
+
                 // 略過無對應屬性
                 if (property.GetCustomAttribute<NotMappedAttribute>() != null) {
                     continue;
@@ -50,8 +109,10 @@ namespace XWidget.EFLogic {
                 if (!TypeCheck(property.PropertyType)) {
                     continue;
                 }
+                #endregion
 
                 if (property.GetCustomAttribute<RemoveCascadeStopperAttribute>() != null) {
+                    ClearFK(type, property.PropertyType, value);
                     continue;
                 }
 
@@ -61,12 +122,7 @@ namespace XWidget.EFLogic {
 
                 if (shouldRemoveCascade != null && //如果存在連鎖刪除判斷方法且不允許連鎖刪除
                     false.Equals(shouldRemoveCascade.Invoke(entity, new object[0]))) {
-                    continue;
-                }
-
-                var value = property.GetValue(entity);
-
-                if (value == null) {
+                    ClearFK(type, property.PropertyType, value);
                     continue;
                 }
 
@@ -80,6 +136,13 @@ namespace XWidget.EFLogic {
             }
 
             foreach (var field in type.GetFields()) {
+                var value = field.GetValue(entity);
+
+                #region 省略無需處理欄位
+                if (value == null) {
+                    continue;
+                }
+
                 // 略過無對應欄位
                 if (field.GetCustomAttribute<NotMappedAttribute>() != null) {
                     continue;
@@ -88,8 +151,10 @@ namespace XWidget.EFLogic {
                 if (!TypeCheck(field.FieldType)) {
                     continue;
                 }
+                #endregion
 
                 if (field.GetCustomAttribute<RemoveCascadeStopperAttribute>() != null) {
+                    ClearFK(type, field.FieldType, value);
                     continue;
                 }
 
@@ -99,12 +164,7 @@ namespace XWidget.EFLogic {
 
                 if (shouldRemoveCascade != null && //如果存在連鎖刪除判斷方法且不允許連鎖刪除
                     false.Equals(shouldRemoveCascade.Invoke(entity, new object[0]))) {
-                    continue;
-                }
-
-                var value = field.GetValue(entity);
-
-                if (value == null) {
+                    ClearFK(type, field.FieldType, value);
                     continue;
                 }
 
