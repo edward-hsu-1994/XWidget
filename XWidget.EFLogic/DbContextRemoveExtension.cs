@@ -7,6 +7,7 @@ using System.Text;
 using System.Reflection;
 using System.Runtime.Serialization;
 using System.ComponentModel.DataAnnotations.Schema;
+using XWidget.Utilities;
 
 namespace XWidget.EFLogic {
     /// <summary>
@@ -48,14 +49,6 @@ namespace XWidget.EFLogic {
                 return runtimeType;
             }
 
-            // 取得預設值
-            object GetDefault(Type runtimeType) {
-                if (runtimeType.IsValueType) {
-                    return Activator.CreateInstance(runtimeType);
-                }
-                return null;
-            }
-
             // 清除外來鍵
             void ClearFK(Type currentType, Type propertyOrFieldType, object value) {
                 var runtimeType = context.Model.FindRuntimeEntityType(currentType);
@@ -70,12 +63,12 @@ namespace XWidget.EFLogic {
                 if (value is IEnumerable _enumValue) {
                     foreach (var element in _enumValue) {
                         foreach (var fk in fks_Prop) {
-                            fk.SetValue(element, GetDefault(fk.PropertyType));
+                            fk.SetValue(element, TypeUtility.GetDefault(fk.PropertyType));
                         }
                     }
                 } else {
                     foreach (var fk in fks_Prop) {
-                        fk.SetValue(value, GetDefault(fk.PropertyType));
+                        fk.SetValue(value, TypeUtility.GetDefault(fk.PropertyType));
                     }
                 }
             }
