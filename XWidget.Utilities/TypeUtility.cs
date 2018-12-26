@@ -83,5 +83,27 @@ namespace XWidget.Utilities {
 
             return result_;
         }
+
+
+        /// <summary>
+        /// 取得指定類型預設值
+        /// </summary>
+        /// <param name="type">類型</param>
+        /// <returns>指定類型預設值</returns>
+        public static object GetDefault(Type type) {
+            if (type.IsValueType) {
+                return Activator.CreateInstance(type);
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// 取得指定類型預設值
+        /// </summary>
+        /// <typeparam name="T">類型</typeparam>
+        /// <returns>指定類型預設值</returns>
+        public static T GetDefault<T>() {
+            return (T)GetDefault(typeof(T));
+        }
     }
 }

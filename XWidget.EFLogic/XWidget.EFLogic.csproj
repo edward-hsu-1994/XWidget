@@ -31,6 +31,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\XWidget.Extensions\XWidget.Extensions.csproj" />
+    <ProjectReference Include="..\XWidget.Utilities\XWidget.Utilities.csproj" />
     <ProjectReference Include="..\XWidget.Web.Exceptions\XWidget.Web.Exceptions.csproj" />
   </ItemGroup>
 
