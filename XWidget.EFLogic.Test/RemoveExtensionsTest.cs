@@ -80,6 +80,31 @@ namespace XWidget.EFLogic.Test {
             context.RemoveCascade(category_B);
             context.SaveChanges();
             Assert.Empty(context.Notes.Where(x => x.Title == "Note_7"));
+
+            var categoryC = new Category() {
+                Name = "CategoryC"
+            };
+            context.Categories.Add(categoryC);
+
+            var categoryC1 = new Category() {
+                Name = "CategoryC1",
+                Parent = categoryC
+            };
+            context.Categories.Add(categoryC1);
+
+            var categoryC2 = new Category() {
+                Name = "CategoryC2",
+                Parent = categoryC1
+            };
+            context.Categories.Add(categoryC2);
+            context.SaveChanges();
+
+            context.RemoveCascade(categoryC1);
+            context.SaveChanges();
+
+            Assert.Null(context.Categories.FirstOrDefault(x => x.Name == "CategoryC1"));
+            Assert.Null(context.Categories.FirstOrDefault(x => x.Name == "CategoryC2"));
+            Assert.NotNull(context.Categories.FirstOrDefault(x => x.Name == "CategoryC"));
         }
     }
 }

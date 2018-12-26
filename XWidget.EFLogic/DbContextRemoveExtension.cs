@@ -7,6 +7,8 @@ using System.Text;
 using System.Reflection;
 using System.Runtime.Serialization;
 using System.ComponentModel.DataAnnotations.Schema;
+using XWidget.Utilities;
+using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace XWidget.EFLogic {
     /// <summary>
@@ -25,76 +27,28 @@ namespace XWidget.EFLogic {
             var entitiesTypes = context.Model.GetEntityTypes()
                     .Select(x => x.ClrType);
 
-            /// <summary>
-            /// 檢查是否為EF模型類型
-            /// </summary>
-            /// <param name="entityType">檢查類型</param>
-            /// <returns>是否符合 </returns>
-            bool TypeCheck(Type entityType) {
-                if (entityType.IsGenericType &&
-                    entityType.GetGenericTypeDefinition() == typeof(ICollection<>)) {
-                    entityType = entityType.GetGenericArguments()[0];
-                }
-                return entitiesTypes
-                    .Contains(entityType);
-            }
-
-            // 取得基礎類型
-            Type GetRawType(Type _type) {
-                if (_type.IsGenericType &&
-                    _type.GetGenericTypeDefinition() == typeof(ICollection<>)) {
-                    _type = _type.GetGenericArguments()[0];
-                }
-                return _type;
-            }
-
-            // 取得預設值
-            object GetDefault(Type _type) {
-                if (_type.IsValueType) {
-                    return Activator.CreateInstance(_type);
-                }
-                return null;
-            }
-
-            // 清除外來鍵
-            void ClearFK(Type currentType, Type propertyOrFieldType, object value) {
-                var entityType = context.Model.FindRuntimeEntityType(currentType);
-                var propertyType = context.Model.FindRuntimeEntityType(GetRawType(propertyOrFieldType));
-
-                var fks_Prop = entityType.GetReferencingForeignKeys()
-                    .Where(x => x.DeclaringEntityType == propertyType)
-                    .SelectMany(x => x.Properties)
-                    .Select(x => x.PropertyInfo)
-                    .Where(x => x != null);
-                var fks_Field = entityType.GetReferencingForeignKeys()
-                    .Where(x => x.DeclaringEntityType == propertyType)
-                    .SelectMany(x => x.Properties)
-                    .Select(x => x.FieldInfo)
-                    .Where(x => x != null);
-
-                if (value is IEnumerable _enumValue) {
-                    foreach (var element in _enumValue) {
-                        foreach (var fk in fks_Prop) {
-                            fk.SetValue(element, GetDefault(fk.PropertyType));
+            void SetNavigationToDefault(IEntityType _currentType, IEntityType _valueType, object _value) {
+                foreach (var targets in _valueType.GetForeignKeys().Where(x => x.DeclaringEntityType == _currentType)) {
+                    if (_value is IEnumerable _enumValue) {
+                        foreach (var element in _enumValue) {
+                            foreach (var fk in targets.Properties) {
+                                fk.PropertyInfo.SetValue(_value, TypeUtility.GetDefault(fk.PropertyInfo.PropertyType));
+                            }
                         }
-                        foreach (var fk in fks_Field) {
-                            fk.SetValue(element, GetDefault(fk.FieldType));
+                    } else {
+                        foreach (var fk in targets.Properties) {
+                            fk.PropertyInfo.SetValue(_value, TypeUtility.GetDefault(fk.PropertyInfo.PropertyType));
                         }
-                    }
-                } else {
-                    foreach (var fk in fks_Prop) {
-                        fk.SetValue(value, GetDefault(fk.PropertyType));
-                    }
-                    foreach (var fk in fks_Field) {
-                        fk.SetValue(value, GetDefault(fk.FieldType));
                     }
                 }
             }
 
             Type type = entity.GetType();
+            var entityType = context.Model.FindRuntimeEntityType(type);
+            var navProperties = entityType.GetNavigations();
 
-            foreach (var property in type.GetProperties()) {
-                var value = property.GetValue(entity);
+            foreach (var property in navProperties) {
+                var value = property.PropertyInfo.GetValue(entity);
 
                 #region 省略無需處理屬性
                 if (value == null) {
@@ -102,19 +56,10 @@ namespace XWidget.EFLogic {
                 }
 
                 // 略過無對應屬性
-                if (property.GetCustomAttribute<NotMappedAttribute>() != null) {
-                    continue;
-                }
-
-                if (!TypeCheck(property.PropertyType)) {
+                if (property.PropertyInfo.GetCustomAttribute<NotMappedAttribute>() != null) {
                     continue;
                 }
                 #endregion
-
-                if (property.GetCustomAttribute<RemoveCascadeStopperAttribute>() != null) {
-                    ClearFK(type, property.PropertyType, value);
-                    continue;
-                }
 
                 var shouldRemoveCascade = type.GetMethod(
                     $"ShouldRemoveCascade{property.Name}",
@@ -122,49 +67,12 @@ namespace XWidget.EFLogic {
 
                 if (shouldRemoveCascade != null && //如果存在連鎖刪除判斷方法且不允許連鎖刪除
                     false.Equals(shouldRemoveCascade.Invoke(entity, new object[0]))) {
-                    ClearFK(type, property.PropertyType, value);
+                    SetNavigationToDefault(entityType, property.GetTargetType(), value);
                     continue;
                 }
 
-                if (value is IEnumerable enumValue) {
-                    foreach (var element in enumValue) {
-                        result.AddRange(GetRefEntities(context, element));
-                    }
-                } else {
-                    result.Add(value);
-                }
-            }
-
-            foreach (var field in type.GetFields()) {
-                var value = field.GetValue(entity);
-
-                #region 省略無需處理欄位
-                if (value == null) {
-                    continue;
-                }
-
-                // 略過無對應欄位
-                if (field.GetCustomAttribute<NotMappedAttribute>() != null) {
-                    continue;
-                }
-
-                if (!TypeCheck(field.FieldType)) {
-                    continue;
-                }
-                #endregion
-
-                if (field.GetCustomAttribute<RemoveCascadeStopperAttribute>() != null) {
-                    ClearFK(type, field.FieldType, value);
-                    continue;
-                }
-
-                var shouldRemoveCascade = type.GetMethod(
-                    $"ShouldRemoveCascade{field.Name}",
-                    BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase);
-
-                if (shouldRemoveCascade != null && //如果存在連鎖刪除判斷方法且不允許連鎖刪除
-                    false.Equals(shouldRemoveCascade.Invoke(entity, new object[0]))) {
-                    ClearFK(type, field.FieldType, value);
+                if (property.PropertyInfo.GetCustomAttribute<RemoveCascadeStopperAttribute>() != null) {
+                    SetNavigationToDefault(entityType, property.GetTargetType(), value);
                     continue;
                 }
 
@@ -247,15 +155,15 @@ namespace XWidget.EFLogic {
             /// <summary>
             /// 檢查是否為EF模型類型
             /// </summary>
-            /// <param name="entityType">檢查類型</param>
+            /// <param name="runtimeType">檢查類型</param>
             /// <returns>是否符合 </returns>
-            bool TypeCheck(Type entityType) {
-                if (entityType.IsGenericType &&
-                    entityType.GetGenericTypeDefinition() == typeof(ICollection<>)) {
-                    entityType = entityType.GetGenericArguments()[0];
+            bool TypeCheck(Type runtimeType) {
+                if (runtimeType.IsGenericType &&
+                    runtimeType.GetGenericTypeDefinition() == typeof(ICollection<>)) {
+                    runtimeType = runtimeType.GetGenericArguments()[0];
                 }
                 return entitiesTypes
-                    .Contains(entityType);
+                    .Contains(runtimeType);
             }
 
 
@@ -266,18 +174,20 @@ namespace XWidget.EFLogic {
             result.Add(type);
 
             var entity = FormatterServices.GetUninitializedObject(type);
+            var entityType = context.Model.FindRuntimeEntityType(type);
+            var navs = entityType.GetNavigations();
 
-            foreach (var property in type.GetProperties()) {
-                if (!TypeCheck(property.PropertyType)) {
+            foreach (var nav in navs) {
+                if (!TypeCheck(nav.PropertyInfo.PropertyType)) {
                     continue;
                 }
 
-                if (property.GetCustomAttribute<RemoveCascadeStopperAttribute>() != null) {
+                if (nav.PropertyInfo.GetCustomAttribute<RemoveCascadeStopperAttribute>() != null) {
                     continue;
                 }
 
                 var shouldRemoveCascade = type.GetMethod(
-                    $"ShouldRemoveCascade{property.Name}",
+                    $"ShouldRemoveCascade{nav.Name}",
                     BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase);
 
                 if (shouldRemoveCascade != null && //如果存在連鎖刪除判斷方法且不允許連鎖刪除
@@ -285,42 +195,10 @@ namespace XWidget.EFLogic {
                     continue;
                 }
 
-                if (property.PropertyType.GetInterfaces()
-                    .Where(x => x.IsGenericType)
-                    .Select(x => x.GetGenericTypeDefinition())
-                    .Contains(typeof(IEnumerable<>))) {
-                    LoadRemoveCascadeTypes(
+                LoadRemoveCascadeTypes(
                         context,
-                        property.PropertyType.GetGenericArguments().FirstOrDefault(),
+                        nav.GetTargetType().ClrType,
                         result);
-                } else {
-                    LoadRemoveCascadeTypes(context, property.PropertyType, result);
-                }
-            }
-
-            foreach (var field in type.GetFields()) {
-                if (!TypeCheck(field.FieldType)) {
-                    continue;
-                }
-
-                if (field.GetCustomAttribute<RemoveCascadeStopperAttribute>() != null) {
-                    continue;
-                }
-
-                var shouldRemoveCascade = type.GetMethod(
-                    $"ShouldRemoveCascade{field.Name}",
-                    BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase);
-
-                if (shouldRemoveCascade != null && //如果存在連鎖刪除判斷方法且不允許連鎖刪除
-                    false.Equals(shouldRemoveCascade.Invoke(entity, new object[0]))) {
-                    continue;
-                }
-
-                if (field.FieldType.GetInterfaces().Contains(typeof(IEnumerable<>))) {
-                    result.AddRange(GetRemoveCascadeTypes(context, field.FieldType.GetGenericArguments().FirstOrDefault()));
-                } else {
-                    result.Add(field.FieldType);
-                }
             }
         }
     }
