@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Reflection;
 using System.Runtime.Serialization;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace XWidget.EFLogic {
     /// <summary>
@@ -41,6 +42,11 @@ namespace XWidget.EFLogic {
             Type type = entity.GetType();
 
             foreach (var property in type.GetProperties()) {
+                // 略過無對應屬性
+                if (property.GetCustomAttribute<NotMappedAttribute>() != null) {
+                    continue;
+                }
+
                 if (!TypeCheck(property.PropertyType)) {
                     continue;
                 }
@@ -74,6 +80,11 @@ namespace XWidget.EFLogic {
             }
 
             foreach (var field in type.GetFields()) {
+                // 略過無對應欄位
+                if (field.GetCustomAttribute<NotMappedAttribute>() != null) {
+                    continue;
+                }
+
                 if (!TypeCheck(field.FieldType)) {
                     continue;
                 }
