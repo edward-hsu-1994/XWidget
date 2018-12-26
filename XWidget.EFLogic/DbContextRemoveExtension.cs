@@ -27,20 +27,6 @@ namespace XWidget.EFLogic {
             var entitiesTypes = context.Model.GetEntityTypes()
                     .Select(x => x.ClrType);
 
-            /// <summary>
-            /// 檢查是否為EF模型類型
-            /// </summary>
-            /// <param name="entityType">檢查類型</param>
-            /// <returns>是否符合 </returns>
-            bool TypeCheck(Type runtimeType) {
-                if (runtimeType.IsGenericType &&
-                    runtimeType.GetGenericTypeDefinition() == typeof(ICollection<>)) {
-                    runtimeType = runtimeType.GetGenericArguments()[0];
-                }
-                return entitiesTypes
-                    .Contains(runtimeType);
-            }
-
             void SetNavigationToDefault(IEntityType _currentType, IEntityType _valueType, object _value) {
                 foreach (var targets in _valueType.GetForeignKeys().Where(x => x.DeclaringEntityType == _currentType)) {
                     if (_value is IEnumerable _enumValue) {
@@ -71,10 +57,6 @@ namespace XWidget.EFLogic {
 
                 // 略過無對應屬性
                 if (property.PropertyInfo.GetCustomAttribute<NotMappedAttribute>() != null) {
-                    continue;
-                }
-
-                if (!TypeCheck(property.PropertyInfo.PropertyType)) {
                     continue;
                 }
                 #endregion
