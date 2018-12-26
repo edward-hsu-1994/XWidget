@@ -41,35 +41,18 @@ namespace XWidget.EFLogic {
                     .Contains(runtimeType);
             }
 
-            // 取得基礎類型
-            Type GetRawType(Type runtimeType) {
-                if (runtimeType.IsGenericType &&
-                    runtimeType.GetGenericTypeDefinition() == typeof(ICollection<>)) {
-                    runtimeType = runtimeType.GetGenericArguments()[0];
-                }
-                return runtimeType;
-            }
-
-            // 清除外來鍵
-            void ClearFK(Type currentType, Type propertyType, object value) {
-                var runtimeType = context.Model.FindRuntimeEntityType(currentType);
-                var propertyType0 = context.Model.FindRuntimeEntityType(GetRawType(propertyType));
-
-                var fks_Prop = runtimeType.GetReferencingForeignKeys()
-                    .Where(x => x.DeclaringEntityType == propertyType0)
-                    .SelectMany(x => x.Properties)
-                    .Select(x => x.PropertyInfo)
-                    .Where(x => x != null);
-
-                if (value is IEnumerable _enumValue) {
-                    foreach (var element in _enumValue) {
-                        foreach (var fk in fks_Prop) {
-                            fk.SetValue(element, TypeUtility.GetDefault(fk.PropertyType));
+            void SetNavigationToDefault(IEntityType _currentType, IEntityType _valueType, object _value) {
+                foreach (var targets in _valueType.GetForeignKeys().Where(x => x.DeclaringEntityType == _currentType)) {
+                    if (_value is IEnumerable _enumValue) {
+                        foreach (var element in _enumValue) {
+                            foreach (var fk in targets.Properties) {
+                                fk.PropertyInfo.SetValue(_value, TypeUtility.GetDefault(fk.PropertyInfo.PropertyType));
+                            }
                         }
-                    }
-                } else {
-                    foreach (var fk in fks_Prop) {
-                        fk.SetValue(value, TypeUtility.GetDefault(fk.PropertyType));
+                    } else {
+                        foreach (var fk in targets.Properties) {
+                            fk.PropertyInfo.SetValue(_value, TypeUtility.GetDefault(fk.PropertyInfo.PropertyType));
+                        }
                     }
                 }
             }
@@ -96,18 +79,18 @@ namespace XWidget.EFLogic {
                 }
                 #endregion
 
-                if (property.PropertyInfo.GetCustomAttribute<RemoveCascadeStopperAttribute>() != null) {
-                    ClearFK(type, property.PropertyInfo.PropertyType, value);
-                    continue;
-                }
-
                 var shouldRemoveCascade = type.GetMethod(
                     $"ShouldRemoveCascade{property.Name}",
                     BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase);
 
                 if (shouldRemoveCascade != null && //如果存在連鎖刪除判斷方法且不允許連鎖刪除
                     false.Equals(shouldRemoveCascade.Invoke(entity, new object[0]))) {
-                    ClearFK(type, property.PropertyInfo.PropertyType, value);
+                    SetNavigationToDefault(entityType, property.GetTargetType(), value);
+                    continue;
+                }
+
+                if (property.PropertyInfo.GetCustomAttribute<RemoveCascadeStopperAttribute>() != null) {
+                    SetNavigationToDefault(entityType, property.GetTargetType(), value);
                     continue;
                 }
 
