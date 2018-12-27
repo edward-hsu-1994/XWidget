@@ -436,6 +436,35 @@ namespace XWidget.EFLogic {
             }
         }
 
+        #region 內部方法
+        /// <summary>
+        /// (內部方法)更新或建立指定的物件實例
+        /// </summary>
+        /// <param name="entity">物件實例</param>
+        /// <param name="parameters">參數</param>
+        /// <returns>更新後的物件實例</returns>
+        private async Task<TEntity> UpdateOrCreateAsync(object entity, List<object> refList, params object[] parameters) {
+            var type = typeof(TEntity);
+            TId id = (TId)type.GetProperty(IdentityPropertyName).GetValue(entity);
+
+            if (await ExistsAsync(id)) {
+                return await UpdateAsync((TEntity)entity, refList, parameters);
+            } else {
+                return await CreateAsync((TEntity)entity, parameters);
+            }
+        }
+
+        /// <summary>
+        /// (內部方法)更新或建立指定的物件實例
+        /// </summary>
+        /// <param name="entity">物件實例</param>
+        /// <param name="parameters">參數</param>
+        /// <returns>更新後的物件實例</returns>
+        private TEntity UpdateOrCreate(object entity, List<object> refList, params object[] parameters) {
+            return UpdateOrCreateAsync(entity, refList, parameters).ToSync();
+        }
+        #endregion
+
         /// <summary>
         /// 更新或建立指定的物件實例
         /// </summary>
@@ -453,11 +482,23 @@ namespace XWidget.EFLogic {
         /// <param name="parameters">參數</param>
         /// <returns>更新後的物件實例</returns>
         public virtual async Task<TEntity> UpdateAsync(TEntity entity, params object[] parameters) {
-            return await InternalUpdateAsync(entity, new List<object>(), parameters);
+            return await UpdateAsync(entity, null, parameters);
+        }
+
+
+        /// <summary>
+        /// (內部方法)更新指定的物件實例
+        /// </summary>
+        /// <param name="entity">物件實例</param>
+        /// <param name="refList">參考列表</param>
+        /// <param name="parameters">參數</param>
+        /// <returns>更新後的物件實例</returns>
+        private async Task<TEntity> UpdateAsync(TEntity entity, List<object> refList, params object[] parameters) {
+            return await InternalUpdateAsync(entity, refList ?? new List<object>(), parameters);
         }
 
         /// <summary>
-        /// 更新指定的物件實例
+        /// (內部方法)更新指定的物件實例
         /// </summary>
         /// <param name="entity">物件實例</param>
         /// <param name="parameters">參數</param>
@@ -483,7 +524,29 @@ namespace XWidget.EFLogic {
 
                     if (Database.Model.FindEntityType(obj.GetType()) == null) continue;
 
-                    ((dynamic)Manager.GetLogicByType(member.Metadata.PropertyInfo.PropertyType)).UpdateOrCreate(obj);
+                    var logic = Manager.GetLogicByType(member.Metadata.PropertyInfo.PropertyType);
+                    var updateOrCreateMethod = logic.GetType()
+                            .GetAllBaseTypes()
+                            .Where(x => x.IsGenericType)
+                            .FirstOrDefault(x => x.GetGenericTypeDefinition() == typeof(LogicBase<,,>))
+                            .GetMethods(BindingFlags.Instance | BindingFlags.NonPublic)
+                            .FirstOrDefault(x => {
+                                return x.Name == "UpdateOrCreate" &&
+                                x.GetParameters().Select(y => y.ParameterType)
+                                .SequenceEqual(new Type[] {
+                                typeof(object),
+                                typeof(List<object>),
+                                typeof(object[])
+                                });
+                            });
+
+                    updateOrCreateMethod.Invoke(
+                        logic,
+                        new object[]{
+                            obj,
+                            refList,
+                            parameters
+                        });
                 } else if (member is CollectionEntry) {
                     var collection = (IEnumerable)obj;
 
@@ -492,7 +555,30 @@ namespace XWidget.EFLogic {
                     foreach (var item in collection) {
                         if (item == null) continue;
                         if (Database.Model.FindEntityType(item.GetType()) == null) continue;
-                        ((dynamic)Manager.GetLogicByType(item.GetType())).UpdateOrCreate(item);
+
+                        var logic = Manager.GetLogicByType(item.GetType());
+                        var updateOrCreateMethod = logic.GetType()
+                            .GetAllBaseTypes()
+                            .Where(x => x.IsGenericType)
+                            .FirstOrDefault(x => x.GetGenericTypeDefinition() == typeof(LogicBase<,,>))
+                            .GetMethods(BindingFlags.Instance | BindingFlags.NonPublic)
+                            .FirstOrDefault(x => {
+                                return x.Name == "UpdateOrCreate" &&
+                                x.GetParameters().Select(y => y.ParameterType)
+                                .SequenceEqual(new Type[] {
+                                typeof(object),
+                                typeof(List<object>),
+                                typeof(object[])
+                                });
+                            });
+
+                        updateOrCreateMethod.Invoke(
+                            logic,
+                            new object[]{
+                                item,
+                                refList,
+                                parameters
+                            });
                     }
                 } else {
                     member.Metadata.PropertyInfo.SetValue(

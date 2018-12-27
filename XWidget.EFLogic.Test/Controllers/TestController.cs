@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Xunit;
@@ -18,11 +19,35 @@ namespace XWidget.EFLogic.Test.Controllers {
 
         [HttpGet]
         public async Task Test() {
+
+
+
             var categoryLogic = Manager.GetLogicByType<Category, Guid>();
+
+            var updateOrCreateMethod = categoryLogic.GetType().GetAllBaseTypes()
+                    .Where(x => x.IsGenericType)
+                    .FirstOrDefault(x => x.GetGenericTypeDefinition() == typeof(LogicBase<,,>))
+                    .GetMethods(BindingFlags.Instance | BindingFlags.NonPublic)
+                    .FirstOrDefault(x => {
+                        return x.Name == "UpdateOrCreate" &&
+                        x.GetParameters().Select(y => y.ParameterType)
+                        .SequenceEqual(new Type[] {
+                            typeof(object),
+                            typeof(List<object>),
+                            typeof(object[])
+                        });
+                    });
 
             var category = categoryLogic.Create(new Category() {
                 Name = "Test01"
             });
+
+            var m = updateOrCreateMethod.Invoke(categoryLogic, new object[] {
+                category,
+                new List<object>(),
+                new object[0]
+            });
+
 
             category = categoryLogic.Update(new Category() {
                 Id = category.Id,
