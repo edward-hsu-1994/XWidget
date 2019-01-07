@@ -39,8 +39,6 @@ namespace XWidget.Web.GoogleAnalytics.Test {
 
                 request.Response.Body.Write(testData, 0, testData.Length);
             });
-
-            app.UseMvc();
         }
     }
 }
