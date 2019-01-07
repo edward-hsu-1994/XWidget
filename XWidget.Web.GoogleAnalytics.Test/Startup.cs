@@ -30,7 +30,7 @@ namespace XWidget.Web.GoogleAnalytics.Test {
             app.UseGoogleAnalytics("UA-XXXXX-1");
 
             app.Run(async (request) => {
-                request.Response.StatusCode = StatusCodes.Status404NotFound;
+                request.Response.StatusCode = StatusCodes.Status200OK;
                 request.Response.ContentType = "text/html";
 
                 var testHtml = "<html><head></head><body><div>test</div>Content</body></html>";
