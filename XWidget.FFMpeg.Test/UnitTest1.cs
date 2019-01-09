@@ -7,6 +7,9 @@ namespace XWidget.FFMpeg.Test {
         public void Test1() {
             var builder = new FFMpegConverterBuilder();
             builder
+                .ConfigGeneric(option =>
+                    option.SetStartPosition(40).SetDuration(10)
+                )
                 .ConfigVideo(option =>
                     option.SetSize(352, 240).SetPreset(VideoOption.Preset.veryfast).SetCrf(23)
                 )
