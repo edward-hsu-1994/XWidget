@@ -6,7 +6,7 @@ namespace XWidget.FFMpeg {
         private GenericOption generic = new GenericOption();
         private VideoOption video = new VideoOption();
         private AudioOption audio = new AudioOption();
-
+        private string advancedArgs = string.Empty;
         public FFMpegConverterBuilder ConfigGeneric(Action<GenericOption> genericConfig) {
             genericConfig(generic);
             return this;
@@ -22,12 +22,17 @@ namespace XWidget.FFMpeg {
             return this;
         }
 
+        public FFMpegConverterBuilder ConfigAdvancedArgs(string args) {
+            advancedArgs = args;
+            return this;
+        }
+
         public string BuildArgs() {
             var generic_str = string.Join(" ", generic.args.Select(x => $"-{x.Key} {x.Value ?? ""}"));
             var video_str = string.Join(" ", video.args.Select(x => $"-{x.Key} {x.Value ?? ""}"));
             var audio_str = string.Join(" ", audio.args.Select(x => $"-{x.Key} {x.Value ?? ""}"));
 
-            return string.Join(" ", generic_str, video_str, audio_str);
+            return string.Join(" ", generic_str, video_str, audio_str, advancedArgs);
         }
 
         public IFFMpegConverter Build() {
