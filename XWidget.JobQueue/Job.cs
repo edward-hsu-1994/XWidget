@@ -42,7 +42,7 @@ namespace XWidget.JobQueue {
         /// </summary>
         public T Result { get; set; }
 
-        CancellationTokenSource IJob.CancellationToken => throw new NotImplementedException();
+        CancellationTokenSource IJob.CancellationToken => this.CancellationToken;
 
         /// <summary>
         /// 建立工作
