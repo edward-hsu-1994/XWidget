@@ -1,0 +1,38 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Authors>XuPeiYao</Authors>
+    <Company>XuPeiYao</Company>
+    <PackageProjectUrl>https://github.com/XuPeiYao/XWidget/tree/master/XWidget.GoogleAnalytics</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/XuPeiYao/XWidget.git</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <Description>ASP.net Core注入Google Analytics腳本</Description>
+    <PackageIconUrl>https://i.imgur.com/fF6aNHL.png</PackageIconUrl>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile>bin\Debug\netstandard2.0\XWidget.Web.GoogleAnalytics.xml</DocumentationFile>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DocumentationFile>bin\Release\netstandard2.0\XWidget.Web.GoogleAnalytics.xml</DocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="gtag.html" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="gtag.html" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="HtmlAgilityPack" Version="1.8.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.1.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Http.Extensions" Version="2.1.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="2.1.0" />
+  </ItemGroup>
+
+</Project>
