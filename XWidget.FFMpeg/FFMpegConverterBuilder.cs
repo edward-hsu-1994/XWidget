@@ -27,20 +27,17 @@ namespace XWidget.FFMpeg {
             return this;
         }
 
-        public string BuildArgs() {
+        public string CreateCommand(string[] inputs, string output) {
             var generic_str = string.Join(" ", generic.args.Select(x => $"-{x.Key} {x.Value ?? ""}"));
             var video_str = string.Join(" ", video.args.Select(x => $"-{x.Key} {x.Value ?? ""}"));
             var audio_str = string.Join(" ", audio.args.Select(x => $"-{x.Key} {x.Value ?? ""}"));
 
-            return string.Join(" ", generic_str, video_str, audio_str, advancedArgs);
+            var command = "ffmpeg " + string.Join(" ", generic_str, video_str, audio_str, advancedArgs);
+
+            return string.Join(" ", command, string.Join(" ", inputs.Select(x => "-i " + x)), output);
         }
 
         public IFFMpegConverter Build() {
-            var generic_str = string.Join(" ", generic.args.Select(x => $"-{x.Key} {x.Value ?? ""}"));
-            var video_str = string.Join(" ", video.args.Select(x => $"-{x.Key} {x.Value ?? ""}"));
-            var audio_str = string.Join(" ", audio.args.Select(x => $"-{x.Key} {x.Value ?? ""}"));
-
-
 
             return null;
         }
