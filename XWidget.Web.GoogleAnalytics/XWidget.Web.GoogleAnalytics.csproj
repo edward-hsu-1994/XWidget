@@ -5,7 +5,7 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Authors>XuPeiYao</Authors>
     <Company>XuPeiYao</Company>
-    <PackageProjectUrl>https://github.com/XuPeiYao/XWidget/tree/master/XWidget.GoogleAnalytics</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/XuPeiYao/XWidget/tree/master/XWidget.Web..GoogleAnalytics</PackageProjectUrl>
     <RepositoryUrl>https://github.com/XuPeiYao/XWidget.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <Description>ASP.net Core注入Google Analytics腳本</Description>
