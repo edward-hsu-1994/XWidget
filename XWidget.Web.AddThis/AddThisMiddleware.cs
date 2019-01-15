@@ -20,7 +20,7 @@ namespace XWidget.Web.AddThis {
         /// <param name="app">應用程式建構器</param>
         /// <param name="pubid">網頁代碼</param>
         /// <returns>應用程式建構器</returns>
-        public static IApplicationBuilder UseAddThis(
+        public static IApplicationBuilder UseAddThisShareButton(
             this IApplicationBuilder app,
             string pubid
             ) {
