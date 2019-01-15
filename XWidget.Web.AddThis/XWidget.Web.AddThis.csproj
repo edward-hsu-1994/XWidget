@@ -5,27 +5,27 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Authors>XuPeiYao</Authors>
     <Company>XuPeiYao</Company>
-    <PackageProjectUrl>https://github.com/XuPeiYao/XWidget/tree/master/XWidget.Web..GoogleAnalytics</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/XuPeiYao/XWidget/tree/master/XWidget.Web.AddThis</PackageProjectUrl>
     <RepositoryUrl>https://github.com/XuPeiYao/XWidget.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <Description>ASP.net Core注入Google Analytics腳本</Description>
+    <Description>ASP.net Core注入AddThis社群腳本</Description>
     <PackageIconUrl>https://i.imgur.com/fF6aNHL.png</PackageIconUrl>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile>bin\Debug\netstandard2.0\XWidget.Web.GoogleAnalytics.xml</DocumentationFile>
+    <DocumentationFile>bin\Debug\netstandard2.0\XWidget.Web.AddThis.xml</DocumentationFile>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DocumentationFile>bin\Release\netstandard2.0\XWidget.Web.GoogleAnalytics.xml</DocumentationFile>
+    <DocumentationFile>bin\Release\netstandard2.0\XWidget.Web.AddThis.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="gtag.html" />
+    <None Remove="addThis.html" />
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="gtag.html" />
+    <EmbeddedResource Include="addThis.html" />
   </ItemGroup>
 
   <ItemGroup>

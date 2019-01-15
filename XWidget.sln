@@ -73,9 +73,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XWidget.Web.GoogleAnalytics
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XWidget.Web.GoogleAnalytics.Test", "XWidget.Web.GoogleAnalytics.Test\XWidget.Web.GoogleAnalytics.Test.csproj", "{E4C1E962-2F11-442B-8BE2-7CB22D0B3EAA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XWidget.FFMpeg", "XWidget.FFMpeg\XWidget.FFMpeg.csproj", "{4F958A51-AB1A-4B99-9CE1-782BD8635646}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XWidget.FFMpeg", "XWidget.FFMpeg\XWidget.FFMpeg.csproj", "{4F958A51-AB1A-4B99-9CE1-782BD8635646}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XWidget.FFMpeg.Test", "XWidget.FFMpeg.Test\XWidget.FFMpeg.Test.csproj", "{264BCA06-5C65-4931-A725-114EC86EB5E7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XWidget.FFMpeg.Test", "XWidget.FFMpeg.Test\XWidget.FFMpeg.Test.csproj", "{264BCA06-5C65-4931-A725-114EC86EB5E7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XWidget.Web.AddThis", "XWidget.Web.AddThis\XWidget.Web.AddThis.csproj", "{2ED1C7FA-27C3-458D-B40E-DEE35452AF30}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XWidget.Web.AddThis.Test", "XWidget.Web.AddThis.Test\XWidget.Web.AddThis.Test.csproj", "{8C0A19FF-BA57-4165-9964-7823ED9AE2CD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -215,6 +219,14 @@ Global
 		{264BCA06-5C65-4931-A725-114EC86EB5E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{264BCA06-5C65-4931-A725-114EC86EB5E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{264BCA06-5C65-4931-A725-114EC86EB5E7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2ED1C7FA-27C3-458D-B40E-DEE35452AF30}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2ED1C7FA-27C3-458D-B40E-DEE35452AF30}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2ED1C7FA-27C3-458D-B40E-DEE35452AF30}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2ED1C7FA-27C3-458D-B40E-DEE35452AF30}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8C0A19FF-BA57-4165-9964-7823ED9AE2CD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8C0A19FF-BA57-4165-9964-7823ED9AE2CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8C0A19FF-BA57-4165-9964-7823ED9AE2CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8C0A19FF-BA57-4165-9964-7823ED9AE2CD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

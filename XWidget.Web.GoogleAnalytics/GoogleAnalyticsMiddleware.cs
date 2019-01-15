@@ -6,9 +6,9 @@ using System.IO;
 using System.Reflection;
 
 namespace XWidget.Web.GoogleAnalytics {
-    public static class UseGoogleAnalyticsMiddleware {
+    public static class GoogleAnalyticsMiddleware {
         private static string GTagJsTemplate = null;
-        static UseGoogleAnalyticsMiddleware() {
+        static GoogleAnalyticsMiddleware() {
             var assembly = Assembly.GetExecutingAssembly();
             var textStreamReader = new StreamReader(assembly.GetManifestResourceStream("XWidget.Web.GoogleAnalytics.gtag.html"));
             GTagJsTemplate = textStreamReader.ReadToEnd();
