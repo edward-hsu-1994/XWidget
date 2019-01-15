@@ -79,6 +79,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XWidget.FFMpeg.Test", "XWid
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XWidget.Web.AddThis", "XWidget.Web.AddThis\XWidget.Web.AddThis.csproj", "{2ED1C7FA-27C3-458D-B40E-DEE35452AF30}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XWidget.Web.AddThis.Test", "XWidget.Web.AddThis.Test\XWidget.Web.AddThis.Test.csproj", "{8C0A19FF-BA57-4165-9964-7823ED9AE2CD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -221,6 +223,10 @@ Global
 		{2ED1C7FA-27C3-458D-B40E-DEE35452AF30}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2ED1C7FA-27C3-458D-B40E-DEE35452AF30}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2ED1C7FA-27C3-458D-B40E-DEE35452AF30}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8C0A19FF-BA57-4165-9964-7823ED9AE2CD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8C0A19FF-BA57-4165-9964-7823ED9AE2CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8C0A19FF-BA57-4165-9964-7823ED9AE2CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8C0A19FF-BA57-4165-9964-7823ED9AE2CD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
