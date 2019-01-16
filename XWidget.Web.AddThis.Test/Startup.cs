@@ -36,7 +36,7 @@ namespace XWidget.Web.AddThis.Test {
                 var testHtml = "<html><head></head><body><div>test</div>Content</body></html>";
 
                 var testData = Encoding.UTF8.GetBytes(testHtml);
-
+                request.Response.ContentLength = testData.Length;
                 request.Response.Body.Write(testData, 0, testData.Length);
             });
         }

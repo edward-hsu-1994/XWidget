@@ -73,6 +73,7 @@ namespace XWidget.Web.AddThis {
                 context.Response.ContentType = backup.ContentType;
                 context.Response.StatusCode = backup.StatusCode;
                 foreach (var header in backup.Headers) {
+                    if (header.Key == "Content-Length") continue;
                     context.Response.Headers[header.Key] = header.Value;
                 }
                 #endregion
