@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using System;
 using System.IO;
 using System.Reflection;
+using System.Threading.Tasks;
 
 namespace XWidget.Web.GoogleAnalytics {
     public static class GoogleAnalyticsMiddleware {
@@ -18,11 +19,11 @@ namespace XWidget.Web.GoogleAnalytics {
         /// 在text/html類型的結果中注入Google Analytics腳本
         /// </summary>
         /// <param name="app">應用程式建構器</param>
-        /// <param name="trackingCode">追蹤碼</param>
+        /// <param name="trackingCodeFunc">追蹤碼產生方法</param>
         /// <returns>應用程式建構器</returns>
         public static IApplicationBuilder UseGoogleAnalytics(
             this IApplicationBuilder app,
-            string trackingCode
+            Func<HttpContext, string> trackingCodeFunc
             ) {
             return app.Use(async (context, next) => {
                 var originStream = context.Response.Body;
@@ -42,7 +43,7 @@ namespace XWidget.Web.GoogleAnalytics {
                     // 取得BaseElement並設定href
                     var baseNode = html.DocumentNode.SelectSingleNode("//body");
                     if (baseNode != null) {
-                        baseNode.InnerHtml += GTagJsTemplate.Replace("{{trackingCode}}", trackingCode);
+                        baseNode.InnerHtml += GTagJsTemplate.Replace("{{trackingCode}}", trackingCodeFunc(context));
                     }
 
                     warpStream = new MemoryStream();
@@ -71,6 +72,31 @@ namespace XWidget.Web.GoogleAnalytics {
                 await warpStream.CopyToAsync(context.Response.Body);
                 context.Response.ContentLength = warpStream.Length;
             });
+        }
+
+        /// <summary>
+        /// 在text/html類型的結果中注入Google Analytics腳本
+        /// </summary>
+        /// <param name="app">應用程式建構器</param>
+        /// <param name="trackingCodeFunc">追蹤碼產生方法</param>
+        /// <returns>應用程式建構器</returns>
+        public static IApplicationBuilder UseGoogleAnalytics(
+            this IApplicationBuilder app,
+            Func<HttpContext, Task<string>> trackingCodeFunc) {
+            return app.UseGoogleAnalytics(c => trackingCodeFunc(c).GetAwaiter().GetResult());
+        }
+
+        /// <summary>
+        /// 在text/html類型的結果中注入Google Analytics腳本
+        /// </summary>
+        /// <param name="app">應用程式建構器</param>
+        /// <param name="trackingCode">追蹤碼</param>
+        /// <returns>應用程式建構器</returns>
+        public static IApplicationBuilder UseGoogleAnalytics(
+            this IApplicationBuilder app,
+            string trackingCode
+            ) {
+            return app.UseGoogleAnalytics(c => trackingCode);
         }
     }
 }
