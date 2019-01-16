@@ -44,7 +44,10 @@ namespace XWidget.Web.GoogleAnalytics {
                     // 取得BaseElement並設定href
                     var baseNode = html.DocumentNode.SelectSingleNode("//body");
                     if (baseNode != null) {
-                        baseNode.InnerHtml += GTagJsTemplate.Replace("{{trackingCode}}", trackingCodeFunc(context));
+                        var trackingCode = trackingCodeFunc(context);
+                        if (!string.IsNullOrWhiteSpace(trackingCode)) {
+                            baseNode.InnerHtml += GTagJsTemplate.Replace("{{trackingCode}}", trackingCode);
+                        }
                     }
 
                     warpStream = new MemoryStream();
@@ -70,6 +73,7 @@ namespace XWidget.Web.GoogleAnalytics {
                 context.Response.ContentType = backup.ContentType;
                 context.Response.StatusCode = backup.StatusCode;
                 foreach (var header in backup.Headers) {
+                    if (header.Key == "Content-Length") continue;
                     context.Response.Headers[header.Key] = header.Value;
                 }
                 #endregion
