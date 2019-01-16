@@ -44,6 +44,16 @@ namespace XWidget.EFLogic {
             }
 
             Type type = entity.GetType();
+
+            // 獲取類型中的連鎖刪除方案設定
+            RemoveCascadeAttribute removeCascadeAttribute = type.GetCustomAttribute<RemoveCascadeAttribute>();
+            if (removeCascadeAttribute == null) {
+                removeCascadeAttribute = new RemoveCascadeAttribute() {
+                    Mode = RemoveCascadeMode.OptOut
+                };
+            }
+
+
             var entityType = context.Model.FindRuntimeEntityType(type);
             var navProperties = entityType.GetNavigations();
 
