@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using HtmlAgilityPack;
 using Microsoft.AspNetCore.Builder;
@@ -90,7 +91,8 @@ namespace XWidget.Web {
                         #region Backup Response Properties
                         var backup = new {
                             context.Response.ContentType,
-                            context.Response.StatusCode
+                            context.Response.StatusCode,
+                            Headers = context.Response.Headers.ToArray()
                         };
                         #endregion
 
@@ -99,6 +101,9 @@ namespace XWidget.Web {
                         #region Reset Response Properties
                         context.Response.ContentType = backup.ContentType;
                         context.Response.StatusCode = backup.StatusCode;
+                        foreach (var header in backup.Headers) {
+                            context.Response.Headers[header.Key] = header.Value;
+                        }
                         #endregion
 
                         await warpStream.CopyToAsync(context.Response.Body);
