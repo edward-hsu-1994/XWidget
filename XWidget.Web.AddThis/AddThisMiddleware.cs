@@ -44,7 +44,10 @@ namespace XWidget.Web.AddThis {
                     // 取得BaseElement並設定href
                     var baseNode = html.DocumentNode.SelectSingleNode("//body");
                     if (baseNode != null) {
-                        baseNode.InnerHtml += AddThisJsTemplate.Replace("{{pubid}}", pubidFunc(context));
+                        var pubid = pubidFunc(context);
+                        if (!string.IsNullOrWhiteSpace(pubid)) {
+                            baseNode.InnerHtml += AddThisJsTemplate.Replace("{{pubid}}", pubid);
+                        }
                     }
 
                     warpStream = new MemoryStream();
