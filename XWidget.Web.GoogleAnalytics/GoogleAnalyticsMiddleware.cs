@@ -27,6 +27,7 @@ namespace XWidget.Web.GoogleAnalytics {
             Func<HttpContext, string> trackingCodeFunc
             ) {
             return app.Use(async (context, next) => {
+                var trackingCode = trackingCodeFunc(context);
                 var originStream = context.Response.Body;
                 var warpStream = new MemoryStream();
 
@@ -44,7 +45,6 @@ namespace XWidget.Web.GoogleAnalytics {
                     // 取得BaseElement並設定href
                     var baseNode = html.DocumentNode.SelectSingleNode("//body");
                     if (baseNode != null) {
-                        var trackingCode = trackingCodeFunc(context);
                         if (!string.IsNullOrWhiteSpace(trackingCode)) {
                             baseNode.InnerHtml += GTagJsTemplate.Replace("{{trackingCode}}", trackingCode);
                         }

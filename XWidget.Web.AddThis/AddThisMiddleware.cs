@@ -27,6 +27,7 @@ namespace XWidget.Web.AddThis {
             Func<HttpContext, string> pubidFunc
             ) {
             return app.Use(async (context, next) => {
+                var pubid = pubidFunc(context);
                 var originStream = context.Response.Body;
                 var warpStream = new MemoryStream();
 
@@ -44,7 +45,6 @@ namespace XWidget.Web.AddThis {
                     // 取得BaseElement並設定href
                     var baseNode = html.DocumentNode.SelectSingleNode("//body");
                     if (baseNode != null) {
-                        var pubid = pubidFunc(context);
                         if (!string.IsNullOrWhiteSpace(pubid)) {
                             baseNode.InnerHtml += AddThisJsTemplate.Replace("{{pubid}}", pubid);
                         }
