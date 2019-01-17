@@ -329,6 +329,8 @@ namespace XWidget.EFLogic {
             return FindOneAsync(cond).ToSync();
         }
 
+
+
         /// <summary>
         /// 透過唯一識別號取得指定物件實例
         /// </summary>
@@ -350,6 +352,21 @@ namespace XWidget.EFLogic {
         }
 
         /// <summary>
+        /// 內部方法透過唯一識別號取得指定物件實例
+        /// </summary>
+        /// <param name="id">唯一識別號</param>
+        /// <returns>物件實例</returns>
+        internal async Task<TEntity> InternalGetAsync(TId id) {
+            var instance = Database.Set<TEntity>().SingleOrDefault($"{IdentityPropertyName} == @0", id);
+
+            if (instance == null) {
+                throw new NotFoundException();
+            }
+
+            return instance;
+        }
+
+        /// <summary>
         /// 透過唯一識別號取得指定物件實例
         /// </summary>
         /// <param name="id">唯一識別號</param>
@@ -358,14 +375,62 @@ namespace XWidget.EFLogic {
         public virtual async Task<TEntity> GetAsync(TId id, TParameters parameters = default(TParameters)) {
             var instance = Database.Set<TEntity>().SingleOrDefault($"{IdentityPropertyName} == @0", id);
 
+            await Manager.AfterGet(instance, parameters);
+            await AfterGet(instance, parameters);
+            return instance;
+        }
+
+        #region NoCacheGet
+
+        /// <summary>
+        /// 透過唯一識別號取得指定物件實例
+        /// </summary>
+        /// <param name="id">唯一識別號</param>
+        /// <param name="parameters">參數</param>
+        /// <returns>物件實例</returns>
+        public async Task<TEntity> GetWithoutCacheAsync(object id, TParameters parameters = default(TParameters)) {
+            return await GetWithoutCacheAsync((TId)id, parameters);
+        }
+
+        /// <summary>
+        /// 透過唯一識別號取得指定物件實例
+        /// </summary>
+        /// <param name="id">唯一識別號</param>
+        /// <param name="parameters">參數</param>
+        /// <returns>物件實例</returns>
+        public TEntity GetWithoutCache(object id, TParameters parameters = default(TParameters)) {
+            return GetWithoutCacheAsync(id, parameters).ToSync();
+        }
+
+        /// <summary>
+        /// 內部方法透過唯一識別號取得指定物件實例
+        /// </summary>
+        /// <param name="id">唯一識別號</param>
+        /// <returns>物件實例</returns>
+        internal async Task<TEntity> InternalGetWithoutCacheAsync(TId id) {
+            var instance = Database.Set<TEntity>().AsNoTracking().SingleOrDefault($"{IdentityPropertyName} == @0", id);
+
             if (instance == null) {
                 throw new NotFoundException();
             }
+
+            return instance;
+        }
+
+        /// <summary>
+        /// 透過唯一識別號取得指定物件實例
+        /// </summary>
+        /// <param name="id">唯一識別號</param>
+        /// <param name="parameters">參數</param>
+        /// <returns>物件實例</returns>
+        public virtual async Task<TEntity> GetWithoutCacheAsync(TId id, TParameters parameters = default(TParameters)) {
+            var instance = await InternalGetWithoutCacheAsync(id);
 
             await Manager.AfterGet(instance, parameters);
             await AfterGet(instance, parameters);
             return instance;
         }
+        #endregion
 
         /// <summary>
         /// 透過唯一識別號取得指定物件實例
@@ -538,9 +603,9 @@ namespace XWidget.EFLogic {
         private async Task<TEntity> InternalUpdateAsync(TEntity entity, List<object> refList, TParameters parameters = default(TParameters)) {
             var type = typeof(TEntity);
             TId id = (TId)type.GetProperty(IdentityPropertyName).GetValue(entity);
-            var instance = await GetAsync(id, parameters);
+            var instance = await InternalGetAsync(id);
 
-            foreach (var member in Database.Entry(instance).Members) {
+            foreach (var member in Database.Entry(entity).Members) {
                 var obj = member.Metadata.PropertyInfo.GetValue(entity);
 
                 if (obj != null) {
@@ -615,7 +680,7 @@ namespace XWidget.EFLogic {
                 } else {
                     member.Metadata.PropertyInfo.SetValue(
                         instance,
-                        member.Metadata.PropertyInfo.GetValue(entity));
+                        obj);
                 }
             }
 
@@ -625,7 +690,8 @@ namespace XWidget.EFLogic {
             await Database.SaveChangesAsync();
             await AfterUpdate(instance, parameters);
             await Manager.AfterUpdate(instance, parameters);
-            return instance;
+
+            return await GetAsync(id);
         }
 
         /// <summary>
