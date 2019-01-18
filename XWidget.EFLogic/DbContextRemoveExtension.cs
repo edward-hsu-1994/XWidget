@@ -208,30 +208,58 @@ namespace XWidget.EFLogic {
 
             var entity = FormatterServices.GetUninitializedObject(type);
             var entityType = context.Model.FindRuntimeEntityType(type);
+
+            // 獲取類型中的連鎖刪除方案設定
+            RemoveCascadeAttribute removeCascadeAttribute = type.GetCustomAttribute<RemoveCascadeAttribute>();
+            if (removeCascadeAttribute == null) {
+                removeCascadeAttribute = new RemoveCascadeAttribute() {
+                    Mode = RemoveCascadeMode.OptOut
+                };
+            }
+
             var navs = entityType.GetNavigations();
 
             foreach (var nav in navs) {
                 if (!TypeCheck(nav.PropertyInfo.PropertyType)) {
                     continue;
                 }
+                if (removeCascadeAttribute.Mode == RemoveCascadeMode.OptOut) {
+                    if (nav.PropertyInfo.GetCustomAttribute<RemoveCascadeStopperAttribute>() != null) {
+                        continue;
+                    }
 
-                if (nav.PropertyInfo.GetCustomAttribute<RemoveCascadeStopperAttribute>() != null) {
-                    continue;
+                    var shouldRemoveCascade = type.GetMethod(
+                        $"ShouldRemoveCascade{nav.Name}",
+                        BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase);
+
+                    if (shouldRemoveCascade != null && //如果存在連鎖刪除判斷方法且不允許連鎖刪除
+                        false.Equals(shouldRemoveCascade.Invoke(entity, new object[0]))) {
+                        continue;
+                    }
+
+                    LoadRemoveCascadeTypes(
+                            context,
+                            nav.GetTargetType().ClrType,
+                            result);
+                } else if (removeCascadeAttribute.Mode == RemoveCascadeMode.OptIn) {
+                    if (nav.PropertyInfo.GetCustomAttribute<RemoveCascadePropertyAttribute>() == null) {
+                        continue;
+                    }
+
+                    var shouldRemoveCascade = type.GetMethod(
+                        $"ShouldRemoveCascade{nav.Name}",
+                        BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase);
+
+                    if (shouldRemoveCascade != null && //如果存在連鎖刪除判斷方法且不允許連鎖刪除
+                        false.Equals(shouldRemoveCascade.Invoke(entity, new object[0]))) {
+                        continue;
+                    }
+
+                    LoadRemoveCascadeTypes(
+                            context,
+                            nav.GetTargetType().ClrType,
+                            result);
                 }
-
-                var shouldRemoveCascade = type.GetMethod(
-                    $"ShouldRemoveCascade{nav.Name}",
-                    BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase);
-
-                if (shouldRemoveCascade != null && //如果存在連鎖刪除判斷方法且不允許連鎖刪除
-                    false.Equals(shouldRemoveCascade.Invoke(entity, new object[0]))) {
-                    continue;
-                }
-
-                LoadRemoveCascadeTypes(
-                        context,
-                        nav.GetTargetType().ClrType,
-                        result);
             }
         }
     }
