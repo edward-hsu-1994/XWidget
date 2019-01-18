@@ -710,6 +710,16 @@ namespace XWidget.EFLogic {
             return GetDifferencesAsync(entity).ToSync();
         }
 
+        /// <summary>
+        /// 取得資料庫操作邏輯管理器
+        /// </summary>
+        /// <typeparam name="TLogicManager">資料庫操作邏輯管理器類型</typeparam>
+        /// <returns>資料庫操作邏輯管理器</returns>
+        public virtual TLogicManager GetLogicManager<TLogicManager>()
+            where TLogicManager : LogicManagerBase<TContext> {
+            return Manager as TLogicManager;
+        }
+
         #region Hook
         /// <summary>
         /// 建立前處理
