@@ -18,12 +18,13 @@ namespace XWidget.EFLogic.Test.Models2 {
         [InverseProperty("Children")]
         public virtual ProductCategory Parent { get; set; }
 
-        [RemoveCascadeProperty]
         [InverseProperty("Parent")]
         public virtual ICollection<ProductCategory> Children { get; set; } = new HashSet<ProductCategory>();
 
         [RemoveCascadeProperty]
         [InverseProperty("Category")]
         public virtual ICollection<Product> Products { get; set; } = new HashSet<Product>();
+
+        public bool ShouldRemoveCascadeChildren() => true;
     }
 }

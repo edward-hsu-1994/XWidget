@@ -147,6 +147,16 @@ namespace XWidget.EFLogic.Test {
                 Assert.Empty(context.Order.Where(x => x.UserAccount == user.Account));
                 Assert.Equal(productTotalCount, context.Product.Count());
             }
+
+            using (var context = TestContext2.CreateInstance()) {
+                var category = context.ProductCategory.First();
+
+                context.RemoveCascade(category);
+                context.SaveChanges();
+
+                Assert.Empty(context.ProductCategory.Where(x => x.ParentId == category.Id));
+                Assert.Empty(context.Product.Where(x => x.CategoryId == category.Id));
+            }
         }
     }
 }
