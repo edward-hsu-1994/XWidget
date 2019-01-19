@@ -24,29 +24,14 @@ namespace XWidget.EFLogic.Test.Controllers {
 
             var categoryLogic = Manager.GetLogicByType<Category, Guid>();
 
-            var updateOrCreateMethod = categoryLogic.GetType().GetAllBaseTypes()
-                    .Where(x => x.IsGenericType)
-                    .FirstOrDefault(x => x.GetGenericTypeDefinition() == typeof(LogicBase<,,>))
-                    .GetMethods(BindingFlags.Instance | BindingFlags.NonPublic)
-                    .FirstOrDefault(x => {
-                        return x.Name == "UpdateOrCreate" &&
-                        x.GetParameters().Select(y => y.ParameterType)
-                        .SequenceEqual(new Type[] {
-                            typeof(object),
-                            typeof(List<object>),
-                            typeof(object[])
-                        });
-                    });
-
             var category = categoryLogic.Create(new Category() {
                 Name = "Test01"
             });
 
-            var m = updateOrCreateMethod.Invoke(categoryLogic, new object[] {
+            var m = categoryLogic.UpdateOrCreate(
                 category,
-                new List<object>(),
                 new object[0]
-            });
+            );
 
 
             category = categoryLogic.Update(new Category() {

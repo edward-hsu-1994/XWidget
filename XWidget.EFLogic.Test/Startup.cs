@@ -24,7 +24,7 @@ namespace XWidget.EFLogic.Test {
             services.AddScoped<TestContext>(x => TestContext.CreateInstance());
 
             services.AddLogic<TestLogicManager, TestContext>()
-            .AddFromDbContext("Id");
+                .AddFromDbContext("Id");
 
             services.AddMvc()
                 .AddApplicationPart(typeof(TestController).GetTypeInfo().Assembly)

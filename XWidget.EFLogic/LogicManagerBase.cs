@@ -12,7 +12,20 @@ namespace XWidget.EFLogic {
     /// <summary>
     /// 邏輯管理器
     /// </summary>
-    public abstract class LogicManagerBase<TContext> where TContext : DbContext {
+    public abstract class LogicManagerBase<TContext> : LogicManagerBase<TContext, object[]>
+        where TContext : DbContext {
+        /// <summary>
+        /// 邏輯管理器建構子
+        /// </summary>
+        /// <param name="database">資料庫上下文</param>
+        public LogicManagerBase(TContext database) : base(database) {
+        }
+    }
+
+    /// <summary>
+    /// 邏輯管理器
+    /// </summary>
+    public abstract class LogicManagerBase<TContext, TParameters> where TContext : DbContext {
         internal DynamicLogicMapBuilder<TContext> MapBuilder { get; set; }
 
         /// <summary>
@@ -28,9 +41,9 @@ namespace XWidget.EFLogic {
         /// <summary>
         /// 動態邏輯對應
         /// </summary>
-        public DynamicLogicMap<TContext> DynamicLogicMap {
+        public DynamicLogicMap<TContext, TParameters> DynamicLogicMap {
             get {
-                return new DynamicLogicMap<TContext>() {
+                return new DynamicLogicMap<TContext, TParameters>() {
                     Maps = MapBuilder.Maps
                 };
             }
@@ -50,9 +63,9 @@ namespace XWidget.EFLogic {
         /// <typeparam name="TEntity">實例類型</typeparam>
         /// <typeparam name="TId">唯一識別號類型</typeparam>
         /// <returns>操作邏輯</returns>
-        public LogicBase<TContext, TEntity, TId> GetLogicByType<TEntity, TId>()
+        public LogicBase<TContext, TEntity, TId, TParameters> GetLogicByType<TEntity, TId>()
             where TEntity : class {
-            return (LogicBase<TContext, TEntity, TId>)GetLogicByType(typeof(TEntity));
+            return (LogicBase<TContext, TEntity, TId, TParameters>)GetLogicByType(typeof(TEntity));
         }
 
         internal object GetLogicByType(Type type) {
@@ -67,12 +80,12 @@ namespace XWidget.EFLogic {
                     x =>
                         (
                             x.PropertyType.IsGenericType &&
-                            x.PropertyType.GetGenericTypeDefinition() == typeof(LogicBase<,,>) &&
+                            x.PropertyType.GetGenericTypeDefinition() == typeof(LogicBase<,,,>) &&
                             x.PropertyType.GenericTypeArguments[1] == type
                         ) || (
                             x.PropertyType.BaseType != null &&
                             x.PropertyType.BaseType.IsGenericType &&
-                            x.PropertyType.BaseType.GetGenericTypeDefinition() == typeof(LogicBase<,,>) &&
+                            x.PropertyType.BaseType.GetGenericTypeDefinition() == typeof(LogicBase<,,,>) &&
                             x.PropertyType.BaseType.GenericTypeArguments[1] == type
                         )
                 );
@@ -238,7 +251,7 @@ namespace XWidget.EFLogic {
         /// <param name="id">唯一識別號</param>
         /// <param name="parameters">參數</param>
         /// <returns>物件實例</returns>
-        public async Task<TEntity> GetAsync<TEntity>(object id, object[] parameters = null) where TEntity : class {
+        public async Task<TEntity> GetAsync<TEntity>(object id, TParameters parameters = default(TParameters)) where TEntity : class {
             var targetLogic = (dynamic)GetLogicByType(typeof(TEntity));
 
             return await ((dynamic)targetLogic).GetAsync(id, parameters);
@@ -251,7 +264,7 @@ namespace XWidget.EFLogic {
         /// <param name="id">唯一識別號</param>
         /// <param name="parameters">參數</param>
         /// <returns>物件實例</returns>
-        public TEntity Get<TEntity>(object id, object[] parameters = null) where TEntity : class {
+        public TEntity Get<TEntity>(object id, TParameters parameters = default(TParameters)) where TEntity : class {
             return GetAsync<TEntity>(id, parameters).ToSync();
         }
 
@@ -262,7 +275,7 @@ namespace XWidget.EFLogic {
         /// <param name="id">唯一識別號</param>
         /// <param name="parameters">參數</param>
         /// <returns>物件實例</returns>
-        public async Task<object> GetAsync(Type type, object id, object[] parameters = null) {
+        public async Task<object> GetAsync(Type type, object id, TParameters parameters = default(TParameters)) {
             var targetLogic = (dynamic)GetLogicByType(type);
 
             return await ((dynamic)targetLogic).GetAsync(id, parameters);
@@ -275,7 +288,7 @@ namespace XWidget.EFLogic {
         /// <param name="id">唯一識別號</param>
         /// <param name="parameters">參數</param>
         /// <returns>物件實例</returns>
-        public object Get(Type type, object id, object[] parameters = null) {
+        public object Get(Type type, object id, TParameters parameters = default(TParameters)) {
             return GetAsync(type, id, parameters).ToSync();
         }
 
@@ -286,7 +299,7 @@ namespace XWidget.EFLogic {
         /// <param name="entity">物件實例</param>
         /// <param name="parameters">參數</param>
         /// <returns>加入後的物件</returns>
-        public async Task<TEntity> CreateAsync<TEntity>(TEntity entity, object[] parameters = null) where TEntity : class {
+        public async Task<TEntity> CreateAsync<TEntity>(TEntity entity, TParameters parameters = default(TParameters)) where TEntity : class {
             var targetLogic = (dynamic)GetLogicByType(typeof(TEntity));
 
             return await ((dynamic)targetLogic).CreateAsync(entity, parameters);
@@ -299,7 +312,7 @@ namespace XWidget.EFLogic {
         /// <param name="entity">物件實例</param>
         /// <param name="parameters">參數</param>
         /// <returns>加入後的物件</returns>
-        public TEntity Create<TEntity>(TEntity entity, object[] parameters = null) where TEntity : class {
+        public TEntity Create<TEntity>(TEntity entity, TParameters parameters = default(TParameters)) where TEntity : class {
             return CreateAsync(entity, parameters).ToSync();
         }
 
@@ -310,7 +323,7 @@ namespace XWidget.EFLogic {
         /// <param name="entity">物件實例</param>
         /// <param name="parameters">參數</param>
         /// <returns>加入後的物件</returns>
-        public async Task<TEntity> UpdateAsync<TEntity>(TEntity entity, object[] parameters = null) where TEntity : class {
+        public async Task<TEntity> UpdateAsync<TEntity>(TEntity entity, TParameters parameters = default(TParameters)) where TEntity : class {
             var targetLogic = (dynamic)GetLogicByType(typeof(TEntity));
 
             return await ((dynamic)targetLogic).UpdateAsync(entity, parameters);
@@ -323,7 +336,7 @@ namespace XWidget.EFLogic {
         /// <param name="entity">物件實例</param>
         /// <param name="parameters">參數</param>
         /// <returns>加入後的物件</returns>
-        public TEntity Update<TEntity>(TEntity entity, object[] parameters = null) where TEntity : class {
+        public TEntity Update<TEntity>(TEntity entity, TParameters parameters = default(TParameters)) where TEntity : class {
             return UpdateAsync(entity, parameters).ToSync();
         }
 
@@ -333,7 +346,7 @@ namespace XWidget.EFLogic {
         /// <param name="entity">物件實例</param>
         /// <param name="parameters">參數</param>
         /// <returns>更新後的物件實例</returns>
-        public async Task<TEntity> UpdateOrCreateAsync<TEntity>(TEntity entity, params object[] parameters)
+        public async Task<TEntity> UpdateOrCreateAsync<TEntity>(TEntity entity, TParameters parameters = default(TParameters))
             where TEntity : class {
             var targetLogic = (dynamic)GetLogicByType(typeof(TEntity));
 
@@ -346,7 +359,7 @@ namespace XWidget.EFLogic {
         /// <param name="entity">物件實例</param>
         /// <param name="parameters">參數</param>
         /// <returns>更新後的物件實例</returns>
-        public TEntity UpdateOrCreate<TEntity>(TEntity entity, params object[] parameters)
+        public TEntity UpdateOrCreate<TEntity>(TEntity entity, TParameters parameters = default(TParameters))
             where TEntity : class {
             return UpdateOrCreateAsync(entity, parameters).ToSync();
         }
@@ -357,7 +370,7 @@ namespace XWidget.EFLogic {
         /// <typeparam name="T">實例類型</typeparam>
         /// <param name="id">唯一識別號</param>
         /// <param name="parameters">參數</param>
-        public async Task DeleteAsync<TEntity>(object id, object[] parameters = null) where TEntity : class {
+        public async Task DeleteAsync<TEntity>(object id, TParameters parameters = default(TParameters)) where TEntity : class {
             var targetLogic = (dynamic)GetLogicByType(typeof(TEntity));
 
             await targetLogic.DeleteAsync(id, parameters);
@@ -369,7 +382,7 @@ namespace XWidget.EFLogic {
         /// <typeparam name="T">實例類型</typeparam>
         /// <param name="id">唯一識別號</param>
         /// <param name="parameters">參數</param>
-        public void Delete<TEntity>(object id, object[] parameters = null) where TEntity : class {
+        public void Delete<TEntity>(object id, TParameters parameters = default(TParameters)) where TEntity : class {
             DeleteAsync<TEntity>(id, parameters).ToSync();
         }
 
@@ -379,7 +392,7 @@ namespace XWidget.EFLogic {
         /// <param name="type">實例類型</param>
         /// <param name="id">唯一識別號</param>
         /// <param name="parameters">參數</param>
-        public async Task DeleteAsync(Type type, object id, object[] parameters = null) {
+        public async Task DeleteAsync(Type type, object id, TParameters parameters = default(TParameters)) {
             var targetLogic = (dynamic)GetLogicByType(type);
 
             await targetLogic.DeleteAsync(id, parameters);
@@ -391,7 +404,7 @@ namespace XWidget.EFLogic {
         /// <param name="type">實例類型</param>
         /// <param name="id">唯一識別號</param>
         /// <param name="parameters">參數</param>
-        public void Delete(Type type, object id, object[] parameters = null) {
+        public void Delete(Type type, object id, TParameters parameters = default(TParameters)) {
             DeleteAsync(type, id, parameters).ToSync();
         }
 
@@ -444,7 +457,7 @@ namespace XWidget.EFLogic {
         /// <param name="id">物件唯一識別號</param>
         /// <param name="parameters">參數</param>
         /// <returns>直接關聯物件鏈物件陣列</returns>
-        public async Task<object[]> GetDirectChain<TEntity>(object id, params object[] parameters)
+        public async Task<object[]> GetDirectChain<TEntity>(object id, TParameters parameters = default(TParameters))
             where TEntity : class {
             return await GetDirectChain(typeof(TEntity), await GetAsync<TEntity>(id, parameters), parameters);
         }
@@ -456,7 +469,7 @@ namespace XWidget.EFLogic {
         /// <param name="entity">物件實例</param>
         /// <param name="parameters">參數</param>
         /// <returns>直接關聯物件鏈物件陣列</returns>
-        public async Task<object[]> GetDirectChain(Type type, object entity, params object[] parameters) {
+        public async Task<object[]> GetDirectChain(Type type, object entity, TParameters parameters = default(TParameters)) {
             var logic = (dynamic)GetLogicByType(type);
             return await logic.GetDirectChain(entity, parameters);
         }
@@ -468,7 +481,7 @@ namespace XWidget.EFLogic {
         /// <param name="entity">實例</param>
         /// <param name="parameters">參數</param>
         /// <returns>實例</returns>
-        public virtual async Task BeforeCreate(object entity, params object[] parameters) { }
+        public virtual async Task BeforeCreate(object entity, TParameters parameters = default(TParameters)) { }
 
         /// <summary>
         /// 建立後處理
@@ -476,7 +489,7 @@ namespace XWidget.EFLogic {
         /// <param name="entity">實例</param>
         /// <param name="parameters">參數</param>
         /// <returns>實例</returns>
-        public virtual async Task BeforeUpdate(object entity, params object[] parameters) { }
+        public virtual async Task BeforeUpdate(object entity, TParameters parameters = default(TParameters)) { }
 
         /// <summary>
         /// 刪除前處理
@@ -484,7 +497,7 @@ namespace XWidget.EFLogic {
         /// <param name="entity">實例</param>
         /// <param name="parameters">參數</param>
         /// <returns>實例</returns>
-        public virtual async Task BeforeDelete(object entity, params object[] parameters) { }
+        public virtual async Task BeforeDelete(object entity, TParameters parameters = default(TParameters)) { }
 
         /// <summary>
         /// 取得後處理
@@ -492,7 +505,7 @@ namespace XWidget.EFLogic {
         /// <param name="entity">實例</param>
         /// <param name="parameters">參數</param>
         /// <returns>實例</returns>
-        public virtual async Task AfterGet(object entity, params object[] parameters) { }
+        public virtual async Task AfterGet(object entity, TParameters parameters = default(TParameters)) { }
 
         /// <summary>
         /// 建立後處理
@@ -500,7 +513,7 @@ namespace XWidget.EFLogic {
         /// <param name="entity">實例</param>
         /// <param name="parameters">參數</param>
         /// <returns>實例</returns>
-        public virtual async Task AfterCreate(object entity, params object[] parameters) { }
+        public virtual async Task AfterCreate(object entity, TParameters parameters = default(TParameters)) { }
 
         /// <summary>
         /// 更新後處理
@@ -508,7 +521,7 @@ namespace XWidget.EFLogic {
         /// <param name="entity">實例</param>
         /// <param name="parameters">參數</param>
         /// <returns>實例</returns>
-        public virtual async Task AfterUpdate(object entity, params object[] parameters) { }
+        public virtual async Task AfterUpdate(object entity, TParameters parameters = default(TParameters)) { }
 
         /// <summary>
         /// 刪除後處理
@@ -516,7 +529,7 @@ namespace XWidget.EFLogic {
         /// <param name="entity">實例</param>
         /// <param name="parameters">參數</param>
         /// <returns>實例</returns>
-        public virtual async Task AfterDelete(object entity, params object[] parameters) { }
+        public virtual async Task AfterDelete(object entity, TParameters parameters = default(TParameters)) { }
         #endregion
     }
 }
