@@ -19,7 +19,7 @@ namespace XWidget.EFLogic.Test.Models2 {
 
         [RemoveCascadeProperty]
         [InverseProperty("Product")]
-        public virtual ICollection<OrderItem> OrderItems { get; set; }
+        public virtual ICollection<OrderItem> OrderItems { get; set; } = new HashSet<OrderItem>();
 
     }
 }

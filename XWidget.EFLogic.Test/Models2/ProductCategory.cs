@@ -20,10 +20,10 @@ namespace XWidget.EFLogic.Test.Models2 {
 
         [RemoveCascadeProperty]
         [InverseProperty("Parent")]
-        public virtual ICollection<ProductCategory> Children { get; set; }
+        public virtual ICollection<ProductCategory> Children { get; set; } = new HashSet<ProductCategory>();
 
         [RemoveCascadeProperty]
-        [InverseProperty("ProductCategory")]
-        public virtual ICollection<Product> Products { get; set; }
+        [InverseProperty("Category")]
+        public virtual ICollection<Product> Products { get; set; } = new HashSet<Product>();
     }
 }

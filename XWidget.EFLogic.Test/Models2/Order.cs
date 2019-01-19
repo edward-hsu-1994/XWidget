@@ -10,15 +10,15 @@ namespace XWidget.EFLogic.Test.Models2 {
         [Key]
         public virtual Guid Id { get; set; } = Guid.NewGuid();
 
-        public virtual string UserId { get; set; }
+        public virtual string UserAccount { get; set; }
 
         public virtual DateTime Time { get; set; }
 
-        [ForeignKey("UserId")]
+        [ForeignKey("UserAccount")]
         [InverseProperty("Orders")]
         public virtual User User { get; set; }
 
         [InverseProperty("Order")]
-        public virtual ICollection<OrderItem> Items { get; set; }
+        public virtual ICollection<OrderItem> Items { get; set; } = new HashSet<OrderItem>();
     }
 }

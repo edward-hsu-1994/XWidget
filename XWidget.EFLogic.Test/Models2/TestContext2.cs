@@ -36,23 +36,21 @@ namespace XWidget.EFLogic.Test.Models2 {
 
             #region CreateProductCategory
             for (int i = 1; i <= 5; i++) {
-                List<ProductCategory> Children_Level2 = new List<ProductCategory>();
+                var pCategory = new ProductCategory() {
+                    Name = $"Category_{i}"
+                };
+                result.Add(pCategory);
                 for (int j = 1; j <= 5; j++) {
-                    List<ProductCategory> Children_Level3 = new List<ProductCategory>();
+                    var pCategory_2 = new ProductCategory() {
+                        Name = $"Category_{i}_{j}"
+                    };
                     for (int k = 1; k <= 5; k++) {
-                        Children_Level3.Add(new ProductCategory() {
+                        pCategory_2.Children.Add(new ProductCategory() {
                             Name = $"Category_{i}_{j}_{k}"
                         });
                     }
-                    Children_Level2.Add(new ProductCategory() {
-                        Name = $"Category_{i}_{j}",
-                        Children = Children_Level3
-                    });
                 }
-                result.Add(new ProductCategory() {
-                    Name = $"Category_{i}",
-                    Children = Children_Level2
-                });
+
             }
             result.SaveChanges();
             #endregion
@@ -73,17 +71,17 @@ namespace XWidget.EFLogic.Test.Models2 {
             #region CreateOrderAndItem
             foreach (var user in result.User.ToList()) {
                 for (int i = 1; i <= 5; i++) {
-                    List<OrderItem> orderItems = new List<OrderItem>();
+                    var order = new Order() {
+                        Time = DateTime.Now
+                    };
+                    user.Orders.Add(order);
                     foreach (var product in result.Product.ToList()) {
-                        orderItems.Add(new OrderItem() {
+                        order.Items.Add(new OrderItem() {
                             Product = product,
                             Count = i
                         });
                     }
-                    user.Orders.Add(new Order() {
-                        Items = orderItems,
-                        Time = DateTime.Now
-                    });
+
                 }
             }
             result.SaveChanges();

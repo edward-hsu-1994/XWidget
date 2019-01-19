@@ -13,6 +13,6 @@ namespace XWidget.EFLogic.Test.Models2 {
 
         [RemoveCascadeProperty]
         [InverseProperty("User")]
-        public virtual ICollection<Order> Orders { get; set; }
+        public virtual ICollection<Order> Orders { get; set; } = new HashSet<Order>();
     }
 }
