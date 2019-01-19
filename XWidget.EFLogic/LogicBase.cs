@@ -17,12 +17,44 @@ namespace XWidget.EFLogic {
     /// 基礎邏輯操作器基礎
     /// </summary>
     public abstract class LogicBase<TContext, TEntity, TId>
+        : LogicBase<TContext, TEntity, TId, object[]>
         where TEntity : class
         where TContext : DbContext {
+
+        /// <summary>
+        /// 基礎邏輯操作器基礎建構子，預設的主鍵為Id
+        /// </summary>
+        /// <param name="logicManager">資料庫操作邏輯管理器實例</param>
+        public LogicBase(LogicManagerBase<TContext, object[]> logicManager) : base(logicManager, "Id") {
+        }
+
+        /// <summary>
+        /// 基礎邏輯操作器基礎建構子
+        /// </summary>
+        /// <param name="logicManager">資料庫操作邏輯管理器實例</param>
+        /// <param name="identityPropertyName">唯一識別號屬性選擇器</param>
+        public LogicBase(LogicManagerBase<TContext, object[]> logicManager, string identityPropertyName) : base(logicManager, identityPropertyName) {
+        }
+
+        /// <summary>
+        /// 基礎邏輯操作器基礎建構子
+        /// </summary>
+        /// <param name="logicManager">資料庫操作邏輯管理器實例</param>
+        /// <param name="identitySelector">唯一識別號屬性選擇器</param>
+        public LogicBase(LogicManagerBase<TContext, object[]> logicManager, Expression<Func<TEntity, TId>> identitySelector) : base(logicManager, identitySelector) {
+        }
+    }
+
+    /// <summary>
+    /// 基礎邏輯操作器基礎
+    /// </summary>
+    public abstract class LogicBase<TContext, TEntity, TId, TParameters>
+    where TEntity : class
+    where TContext : DbContext {
         /// <summary>
         /// 資料庫操作邏輯管理器
         /// </summary>
-        public LogicManagerBase<TContext> Manager { get; private set; }
+        public LogicManagerBase<TContext, TParameters> Manager { get; private set; }
 
         /// <summary>
         /// 資料庫內容實例
@@ -44,7 +76,7 @@ namespace XWidget.EFLogic {
         /// 基礎邏輯操作器基礎建構子，預設的主鍵為Id
         /// </summary>
         /// <param name="logicManager">資料庫操作邏輯管理器實例</param>
-        public LogicBase(LogicManagerBase<TContext> logicManager) : this(logicManager, "Id") {
+        public LogicBase(LogicManagerBase<TContext, TParameters> logicManager) : this(logicManager, "Id") {
 
         }
 
@@ -53,7 +85,7 @@ namespace XWidget.EFLogic {
         /// </summary>
         /// <param name="logicManager">資料庫操作邏輯管理器實例</param>
         /// <param name="identityPropertyName">唯一識別號屬性選擇器</param>
-        public LogicBase(LogicManagerBase<TContext> logicManager, string identityPropertyName) {
+        public LogicBase(LogicManagerBase<TContext, TParameters> logicManager, string identityPropertyName) {
             this.Manager = logicManager;
 
 
@@ -85,7 +117,7 @@ namespace XWidget.EFLogic {
         /// </summary>
         /// <param name="logicManager">資料庫操作邏輯管理器實例</param>
         /// <param name="identitySelector">唯一識別號屬性選擇器</param>
-        public LogicBase(LogicManagerBase<TContext> logicManager, Expression<Func<TEntity, TId>> identitySelector) {
+        public LogicBase(LogicManagerBase<TContext, TParameters> logicManager, Expression<Func<TEntity, TId>> identitySelector) {
             this.Manager = logicManager;
             this.IdentityPropertyName = (identitySelector.Body as MemberExpression).Member.Name;
         }
@@ -305,7 +337,7 @@ namespace XWidget.EFLogic {
         /// <param name="id">唯一識別號</param>
         /// <param name="parameters">參數</param>
         /// <returns>物件實例</returns>
-        public async Task<TEntity> GetAsync(object id, object[] parameters = null) {
+        public async Task<TEntity> GetAsync(object id, TParameters parameters = default(TParameters)) {
             return await GetAsync((TId)id, parameters);
         }
 
@@ -315,7 +347,7 @@ namespace XWidget.EFLogic {
         /// <param name="id">唯一識別號</param>
         /// <param name="parameters">參數</param>
         /// <returns>物件實例</returns>
-        public TEntity Get(object id, object[] parameters = null) {
+        public TEntity Get(object id, TParameters parameters = default(TParameters)) {
             return GetAsync(id, parameters).ToSync();
         }
 
@@ -340,14 +372,13 @@ namespace XWidget.EFLogic {
         /// <param name="id">唯一識別號</param>
         /// <param name="parameters">參數</param>
         /// <returns>物件實例</returns>
-        public virtual async Task<TEntity> GetAsync(TId id, object[] parameters = null) {
-            var instance = await InternalGetAsync(id);
+        public virtual async Task<TEntity> GetAsync(TId id, TParameters parameters = default(TParameters)) {
+            var instance = Database.Set<TEntity>().SingleOrDefault($"{IdentityPropertyName} == @0", id);
 
             await Manager.AfterGet(instance, parameters);
             await AfterGet(instance, parameters);
             return instance;
         }
-
 
         #region NoCacheGet
 
@@ -357,7 +388,7 @@ namespace XWidget.EFLogic {
         /// <param name="id">唯一識別號</param>
         /// <param name="parameters">參數</param>
         /// <returns>物件實例</returns>
-        public async Task<TEntity> GetWithoutCacheAsync(object id, object[] parameters = null) {
+        public async Task<TEntity> GetWithoutCacheAsync(object id, TParameters parameters = default(TParameters)) {
             return await GetWithoutCacheAsync((TId)id, parameters);
         }
 
@@ -367,7 +398,7 @@ namespace XWidget.EFLogic {
         /// <param name="id">唯一識別號</param>
         /// <param name="parameters">參數</param>
         /// <returns>物件實例</returns>
-        public TEntity GetWithoutCache(object id, object[] parameters = null) {
+        public TEntity GetWithoutCache(object id, TParameters parameters = default(TParameters)) {
             return GetWithoutCacheAsync(id, parameters).ToSync();
         }
 
@@ -392,7 +423,7 @@ namespace XWidget.EFLogic {
         /// <param name="id">唯一識別號</param>
         /// <param name="parameters">參數</param>
         /// <returns>物件實例</returns>
-        public virtual async Task<TEntity> GetWithoutCacheAsync(TId id, object[] parameters = null) {
+        public virtual async Task<TEntity> GetWithoutCacheAsync(TId id, TParameters parameters = default(TParameters)) {
             var instance = await InternalGetWithoutCacheAsync(id);
 
             await Manager.AfterGet(instance, parameters);
@@ -407,7 +438,7 @@ namespace XWidget.EFLogic {
         /// <param name="id">唯一識別號</param>
         /// <param name="parameters">參數</param>
         /// <returns>物件實例</returns>
-        public TEntity Get(TId id, object[] parameters = null) {
+        public TEntity Get(TId id, TParameters parameters = default(TParameters)) {
             return GetAsync(id, parameters).ToSync();
         }
 
@@ -417,7 +448,7 @@ namespace XWidget.EFLogic {
         /// <param name="entity">物件實例</param>
         /// <param name="parameters">參數</param>
         /// <returns>加入後的物件</returns>
-        public async Task<TEntity> CreateAsync(object entity, params object[] parameters) {
+        public async Task<TEntity> CreateAsync(object entity, TParameters parameters = default(TParameters)) {
             return await CreateAsync((TEntity)entity, parameters);
         }
 
@@ -427,7 +458,7 @@ namespace XWidget.EFLogic {
         /// <param name="entity">物件實例</param>
         /// <param name="parameters">參數</param>
         /// <returns>加入後的物件</returns>
-        public TEntity Create(object entity, params object[] parameters) {
+        public TEntity Create(object entity, TParameters parameters = default(TParameters)) {
             return CreateAsync(entity, parameters).ToSync();
         }
 
@@ -437,7 +468,7 @@ namespace XWidget.EFLogic {
         /// <param name="entity">物件實例</param>
         /// <param name="parameters">參數</param>
         /// <returns>加入後的物件</returns>
-        public virtual async Task<TEntity> CreateAsync(TEntity entity, params object[] parameters) {
+        public virtual async Task<TEntity> CreateAsync(TEntity entity, TParameters parameters = default(TParameters)) {
             if (CreateIgnoreIdentity) {
                 (await Manager.GetEntityIdentityProperty(entity)).SetValue(entity, default(TId));
             }
@@ -461,7 +492,7 @@ namespace XWidget.EFLogic {
         /// <param name="entity">物件實例</param>
         /// <param name="parameters">參數</param>
         /// <returns>加入後的物件</returns>
-        public TEntity Create(TEntity entity, params object[] parameters) {
+        public TEntity Create(TEntity entity, TParameters parameters = default(TParameters)) {
             return CreateAsync(entity, parameters).ToSync();
         }
 
@@ -471,7 +502,7 @@ namespace XWidget.EFLogic {
         /// <param name="entity">物件實例</param>
         /// <param name="parameters">參數</param>
         /// <returns>更新後的物件實例</returns>
-        public async Task<TEntity> UpdateAsync(object entity, params object[] parameters) {
+        public async Task<TEntity> UpdateAsync(object entity, TParameters parameters = default(TParameters)) {
             return await UpdateAsync((TEntity)entity, parameters);
         }
 
@@ -481,7 +512,7 @@ namespace XWidget.EFLogic {
         /// <param name="entity">物件實例</param>
         /// <param name="parameters">參數</param>
         /// <returns>更新後的物件實例</returns>
-        public TEntity Update(object entity, params object[] parameters) {
+        public TEntity Update(object entity, TParameters parameters = default(TParameters)) {
             return UpdateAsync(entity, parameters).ToSync();
         }
 
@@ -491,7 +522,7 @@ namespace XWidget.EFLogic {
         /// <param name="entity">物件實例</param>
         /// <param name="parameters">參數</param>
         /// <returns>更新後的物件實例</returns>
-        public virtual async Task<TEntity> UpdateOrCreateAsync(object entity, params object[] parameters) {
+        public virtual async Task<TEntity> UpdateOrCreateAsync(object entity, TParameters parameters = default(TParameters)) {
             var type = typeof(TEntity);
             TId id = (TId)type.GetProperty(IdentityPropertyName).GetValue(entity);
 
@@ -509,7 +540,7 @@ namespace XWidget.EFLogic {
         /// <param name="entity">物件實例</param>
         /// <param name="parameters">參數</param>
         /// <returns>更新後的物件實例</returns>
-        private async Task<TEntity> UpdateOrCreateAsync(object entity, List<object> refList, params object[] parameters) {
+        private async Task<TEntity> UpdateOrCreateAsync(object entity, List<object> refList, TParameters parameters) {
             var type = typeof(TEntity);
             TId id = (TId)type.GetProperty(IdentityPropertyName).GetValue(entity);
 
@@ -526,7 +557,7 @@ namespace XWidget.EFLogic {
         /// <param name="entity">物件實例</param>
         /// <param name="parameters">參數</param>
         /// <returns>更新後的物件實例</returns>
-        private TEntity UpdateOrCreate(object entity, List<object> refList, params object[] parameters) {
+        private TEntity UpdateOrCreate(object entity, List<object> refList, TParameters parameters) {
             return UpdateOrCreateAsync(entity, refList, parameters).ToSync();
         }
         #endregion
@@ -537,7 +568,7 @@ namespace XWidget.EFLogic {
         /// <param name="entity">物件實例</param>
         /// <param name="parameters">參數</param>
         /// <returns>更新後的物件實例</returns>
-        public TEntity UpdateOrCreate(object entity, params object[] parameters) {
+        public TEntity UpdateOrCreate(object entity, TParameters parameters = default(TParameters)) {
             return UpdateOrCreateAsync(entity, parameters).ToSync();
         }
 
@@ -547,8 +578,8 @@ namespace XWidget.EFLogic {
         /// <param name="entity">物件實例</param>
         /// <param name="parameters">參數</param>
         /// <returns>更新後的物件實例</returns>
-        public virtual async Task<TEntity> UpdateAsync(TEntity entity, params object[] parameters) {
-            return await UpdateAsync(entity, null, parameters);
+        public virtual async Task<TEntity> UpdateAsync(TEntity entity, TParameters parameters = default(TParameters)) {
+            return await InternalUpdateAsync(entity, new List<object>(), parameters);
         }
 
 
@@ -559,7 +590,7 @@ namespace XWidget.EFLogic {
         /// <param name="refList">參考列表</param>
         /// <param name="parameters">參數</param>
         /// <returns>更新後的物件實例</returns>
-        private async Task<TEntity> UpdateAsync(TEntity entity, List<object> refList, params object[] parameters) {
+        private async Task<TEntity> UpdateAsync(TEntity entity, List<object> refList, TParameters parameters) {
             return await InternalUpdateAsync(entity, refList ?? new List<object>(), parameters);
         }
 
@@ -569,7 +600,7 @@ namespace XWidget.EFLogic {
         /// <param name="entity">物件實例</param>
         /// <param name="parameters">參數</param>
         /// <returns>更新後的物件實例</returns>
-        private async Task<TEntity> InternalUpdateAsync(TEntity entity, List<object> refList, params object[] parameters) {
+        private async Task<TEntity> InternalUpdateAsync(TEntity entity, List<object> refList, TParameters parameters = default(TParameters)) {
             var type = typeof(TEntity);
             TId id = (TId)type.GetProperty(IdentityPropertyName).GetValue(entity);
             var instance = await InternalGetAsync(id);
@@ -602,7 +633,7 @@ namespace XWidget.EFLogic {
                                 .SequenceEqual(new Type[] {
                                 typeof(object),
                                 typeof(List<object>),
-                                typeof(object[])
+                                typeof(TParameters)
                                 });
                             });
 
@@ -634,7 +665,7 @@ namespace XWidget.EFLogic {
                                 .SequenceEqual(new Type[] {
                                 typeof(object),
                                 typeof(List<object>),
-                                typeof(object[])
+                                typeof(TParameters)
                                 });
                             });
 
@@ -669,7 +700,7 @@ namespace XWidget.EFLogic {
         /// <param name="entity">物件實例</param>
         /// <param name="parameters">參數</param>
         /// <returns>更新後的物件實例</returns>
-        public TEntity Update(TEntity entity, params object[] parameters) {
+        public TEntity Update(TEntity entity, TParameters parameters = default(TParameters)) {
             return UpdateAsync(entity, parameters).ToSync();
         }
 
@@ -679,7 +710,7 @@ namespace XWidget.EFLogic {
         /// <param name="entity">物件實例</param>
         /// <param name="parameters">參數</param>
         /// <returns>更新後的物件實例</returns>
-        public virtual async Task<TEntity> UpdateOrCreateAsync(TEntity entity, params object[] parameters) {
+        public virtual async Task<TEntity> UpdateOrCreateAsync(TEntity entity, TParameters parameters = default(TParameters)) {
             var type = typeof(TEntity);
             TId id = (TId)type.GetProperty(IdentityPropertyName).GetValue(entity);
 
@@ -696,7 +727,7 @@ namespace XWidget.EFLogic {
         /// <param name="entity">物件實例</param>
         /// <param name="parameters">參數</param>
         /// <returns>更新後的物件實例</returns>
-        public TEntity UpdateOrCreate(TEntity entity, params object[] parameters) {
+        public TEntity UpdateOrCreate(TEntity entity, TParameters parameters = default(TParameters)) {
             return UpdateOrCreateAsync(entity, parameters).ToSync();
         }
 
@@ -705,7 +736,7 @@ namespace XWidget.EFLogic {
         /// </summary>
         /// <param name="id">唯一識別號</param>
         /// <param name="parameters">參數</param>
-        public async Task DeleteAsync(object id, params object[] parameters) {
+        public async Task DeleteAsync(object id, TParameters parameters = default(TParameters)) {
             await DeleteAsync((TId)id, parameters);
         }
 
@@ -714,7 +745,7 @@ namespace XWidget.EFLogic {
         /// </summary>
         /// <param name="id">唯一識別號</param>
         /// <param name="parameters">參數</param>
-        public void Delete(object id, params object[] parameters) {
+        public void Delete(object id, TParameters parameters = default(TParameters)) {
             DeleteAsync(id, parameters).ToSync();
         }
 
@@ -723,8 +754,8 @@ namespace XWidget.EFLogic {
         /// </summary>
         /// <param name="id">物件唯一識別號</param>
         /// <param name="parameters">參數</param>
-        public virtual async Task DeleteAsync(TId id, params object[] parameters) {
-            var instance = await InternalGetAsync(id);
+        public virtual async Task DeleteAsync(TId id, TParameters parameters = default(TParameters)) {
+            var instance = await GetAsync(id, parameters);
 
             if (instance == null) {
                 throw new NotFoundException();
@@ -745,7 +776,7 @@ namespace XWidget.EFLogic {
         /// </summary>
         /// <param name="id">物件唯一識別號</param>
         /// <param name="parameters">參數</param>
-        public void Delete(TId id, params object[] parameters) {
+        public void Delete(TId id, TParameters parameters = default(TParameters)) {
             DeleteAsync(id, parameters).ToSync();
         }
 
@@ -794,7 +825,7 @@ namespace XWidget.EFLogic {
         /// <param name="entity">實例</param>
         /// <param name="parameters">參數</param>
         /// <returns>實例</returns>
-        public virtual async Task BeforeCreate(TEntity entity, params object[] parameters) { }
+        public virtual async Task BeforeCreate(TEntity entity, TParameters parameters = default(TParameters)) { }
 
         /// <summary>
         /// 建立後處理
@@ -802,7 +833,7 @@ namespace XWidget.EFLogic {
         /// <param name="entity">實例</param>
         /// <param name="parameters">參數</param>
         /// <returns>實例</returns>
-        public virtual async Task BeforeUpdate(TEntity entity, params object[] parameters) { }
+        public virtual async Task BeforeUpdate(TEntity entity, TParameters parameters = default(TParameters)) { }
 
         /// <summary>
         /// 刪除前處理
@@ -810,7 +841,7 @@ namespace XWidget.EFLogic {
         /// <param name="entity">實例</param>
         /// <param name="parameters">參數</param>
         /// <returns>實例</returns>
-        public virtual async Task BeforeDelete(TEntity entity, params object[] parameters) { }
+        public virtual async Task BeforeDelete(TEntity entity, TParameters parameters = default(TParameters)) { }
 
         /// <summary>
         /// 取得後處理
@@ -818,7 +849,7 @@ namespace XWidget.EFLogic {
         /// <param name="entity">實例</param>
         /// <param name="parameters">參數</param>
         /// <returns>實例</returns>
-        public virtual async Task AfterGet(TEntity entity, params object[] parameters) { }
+        public virtual async Task AfterGet(TEntity entity, TParameters parameters = default(TParameters)) { }
 
         /// <summary>
         /// 建立後處理
@@ -826,7 +857,7 @@ namespace XWidget.EFLogic {
         /// <param name="entity">實例</param>
         /// <param name="parameters">參數</param>
         /// <returns>實例</returns>
-        public virtual async Task AfterCreate(TEntity entity, params object[] parameters) { }
+        public virtual async Task AfterCreate(TEntity entity, TParameters parameters = default(TParameters)) { }
 
         /// <summary>
         /// 更新後處理
@@ -834,7 +865,7 @@ namespace XWidget.EFLogic {
         /// <param name="entity">實例</param>
         /// <param name="parameters">參數</param>
         /// <returns>實例</returns>
-        public virtual async Task AfterUpdate(TEntity entity, params object[] parameters) { }
+        public virtual async Task AfterUpdate(TEntity entity, TParameters parameters = default(TParameters)) { }
 
         /// <summary>
         /// 刪除後處理
@@ -842,7 +873,7 @@ namespace XWidget.EFLogic {
         /// <param name="entity">實例</param>
         /// <param name="parameters">參數</param>
         /// <returns>實例</returns>
-        public virtual async Task AfterDelete(TEntity entity, params object[] parameters) { }
+        public virtual async Task AfterDelete(TEntity entity, TParameters parameters = default(TParameters)) { }
         #endregion
     }
 }
