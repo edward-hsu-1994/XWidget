@@ -8,6 +8,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Xunit;
 using XWidget.EFLogic.Test.Models;
+using XWidget.EFLogic.Test.Models2;
 
 namespace XWidget.EFLogic.Test {
     public class RemoveExtensionsTest {
@@ -32,7 +33,7 @@ namespace XWidget.EFLogic.Test {
         }
 
         [Fact]
-        public void RemoveCascadeTest() {
+        public void RemoveCascade_OptOut() {
             var context = TestContext.CreateInstance();
 
             var category_A = context.Categories.SingleOrDefault(x => x.Name == "Category_A");
@@ -109,7 +110,43 @@ namespace XWidget.EFLogic.Test {
 
         [Fact]
         public void RemoveCascade_OptIn() {
+            using (var context = TestContext2.CreateInstance()) {
+                Assert.NotEmpty(context.User);
 
+                context.RemoveRangeCascade(context.Order.ToList());
+                context.SaveChanges();
+
+                Assert.NotEmpty(context.User);
+                Assert.Empty(context.Order);
+                Assert.Empty(context.OrderItem);
+            }
+
+            using (var context = TestContext2.CreateInstance()) {
+                Assert.NotEmpty(context.Product);
+                Assert.NotEmpty(context.Order);
+                Assert.NotEmpty(context.OrderItem);
+                Assert.NotEmpty(context.ProductCategory);
+
+                context.RemoveRangeCascade(context.Product.ToList());
+                context.SaveChanges();
+
+                Assert.Empty(context.Product);
+                Assert.NotEmpty(context.Order);
+                Assert.Empty(context.OrderItem);
+                Assert.NotEmpty(context.ProductCategory);
+            }
+
+            using (var context = TestContext2.CreateInstance()) {
+                var user = context.User.First();
+                int productTotalCount = context.Product.Count();
+
+                context.RemoveCascade(user);
+                context.SaveChanges();
+
+                Assert.Empty(context.User.Where(x => x.Account == user.Account));
+                Assert.Empty(context.Order.Where(x => x.UserAccount == user.Account));
+                Assert.Equal(productTotalCount, context.Product.Count());
+            }
         }
     }
 }
