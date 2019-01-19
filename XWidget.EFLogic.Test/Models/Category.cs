@@ -5,7 +5,6 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 
 namespace XWidget.EFLogic.Test.Models {
-    [RemoveCascade(Mode = RemoveCascadeMode.OptIn)]
     public class Category {
         public Category() {
             Children = new HashSet<Category>();
@@ -21,12 +20,14 @@ namespace XWidget.EFLogic.Test.Models {
         [InverseProperty("Children")]
         public virtual Category Parent { get; set; }
 
-        [RemoveCascadeProperty]
         [InverseProperty("Parent")]
         public virtual ICollection<Category> Children { get; set; }
 
-        [RemoveCascadeProperty]
         [InverseProperty("Category")]
         public virtual ICollection<Note> Notes { get; set; }
+
+        public bool ShouldRemoveCascadeChildren() => true;
+
+        public bool ShouldRemoveCascadeParent() => false;
     }
 }
