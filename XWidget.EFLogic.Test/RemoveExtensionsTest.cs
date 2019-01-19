@@ -106,5 +106,10 @@ namespace XWidget.EFLogic.Test {
             Assert.Null(context.Categories.FirstOrDefault(x => x.Name == "CategoryC2"));
             Assert.NotNull(context.Categories.FirstOrDefault(x => x.Name == "CategoryC"));
         }
+
+        [Fact]
+        public void RemoveCascade_OptIn() {
+
+        }
     }
 }
