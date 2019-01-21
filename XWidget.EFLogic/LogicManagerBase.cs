@@ -36,7 +36,13 @@ namespace XWidget.EFLogic {
         /// <summary>
         /// 資料庫上下文
         /// </summary>
-        public TContext Database { get; internal set; }
+        public TContext Context { get; internal set; }
+
+        /// <summary>
+        /// 資料庫上下文
+        /// </summary>
+        [Obsolete("建議使用Context屬性")]
+        public TContext Database => Context;
 
         /// <summary>
         /// 動態邏輯對應
@@ -54,7 +60,7 @@ namespace XWidget.EFLogic {
         /// </summary>
         /// <param name="database">資料庫上下文</param>
         public LogicManagerBase(TContext database) {
-            Database = database;
+            Context = database;
         }
 
         /// <summary>
