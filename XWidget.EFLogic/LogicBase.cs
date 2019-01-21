@@ -48,18 +48,24 @@ namespace XWidget.EFLogic {
     /// <summary>
     /// 基礎邏輯操作器基礎
     /// </summary>
-    public abstract class LogicBase<TContext, TEntity, TId, TParameters>
-    where TEntity : class
-    where TContext : DbContext {
+    public abstract partial class LogicBase<TContext, TEntity, TId, TParameters>
+        where TEntity : class
+        where TContext : DbContext {
         /// <summary>
         /// 資料庫操作邏輯管理器
         /// </summary>
         public LogicManagerBase<TContext, TParameters> Manager { get; private set; }
 
         /// <summary>
-        /// 資料庫內容實例
+        /// 資料庫上下文
         /// </summary>
-        public TContext Database => Manager.Database;
+        public TContext Context => Manager.Context;
+
+        /// <summary>
+        /// 資料庫上下文
+        /// </summary>
+        [Obsolete("建議使用Context屬性")]
+        public TContext Database => Context;
 
         /// <summary>
         /// 唯一識別號屬性名稱
@@ -129,7 +135,7 @@ namespace XWidget.EFLogic {
         /// <returns>列表</returns>
         public virtual async Task<IQueryable<TEntity>> ListAsync(Expression<Func<TEntity, bool>> cond = null) {
             if (cond == null) cond = x => true;
-            return Database.Set<TEntity>().Where(cond);
+            return Context.Set<TEntity>().Where(cond);
         }
 
         /// <summary>
@@ -201,7 +207,7 @@ namespace XWidget.EFLogic {
             string likePatten,
             params Expression<Func<TEntity, object>>[] propertySelectors) {
             if (propertySelectors.Length == 0) {
-                var clrType = Database.Model.FindEntityType(typeof(TEntity));
+                var clrType = Context.Model.FindEntityType(typeof(TEntity));
                 var properties = clrType.GetProperties()
                     .Where(x => x.PropertyInfo.PropertyType == typeof(string))
                     .Select(x => x.PropertyInfo.Name).ToArray();
@@ -259,7 +265,7 @@ namespace XWidget.EFLogic {
             var queryExpression = Expression.Lambda<Func<TEntity, bool>>(
                 AllOr(equalExpList), p
             );
-            return (IQueryable<TEntity>)Queryable.Where(Database.Set<TEntity>(), queryExpression);
+            return (IQueryable<TEntity>)Queryable.Where(Context.Set<TEntity>(), queryExpression);
         }
 
         /// <summary>
@@ -280,7 +286,7 @@ namespace XWidget.EFLogic {
         /// <param name="id">唯一識別號</param>
         /// <returns>是否存在實例</returns>
         public virtual async Task<bool> ExistsAsync(object id) {
-            return Database.Set<TEntity>().Any($"{IdentityPropertyName} == @0", id);
+            return Context.Set<TEntity>().Any($"{IdentityPropertyName} == @0", id);
         }
 
         /// <summary>
@@ -298,7 +304,7 @@ namespace XWidget.EFLogic {
         /// <param name="id">唯一識別號</param>
         /// <returns>是否存在實例</returns>
         public virtual async Task<bool> ExistsAsync(TId id) {
-            return Database.Set<TEntity>().Any($"{IdentityPropertyName} == @0", id);
+            return Context.Set<TEntity>().Any($"{IdentityPropertyName} == @0", id);
         }
 
         /// <summary>
@@ -357,7 +363,7 @@ namespace XWidget.EFLogic {
         /// <param name="id">唯一識別號</param>
         /// <returns>物件實例</returns>
         internal async Task<TEntity> InternalGetAsync(TId id) {
-            var instance = Database.Set<TEntity>().SingleOrDefault($"{IdentityPropertyName} == @0", id);
+            var instance = Context.Set<TEntity>().SingleOrDefault($"{IdentityPropertyName} == @0", id);
 
             if (instance == null) {
                 throw new NotFoundException();
@@ -373,7 +379,7 @@ namespace XWidget.EFLogic {
         /// <param name="parameters">參數</param>
         /// <returns>物件實例</returns>
         public virtual async Task<TEntity> GetAsync(TId id, TParameters parameters = default(TParameters)) {
-            var instance = Database.Set<TEntity>().SingleOrDefault($"{IdentityPropertyName} == @0", id);
+            var instance = Context.Set<TEntity>().SingleOrDefault($"{IdentityPropertyName} == @0", id);
 
             await Manager.AfterGet(instance, parameters);
             await AfterGet(instance, parameters);
@@ -408,7 +414,7 @@ namespace XWidget.EFLogic {
         /// <param name="id">唯一識別號</param>
         /// <returns>物件實例</returns>
         internal async Task<TEntity> InternalGetWithoutCacheAsync(TId id) {
-            var instance = Database.Set<TEntity>().AsNoTracking().SingleOrDefault($"{IdentityPropertyName} == @0", id);
+            var instance = Context.Set<TEntity>().AsNoTracking().SingleOrDefault($"{IdentityPropertyName} == @0", id);
 
             if (instance == null) {
                 throw new NotFoundException();
@@ -473,11 +479,11 @@ namespace XWidget.EFLogic {
                 (await Manager.GetEntityIdentityProperty(entity)).SetValue(entity, default(TId));
             }
 
-            Database.Add(entity);
+            Context.Add(entity);
 
             await Manager.BeforeCreate(entity, parameters);
             await BeforeCreate(entity, parameters);
-            await Database.SaveChangesAsync();
+            await Context.SaveChangesAsync();
             await AfterCreate(entity, parameters);
             await Manager.AfterCreate(entity, parameters);
 
@@ -605,7 +611,7 @@ namespace XWidget.EFLogic {
             TId id = (TId)type.GetProperty(IdentityPropertyName).GetValue(entity);
             var instance = await InternalGetAsync(id);
 
-            foreach (var member in Database.Entry(entity).Members) {
+            foreach (var member in Context.Entry(entity).Members) {
                 var obj = member.Metadata.PropertyInfo.GetValue(entity);
 
                 if (obj != null) {
@@ -619,7 +625,7 @@ namespace XWidget.EFLogic {
                 if (member is ReferenceEntry) {
                     if (obj == null) continue;
 
-                    if (Database.Model.FindEntityType(obj.GetType()) == null) continue;
+                    if (Context.Model.FindEntityType(obj.GetType()) == null) continue;
 
                     var logic = Manager.GetLogicByType(member.Metadata.PropertyInfo.PropertyType);
                     var updateOrCreateMethod = logic.GetType()
@@ -651,7 +657,7 @@ namespace XWidget.EFLogic {
 
                     foreach (var item in collection) {
                         if (item == null) continue;
-                        if (Database.Model.FindEntityType(item.GetType()) == null) continue;
+                        if (Context.Model.FindEntityType(item.GetType()) == null) continue;
 
                         var logic = Manager.GetLogicByType(item.GetType());
                         var updateOrCreateMethod = logic.GetType()
@@ -686,8 +692,8 @@ namespace XWidget.EFLogic {
 
             await Manager.BeforeUpdate(instance, parameters);
             await BeforeUpdate(instance, parameters);
-            Database.Update(instance);
-            await Database.SaveChangesAsync();
+            Context.Update(instance);
+            await Context.SaveChangesAsync();
             await AfterUpdate(instance, parameters);
             await Manager.AfterUpdate(instance, parameters);
 
@@ -761,11 +767,11 @@ namespace XWidget.EFLogic {
                 throw new NotFoundException();
             }
 
-            Database.RemoveCascade(instance);
+            Context.RemoveCascade(instance);
 
             await Manager.BeforeDelete(instance, parameters);
             await BeforeDelete(instance, parameters);
-            await Database.SaveChangesAsync();
+            await Context.SaveChangesAsync();
             await AfterDelete(instance, parameters);
             await Manager.AfterDelete(instance, parameters);
         }
@@ -789,7 +795,7 @@ namespace XWidget.EFLogic {
             var type = typeof(TEntity);
             TId id = (TId)type.GetProperty(IdentityPropertyName).GetValue(entity);
 
-            var instance = Database.Set<TEntity>().AsNoTracking().SingleOrDefault($"{IdentityPropertyName} == @0", id);
+            var instance = Context.Set<TEntity>().AsNoTracking().SingleOrDefault($"{IdentityPropertyName} == @0", id);
             if (instance == null) {
                 throw new NotFoundException();
             }
