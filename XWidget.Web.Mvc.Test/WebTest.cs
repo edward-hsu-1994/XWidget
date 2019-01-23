@@ -37,7 +37,17 @@ namespace XWidget.Web.Mvc.Test {
             var response2ContextJObject = JObject.Parse(await response2.Content.ReadAsStringAsync());
 
             Assert.Equal(response2ContextJObject["result"].Count(), 10);
+
+            var response3 = await client.GetAsync("http://localhost:9996/api/test/clientPost");
+
+            Assert.True(response3.IsSuccessStatusCode);
+
+            var responseText = await response3.Content.ReadAsStringAsync();
+
+            Assert.Contains("https://example.com/", responseText);
         }
+
+
 
         public static IWebHost BuildWebHost(string[] args) =>
             WebHost.CreateDefaultBuilder(args)

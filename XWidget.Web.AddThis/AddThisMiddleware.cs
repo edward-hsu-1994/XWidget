@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -10,6 +11,9 @@ using System.Threading.Tasks;
 namespace XWidget.Web.AddThis {
     public static class AddThisMiddleware {
         private static string AddThisJsTemplate = null;
+        private class AddThis {
+
+        }
         static AddThisMiddleware() {
             var assembly = Assembly.GetExecutingAssembly();
             var textStreamReader = new StreamReader(assembly.GetManifestResourceStream("XWidget.Web.AddThis.addThis.html"));
@@ -26,61 +30,35 @@ namespace XWidget.Web.AddThis {
             this IApplicationBuilder app,
             Func<HttpContext, string> pubidFunc
             ) {
-            return app.Use(async (context, next) => {
-                var pubid = pubidFunc(context);
-                var originStream = context.Response.Body;
-                var warpStream = new MemoryStream();
+            return
+                app.Use(async (context, next) => {
+                    var pubid = pubidFunc(context);
+                    var addThisStack = context.Features[typeof(AddThis)] as Stack<string>;
+                    if (addThisStack == null) {
+                        addThisStack = new Stack<string>();
+                        context.Features[typeof(AddThis)] = addThisStack;
+                    }
+                    addThisStack.Push(pubidFunc(context));
+                    await next();
+                    addThisStack.Pop();
+                }).UseHtmlHandler(async (context, html) => {
+                    var addThisStack = context.Features[typeof(AddThis)] as Stack<string>;
+                    var pubid = addThisStack?.Peek();
 
-                context.Response.Body = warpStream;
-                await next();
-
-                if (context.Response.ContentType == "text/html") {
-                    warpStream.Seek(0, SeekOrigin.Begin);
-                    // 讀取HTML內容
-                    var rawHtml = await new StreamReader(warpStream).ReadToEndAsync();
                     // 剖析HTML
-                    HtmlDocument html = new HtmlDocument();
-                    html.LoadHtml(rawHtml);
+                    HtmlDocument htmlDoc = new HtmlDocument();
+                    htmlDoc.LoadHtml(html);
 
-                    // 取得BaseElement並設定href
-                    var baseNode = html.DocumentNode.SelectSingleNode("//body");
-                    if (baseNode != null) {
+                    // 取得Body Element並注入腳本
+                    var bodyNode = htmlDoc.DocumentNode.SelectSingleNode("//body");
+                    if (bodyNode != null) {
                         if (!string.IsNullOrWhiteSpace(pubid)) {
-                            baseNode.InnerHtml += AddThisJsTemplate.Replace("{{pubid}}", pubid);
+                            bodyNode.InnerHtml += AddThisJsTemplate.Replace("{{pubid}}", pubid);
                         }
                     }
 
-                    warpStream = new MemoryStream();
-                    StreamWriter streamWriter = new StreamWriter(warpStream);
-                    streamWriter.Write(html.DocumentNode.OuterHtml);
-                    streamWriter.Flush();
-                }
-                warpStream.Seek(0, SeekOrigin.Begin);
-
-                context.Response.Body = originStream;
-
-                #region Backup Response Properties
-                var backup = new {
-                    context.Response.ContentType,
-                    context.Response.StatusCode,
-                    Headers = context.Response.Headers.ToArray()
-                };
-                #endregion
-
-                context.Response.Clear();
-
-                #region Reset Response Properties
-                context.Response.ContentType = backup.ContentType;
-                context.Response.StatusCode = backup.StatusCode;
-                foreach (var header in backup.Headers) {
-                    if (header.Key == "Content-Length") continue;
-                    context.Response.Headers[header.Key] = header.Value;
-                }
-                #endregion
-
-                await warpStream.CopyToAsync(context.Response.Body);
-                context.Response.ContentLength = warpStream.Length;
-            });
+                    return htmlDoc.DocumentNode.OuterHtml;
+                });
         }
 
         /// <summary>

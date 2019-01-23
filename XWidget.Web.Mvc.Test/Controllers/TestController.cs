@@ -18,5 +18,10 @@ namespace XWidget.Web.Mvc.Test.Controllers {
         public Paging<int> List() {
             return Paging(Enumerable.Range(0, 100), 0, 10);
         }
+
+        [HttpGet("clientPost")]
+        public IActionResult clientPost() {
+            return this.RedirectWithClientPostFormData("https://example.com/", new Dictionary<string, string>() { ["id"] = "1234" });
+        }
     }
 }

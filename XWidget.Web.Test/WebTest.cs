@@ -22,6 +22,10 @@ namespace XWidget.Web.Test {
 
             Assert.True(response.Headers.CacheControl.NoCache);
             Assert.True(response.Headers.CacheControl.NoStore);
+
+            var response2 = await client.GetStringAsync("http://localhost:9997/gg");
+
+            Assert.Equal("<html>gg</html>", response2);
         }
 
         public static IWebHost BuildWebHost(string[] args) =>
