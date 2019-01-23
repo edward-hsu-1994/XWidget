@@ -39,13 +39,17 @@ namespace XWidget.Web.Test {
             app.UseMvc();
 
             app.UseHtmlHandler(async (context, html) => {
-                return "<html>gg</html>";
+                if (context.Request.Path == "/gg") {
+                    return "<html>gg</html>";
+                } else {
+                    return html;
+                }
             });
 
             app.Run(async (request) => {
                 request.Response.ContentType = "text/html";
 
-                var testHtml = "<html><head></head><body><div>test</div>Content</body></html>";
+                var testHtml = "<html><head><base href=\"/\"></head><body><div>test</div>Content</body></html>";
 
                 await request.Response.WriteAsync(testHtml);
             });

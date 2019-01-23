@@ -56,42 +56,18 @@ namespace XWidget.Web {
                 pathMatch,
                 options,
                 app2 => {
-                    // 複寫BaseHref
-                    app2.Use(async (context, next) => {
-                        var originStream = context.Response.Body;
-                        long? originStreamLength = context.Response.ContentLength;
+                    app2.UseHtmlHandler(async (context, html) => {
+                        // 剖析HTML
+                        HtmlDocument htmlDoc = new HtmlDocument();
+                        htmlDoc.LoadHtml(html);
 
-                        var fakeBody = new MemoryStream();
-
-                        context.Response.Body = fakeBody;
-                        await next();
-
-                        if (context.Response.ContentType == "text/html" &&
-                           context.Response.StatusCode == StatusCodes.Status200OK) {
-                            fakeBody.Seek(0, SeekOrigin.Begin);
-                            // 讀取HTML內容
-                            var rawHtml = await new StreamReader(fakeBody).ReadToEndAsync();
-                            // 剖析HTML
-                            HtmlDocument html = new HtmlDocument();
-                            html.LoadHtml(rawHtml);
-
-                            // 取得BaseElement並設定href
-                            var baseNode = html.DocumentNode.SelectSingleNode("//base");
-                            if (baseNode != null) {
-                                baseNode.SetAttributeValue("href", pathMatch + "/");
-                            }
-
-                            fakeBody = new MemoryStream();
-                            StreamWriter streamWriter = new StreamWriter(fakeBody);
-                            streamWriter.Write(html.DocumentNode.OuterHtml);
-                            streamWriter.Flush();
+                        // 取得BaseElement並設定href
+                        var baseNode = htmlDoc.DocumentNode.SelectSingleNode("//base");
+                        if (baseNode != null) {
+                            baseNode.SetAttributeValue("href", pathMatch + "/");
                         }
-                        fakeBody.Seek(0, SeekOrigin.Begin);
 
-                        context.Response.Body = originStream;
-                        context.Response.ContentLength = (originStreamLength ?? 0) + fakeBody.Length;
-
-                        await fakeBody.CopyToAsync(originStream);
+                        return htmlDoc.DocumentNode.OuterHtml;
                     });
 
                     configuration?.Invoke(app2);

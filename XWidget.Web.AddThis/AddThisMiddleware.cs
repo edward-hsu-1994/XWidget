@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -10,6 +11,9 @@ using System.Threading.Tasks;
 namespace XWidget.Web.AddThis {
     public static class AddThisMiddleware {
         private static string AddThisJsTemplate = null;
+        private class AddThis {
+
+        }
         static AddThisMiddleware() {
             var assembly = Assembly.GetExecutingAssembly();
             var textStreamReader = new StreamReader(assembly.GetManifestResourceStream("XWidget.Web.AddThis.addThis.html"));
@@ -26,45 +30,35 @@ namespace XWidget.Web.AddThis {
             this IApplicationBuilder app,
             Func<HttpContext, string> pubidFunc
             ) {
-            return app.Use(async (context, next) => {
-                var pubid = pubidFunc(context);
-                var originStream = context.Response.Body;
-                long? originStreamLength = context.Response.ContentLength;
+            return
+                app.Use(async (context, next) => {
+                    var pubid = pubidFunc(context);
+                    var addThisStack = context.Features[typeof(AddThis)] as Stack<string>;
+                    if (addThisStack == null) {
+                        addThisStack = new Stack<string>();
+                        context.Features[typeof(AddThis)] = addThisStack;
+                    }
+                    addThisStack.Push(pubidFunc(context));
+                    await next();
+                    addThisStack.Pop();
+                }).UseHtmlHandler(async (context, html) => {
+                    var addThisStack = context.Features[typeof(AddThis)] as Stack<string>;
+                    var pubid = addThisStack?.Peek();
 
-                var fakeBody = new MemoryStream();
-
-                context.Response.Body = fakeBody;
-                await next();
-
-                if (context.Response.ContentType == "text/html") {
-                    fakeBody.Seek(0, SeekOrigin.Begin);
-                    // 讀取HTML內容
-                    var rawHtml = await new StreamReader(fakeBody).ReadToEndAsync();
                     // 剖析HTML
-                    HtmlDocument html = new HtmlDocument();
-                    html.LoadHtml(rawHtml);
+                    HtmlDocument htmlDoc = new HtmlDocument();
+                    htmlDoc.LoadHtml(html);
 
                     // 取得Body Element並注入腳本
-                    var bodyNode = html.DocumentNode.SelectSingleNode("//body");
+                    var bodyNode = htmlDoc.DocumentNode.SelectSingleNode("//body");
                     if (bodyNode != null) {
                         if (!string.IsNullOrWhiteSpace(pubid)) {
                             bodyNode.InnerHtml += AddThisJsTemplate.Replace("{{pubid}}", pubid);
                         }
                     }
 
-                    // 字串轉Stream
-                    fakeBody = new MemoryStream();
-                    StreamWriter streamWriter = new StreamWriter(fakeBody);
-                    streamWriter.Write(html.DocumentNode.OuterHtml);
-                    streamWriter.Flush();
-                }
-                fakeBody.Seek(0, SeekOrigin.Begin);
-
-                context.Response.Body = originStream;
-                context.Response.ContentLength = (originStreamLength ?? 0) + fakeBody.Length;
-
-                await fakeBody.CopyToAsync(originStream);
-            });
+                    return htmlDoc.DocumentNode.OuterHtml;
+                });
         }
 
         /// <summary>
