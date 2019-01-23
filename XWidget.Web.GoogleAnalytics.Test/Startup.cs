@@ -23,21 +23,21 @@ namespace XWidget.Web.GoogleAnalytics.Test {
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env) {
-            if (env.IsDevelopment()) {
-                app.UseDeveloperExceptionPage();
-            }
+            app.UseDeveloperExceptionPage();
+
+            app.Use(async (context, next) => {
+                context.Response.StatusCode = StatusCodes.Status200OK;
+                context.Response.ContentType = "text/html";
+                await context.Response.WriteAsync("<!---TEST--->");
+                await next();
+            });
 
             app.UseGoogleAnalytics("UA-XXXXX-1");
 
             app.Run(async (request) => {
-                request.Response.StatusCode = StatusCodes.Status200OK;
-                request.Response.ContentType = "text/html";
-
                 var testHtml = "<html><head></head><body><div>test</div>Content</body></html>";
 
-                var testData = Encoding.UTF8.GetBytes(testHtml);
-                request.Response.ContentLength = testData.Length;
-                request.Response.Body.Write(testData, 0, testData.Length);
+                await request.Response.WriteAsync(testHtml);
             });
         }
     }
