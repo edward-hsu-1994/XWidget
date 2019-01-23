@@ -16,7 +16,7 @@ namespace Microsoft.AspNetCore.Mvc {
         /// <param name="url">目標網址</param>
         /// <param name="formData">FormData</param>
         /// <returns>重定向HTML</returns>
-        public static IActionResult TestRedirectWithClientPostFormData(this Controller obj, string url, Dictionary<string, string> formData) {
+        public static IActionResult RedirectWithClientPostFormData(this Controller obj, string url, Dictionary<string, string> formData) {
             HtmlDocument doc = new HtmlDocument();
             doc.LoadHtml(@"<html><head></head><body><form id=""frm1"" name=""frm1""></form><script>document.frm1.submit()</script></body></html>");
 
