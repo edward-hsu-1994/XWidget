@@ -29,6 +29,7 @@ namespace XWidget.Web.AddThis {
             return app.Use(async (context, next) => {
                 var pubid = pubidFunc(context);
                 var originStream = context.Response.Body;
+                long? originStreamLength = context.Response.ContentLength;
 
                 var fakeBody = new MemoryStream();
 
@@ -60,7 +61,7 @@ namespace XWidget.Web.AddThis {
                 fakeBody.Seek(0, SeekOrigin.Begin);
 
                 context.Response.Body = originStream;
-                context.Response.ContentLength = context.Response.ContentLength + fakeBody.Length;
+                context.Response.ContentLength = (originStreamLength ?? 0) + fakeBody.Length;
 
                 await fakeBody.CopyToAsync(originStream);
             });

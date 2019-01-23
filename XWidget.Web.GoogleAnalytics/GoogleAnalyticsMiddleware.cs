@@ -29,6 +29,7 @@ namespace XWidget.Web.GoogleAnalytics {
             return app.Use(async (context, next) => {
                 var trackingCode = trackingCodeFunc(context);
                 var originStream = context.Response.Body;
+                long? originStreamLength = context.Response.ContentLength;
 
                 Stream fakeBody = new MemoryStream();
 
@@ -60,7 +61,7 @@ namespace XWidget.Web.GoogleAnalytics {
                 fakeBody.Seek(0, SeekOrigin.Begin);
 
                 context.Response.Body = originStream;
-                context.Response.ContentLength = context.Response.ContentLength + fakeBody.Length;
+                context.Response.ContentLength = (originStreamLength ?? 0) + fakeBody.Length;
 
                 await fakeBody.CopyToAsync(originStream);
             });
