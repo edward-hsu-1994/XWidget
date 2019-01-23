@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -15,8 +16,8 @@ namespace XWidget.Web {
         /// <returns>應用程式建構器</returns>
         public static IApplicationBuilder UseHtmlHandler(
             this IApplicationBuilder app,
-            Func<string, Task<string>> handler) {
-            return UseHtmlHandler(app, x => handler(x).GetAwaiter().GetResult());
+            Func<HttpContext, string, Task<string>> handler) {
+            return UseHtmlHandler(app, (c, x) => handler(c, x).GetAwaiter().GetResult());
         }
 
         /// <summary>
@@ -27,7 +28,7 @@ namespace XWidget.Web {
         /// <returns>應用程式建構器</returns>
         public static IApplicationBuilder UseHtmlHandler(
             this IApplicationBuilder app,
-            Func<string, string> handler) {
+            Func<HttpContext, string, string> handler) {
             return app.Use(async (context, next) => {
                 var originStream = context.Response.Body;
                 long? originStreamLength = context.Response.ContentLength;
@@ -43,7 +44,7 @@ namespace XWidget.Web {
                     // 讀取HTML內容
                     var html = await new StreamReader(fakeBody).ReadToEndAsync();
 
-                    html = handler(html);
+                    html = handler(context, html);
 
                     // 字串轉Stream
                     fakeBody = new MemoryStream();

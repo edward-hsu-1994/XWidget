@@ -4,6 +4,7 @@ using System.Reflection;
 using System.Text;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using XWidget.Web.Test.Controllers;
@@ -36,6 +37,18 @@ namespace XWidget.Web.Test {
             app.UseNoCache();
 
             app.UseMvc();
+
+            app.UseHtmlHandler(async (context, html) => {
+                return "<html>gg</html>";
+            });
+
+            app.Run(async (request) => {
+                request.Response.ContentType = "text/html";
+
+                var testHtml = "<html><head></head><body><div>test</div>Content</body></html>";
+
+                await request.Response.WriteAsync(testHtml);
+            });
         }
     }
 }
