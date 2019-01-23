@@ -29,15 +29,16 @@ namespace XWidget.Web.AddThis {
             return app.Use(async (context, next) => {
                 var pubid = pubidFunc(context);
                 var originStream = context.Response.Body;
-                var warpStream = new MemoryStream();
 
-                context.Response.Body = warpStream;
+                var fakeBody = new MemoryStream();
+
+                context.Response.Body = fakeBody;
                 await next();
 
                 if (context.Response.ContentType == "text/html") {
-                    warpStream.Seek(0, SeekOrigin.Begin);
+                    fakeBody.Seek(0, SeekOrigin.Begin);
                     // 讀取HTML內容
-                    var rawHtml = await new StreamReader(warpStream).ReadToEndAsync();
+                    var rawHtml = await new StreamReader(fakeBody).ReadToEndAsync();
                     // 剖析HTML
                     HtmlDocument html = new HtmlDocument();
                     html.LoadHtml(rawHtml);
@@ -50,36 +51,18 @@ namespace XWidget.Web.AddThis {
                         }
                     }
 
-                    warpStream = new MemoryStream();
-                    StreamWriter streamWriter = new StreamWriter(warpStream);
+                    // 字串轉Stream
+                    fakeBody = new MemoryStream();
+                    StreamWriter streamWriter = new StreamWriter(fakeBody);
                     streamWriter.Write(html.DocumentNode.OuterHtml);
                     streamWriter.Flush();
                 }
-                warpStream.Seek(0, SeekOrigin.Begin);
+                fakeBody.Seek(0, SeekOrigin.Begin);
 
                 context.Response.Body = originStream;
+                context.Response.ContentLength = context.Response.ContentLength + fakeBody.Length;
 
-                #region Backup Response Properties
-                var backup = new {
-                    context.Response.ContentType,
-                    context.Response.StatusCode,
-                    Headers = context.Response.Headers.ToArray()
-                };
-                #endregion
-
-                context.Response.Clear();
-
-                #region Reset Response Properties
-                context.Response.ContentType = backup.ContentType;
-                context.Response.StatusCode = backup.StatusCode;
-                foreach (var header in backup.Headers) {
-                    if (header.Key == "Content-Length") continue;
-                    context.Response.Headers[header.Key] = header.Value;
-                }
-                #endregion
-
-                await warpStream.CopyToAsync(context.Response.Body);
-                context.Response.ContentLength = warpStream.Length;
+                await fakeBody.CopyToAsync(originStream);
             });
         }
 

@@ -51,7 +51,7 @@ namespace XWidget.Web.GoogleAnalytics {
                         }
                     }
 
-                    // 
+                    // 字串轉Stream
                     fakeBody = new MemoryStream();
                     StreamWriter streamWriter = new StreamWriter(fakeBody);
                     streamWriter.Write(html.DocumentNode.OuterHtml);
