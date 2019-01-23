@@ -42,11 +42,11 @@ namespace XWidget.Web.AddThis {
                     HtmlDocument html = new HtmlDocument();
                     html.LoadHtml(rawHtml);
 
-                    // 取得BaseElement並設定href
-                    var baseNode = html.DocumentNode.SelectSingleNode("//body");
-                    if (baseNode != null) {
+                    // 取得Body Element並注入腳本
+                    var bodyNode = html.DocumentNode.SelectSingleNode("//body");
+                    if (bodyNode != null) {
                         if (!string.IsNullOrWhiteSpace(pubid)) {
-                            baseNode.InnerHtml += AddThisJsTemplate.Replace("{{pubid}}", pubid);
+                            bodyNode.InnerHtml += AddThisJsTemplate.Replace("{{pubid}}", pubid);
                         }
                     }
 
