@@ -23,9 +23,7 @@ namespace XWidget.Web.AddThis.Test {
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env) {
-            if (env.IsDevelopment()) {
-                app.UseDeveloperExceptionPage();
-            }
+            app.UseDeveloperExceptionPage();
 
             app.UseAddThisShareButton("ra-5c3de839571af158");
 
@@ -35,9 +33,7 @@ namespace XWidget.Web.AddThis.Test {
 
                 var testHtml = "<html><head></head><body><div>test</div>Content</body></html>";
 
-                var testData = Encoding.UTF8.GetBytes(testHtml);
-                request.Response.ContentLength = testData.Length;
-                request.Response.Body.Write(testData, 0, testData.Length);
+                await request.Response.WriteAsync(testHtml);
             });
         }
     }
