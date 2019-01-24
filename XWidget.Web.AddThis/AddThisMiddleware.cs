@@ -32,7 +32,6 @@ namespace XWidget.Web.AddThis {
             ) {
             return
                 app.Use(async (context, next) => {
-                    var pubid = pubidFunc(context);
                     var addThisStack = context.Features[typeof(AddThis)] as Stack<string>;
                     if (addThisStack == null) {
                         addThisStack = new Stack<string>();
