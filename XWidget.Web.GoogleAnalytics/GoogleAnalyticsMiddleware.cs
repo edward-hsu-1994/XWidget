@@ -32,7 +32,6 @@ namespace XWidget.Web.GoogleAnalytics {
             ) {
             return
                 app.Use(async (context, next) => {
-                    var pubid = trackingCodeFunc(context);
                     var googleAnalyticsStack = context.Features[typeof(GoogleAnalytics)] as Stack<string>;
                     if (googleAnalyticsStack == null) {
                         googleAnalyticsStack = new Stack<string>();
