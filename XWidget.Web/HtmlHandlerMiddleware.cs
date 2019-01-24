@@ -12,7 +12,7 @@ namespace XWidget.Web {
         /// 攔截並處理Html回應
         /// </summary>
         /// <param name="app">應用程式建構器</param>
-        /// <param name="handler">處理程序</param>
+        /// <param name="handler">處理程序，Func第一個輸入參數為HttpContext，第二個參數為原始HTML結果，回傳值為處理後的HTML結果</param>
         /// <returns>應用程式建構器</returns>
         public static IApplicationBuilder UseHtmlHandler(
             this IApplicationBuilder app,
@@ -24,7 +24,7 @@ namespace XWidget.Web {
         /// 攔截並處理Html回應
         /// </summary>
         /// <param name="app">應用程式建構器</param>
-        /// <param name="handler">處理程序</param>
+        /// <param name="handler">處理程序，Func第一個輸入參數為HttpContext，第二個參數為原始HTML結果，回傳值為處理後的HTML結果</param>
         /// <returns>應用程式建構器</returns>
         public static IApplicationBuilder UseHtmlHandler(
             this IApplicationBuilder app,
