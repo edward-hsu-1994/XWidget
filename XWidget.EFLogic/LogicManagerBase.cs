@@ -86,12 +86,18 @@ namespace XWidget.EFLogic {
                     x =>
                         (
                             x.PropertyType.IsGenericType &&
-                            x.PropertyType.GetGenericTypeDefinition() == typeof(LogicBase<,,,>) &&
+                            (
+                                x.PropertyType.GetGenericTypeDefinition() == typeof(LogicBase<,,,>) ||
+                                x.PropertyType.GetGenericTypeDefinition() == typeof(LogicBase<,,>)
+                            ) &&
                             x.PropertyType.GenericTypeArguments[1] == type
                         ) || (
                             x.PropertyType.BaseType != null &&
                             x.PropertyType.BaseType.IsGenericType &&
-                            x.PropertyType.BaseType.GetGenericTypeDefinition() == typeof(LogicBase<,,,>) &&
+                            (
+                                x.PropertyType.BaseType.GetGenericTypeDefinition() == typeof(LogicBase<,,,>) ||
+                                x.PropertyType.BaseType.GetGenericTypeDefinition() == typeof(LogicBase<,,>)
+                            ) &&
                             x.PropertyType.BaseType.GenericTypeArguments[1] == type
                         )
                 );
