@@ -631,7 +631,10 @@ namespace XWidget.EFLogic {
                     var updateOrCreateMethod = logic.GetType()
                             .GetAllBaseTypes()
                             .Where(x => x.IsGenericType)
-                            .FirstOrDefault(x => x.GetGenericTypeDefinition() == typeof(LogicBase<,,>))
+                            .FirstOrDefault(x =>
+                                x.GetGenericTypeDefinition() == typeof(LogicBase<,,,>) ||
+                                x.GetGenericTypeDefinition() == typeof(LogicBase<,,>)
+                            )
                             .GetMethods(BindingFlags.Instance | BindingFlags.NonPublic)
                             .FirstOrDefault(x => {
                                 return x.Name == "UpdateOrCreate" &&
@@ -663,7 +666,10 @@ namespace XWidget.EFLogic {
                         var updateOrCreateMethod = logic.GetType()
                             .GetAllBaseTypes()
                             .Where(x => x.IsGenericType)
-                            .FirstOrDefault(x => x.GetGenericTypeDefinition() == typeof(LogicBase<,,>))
+                            .FirstOrDefault(x =>
+                                x.GetGenericTypeDefinition() == typeof(LogicBase<,,,>) ||
+                                x.GetGenericTypeDefinition() == typeof(LogicBase<,,>)
+                            )
                             .GetMethods(BindingFlags.Instance | BindingFlags.NonPublic)
                             .FirstOrDefault(x => {
                                 return x.Name == "UpdateOrCreate" &&
