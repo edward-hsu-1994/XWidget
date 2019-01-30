@@ -27,17 +27,22 @@ namespace XWidget.EFLogic {
             var entitiesTypes = context.Model.GetEntityTypes()
                     .Select(x => x.ClrType);
 
-            void SetNavigationToDefault(IEntityType _currentType, IEntityType _valueType, object _value) {
-                foreach (var targets in _valueType.GetForeignKeys().Where(x => x.DeclaringEntityType == _currentType)) {
-                    if (_value is IEnumerable _enumValue) {
+            void SetNavigationToDefault(IEntityType _currentType, IEntityType _navTargetType, object _navTargetValue) {
+                //找出目標類型相依於目前類型的外來鍵屬性
+                foreach (var targets in _navTargetType.GetForeignKeys().Where(
+                    // 這個外來鍵由導覽類別所定義
+                    x => x.DeclaringEntityType == _navTargetType &&
+                    // 並且目標為目前類別
+                         x.PrincipalEntityType == _currentType)) {
+                    if (_navTargetValue is IEnumerable _enumValue) {
                         foreach (var element in _enumValue) {
                             foreach (var fk in targets.Properties) {
-                                fk.PropertyInfo.SetValue(_value, TypeUtility.GetDefault(fk.PropertyInfo.PropertyType));
+                                fk.PropertyInfo.SetValue(element, TypeUtility.GetDefault(fk.PropertyInfo.PropertyType));
                             }
                         }
                     } else {
                         foreach (var fk in targets.Properties) {
-                            fk.PropertyInfo.SetValue(_value, TypeUtility.GetDefault(fk.PropertyInfo.PropertyType));
+                            fk.PropertyInfo.SetValue(_navTargetValue, TypeUtility.GetDefault(fk.PropertyInfo.PropertyType));
                         }
                     }
                 }
