@@ -157,6 +157,19 @@ namespace XWidget.EFLogic.Test {
                 Assert.Empty(context.ProductCategory.Where(x => x.ParentId == category.Id));
                 Assert.Empty(context.Product.Where(x => x.CategoryId == category.Id));
             }
+
+            using (var context = TestContext2.CreateInstance()) {
+                var category = context.ProductCategory.First(x => x.ParentId.HasValue);
+                var categoryParentId = category.ParentId;
+
+
+                context.RemoveCascade(category);
+                context.SaveChanges();
+
+                Assert.Empty(context.ProductCategory.Where(x => x.ParentId == category.Id));
+                Assert.Empty(context.Product.Where(x => x.CategoryId == category.Id));
+                Assert.NotEmpty(context.ProductCategory.Where(x => x.Id == categoryParentId));
+            }
         }
     }
 }

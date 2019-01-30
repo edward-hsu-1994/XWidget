@@ -35,16 +35,17 @@ namespace XWidget.EFLogic.Test.Models2 {
             #endregion
 
             #region CreateProductCategory
-            for (int i = 1; i <= 5; i++) {
+            for (int i = 1; i <= 2; i++) {
                 var pCategory = new ProductCategory() {
                     Name = $"Category_{i}"
                 };
                 result.Add(pCategory);
-                for (int j = 1; j <= 5; j++) {
+                for (int j = 1; j <= 2; j++) {
                     var pCategory_2 = new ProductCategory() {
                         Name = $"Category_{i}_{j}"
                     };
-                    for (int k = 1; k <= 5; k++) {
+                    pCategory.Children.Add(pCategory_2);
+                    for (int k = 1; k <= 2; k++) {
                         pCategory_2.Children.Add(new ProductCategory() {
                             Name = $"Category_{i}_{j}_{k}"
                         });
@@ -58,7 +59,7 @@ namespace XWidget.EFLogic.Test.Models2 {
             #region CreateProduct
             int productCounter = 1;
             foreach (var category in result.ProductCategory.ToList()) {
-                for (int i = 1; i <= 5; i++) {
+                for (int i = 1; i <= 3; i++) {
                     category.Products.Add(new Product() {
                         Name = $"Product_{productCounter++}",
                         Price = i
@@ -70,7 +71,7 @@ namespace XWidget.EFLogic.Test.Models2 {
 
             #region CreateOrderAndItem
             foreach (var user in result.User.ToList()) {
-                for (int i = 1; i <= 5; i++) {
+                for (int i = 1; i <= 3; i++) {
                     var order = new Order() {
                         Time = DateTime.Now
                     };
