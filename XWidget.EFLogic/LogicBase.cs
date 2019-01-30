@@ -613,6 +613,11 @@ namespace XWidget.EFLogic {
 
             foreach (var member in Context.Entry(entity).Members) {
                 var obj = member.Metadata.PropertyInfo.GetValue(entity);
+                var old_obj = member.Metadata.PropertyInfo.GetValue(instance);
+
+                if (obj == old_obj) {
+                    continue;
+                }
 
                 if (obj != null) {
                     if (!obj.GetType().IsValueType && refList.Contains(obj)) { // 防止循環參照
