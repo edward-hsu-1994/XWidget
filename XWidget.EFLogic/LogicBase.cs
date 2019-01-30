@@ -613,6 +613,11 @@ namespace XWidget.EFLogic {
 
             foreach (var member in Context.Entry(entity).Members) {
                 var obj = member.Metadata.PropertyInfo.GetValue(entity);
+                var old_obj = member.Metadata.PropertyInfo.GetValue(instance);
+
+                if (obj == old_obj) {
+                    continue;
+                }
 
                 if (obj != null) {
                     if (!obj.GetType().IsValueType && refList.Contains(obj)) { // 防止循環參照
@@ -631,7 +636,10 @@ namespace XWidget.EFLogic {
                     var updateOrCreateMethod = logic.GetType()
                             .GetAllBaseTypes()
                             .Where(x => x.IsGenericType)
-                            .FirstOrDefault(x => x.GetGenericTypeDefinition() == typeof(LogicBase<,,>))
+                            .FirstOrDefault(x =>
+                                x.GetGenericTypeDefinition() == typeof(LogicBase<,,,>) ||
+                                x.GetGenericTypeDefinition() == typeof(LogicBase<,,>)
+                            )
                             .GetMethods(BindingFlags.Instance | BindingFlags.NonPublic)
                             .FirstOrDefault(x => {
                                 return x.Name == "UpdateOrCreate" &&
@@ -663,7 +671,10 @@ namespace XWidget.EFLogic {
                         var updateOrCreateMethod = logic.GetType()
                             .GetAllBaseTypes()
                             .Where(x => x.IsGenericType)
-                            .FirstOrDefault(x => x.GetGenericTypeDefinition() == typeof(LogicBase<,,>))
+                            .FirstOrDefault(x =>
+                                x.GetGenericTypeDefinition() == typeof(LogicBase<,,,>) ||
+                                x.GetGenericTypeDefinition() == typeof(LogicBase<,,>)
+                            )
                             .GetMethods(BindingFlags.Instance | BindingFlags.NonPublic)
                             .FirstOrDefault(x => {
                                 return x.Name == "UpdateOrCreate" &&
