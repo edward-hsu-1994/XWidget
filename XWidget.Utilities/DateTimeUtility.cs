@@ -27,5 +27,26 @@ namespace XWidget.Utilities {
             return new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
                 .AddMilliseconds(unixTime * 1000);
         }
+
+        /// <summary>
+        /// 將目標<see cref="DateTime"/>實例轉換為Unix Timestamp Milliseconds
+        /// </summary>
+        /// <param name="datetime"><see cref="DateTime"/>實例</param>
+        /// <returns><see cref="DateTime"/>實例之Unix Timestamp Milliseconds值</returns>
+        public static long ToUnixTimestampMilliseconds(DateTime datetime) {
+            return (long)(datetime.ToUniversalTime() -
+                new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc))
+                    .TotalMilliseconds;
+        }
+
+        /// <summary>
+        /// 將Unix Timestamp Milliseconds轉換為<see cref="DateTime"/>實例
+        /// </summary>
+        /// <param name="unixTime">Unix Timestamp Milliseconds</param>
+        /// <returns><see cref="DateTime"/>實例結果</returns>
+        public static DateTime FromUnixTimestampMilliseconds(long unixTime) {
+            return new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
+                .AddMilliseconds(unixTime);
+        }
     }
 }
