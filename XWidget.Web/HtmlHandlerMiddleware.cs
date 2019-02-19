@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace XWidget.Web {
     public static class HtmlHandlerMiddleware {
@@ -38,7 +39,7 @@ namespace XWidget.Web {
                 context.Response.Body = fakeBody;
                 await next();
 
-                if (context.Response.ContentType == "text/html") {
+                if (context.Response.ContentType?.Split(";")?.FirstOrDefault() == "text/html") {
                     fakeBody.Seek(0, SeekOrigin.Begin);
 
                     // 讀取HTML內容
