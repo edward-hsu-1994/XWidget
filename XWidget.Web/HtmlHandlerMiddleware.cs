@@ -39,7 +39,7 @@ namespace XWidget.Web {
                 context.Response.Body = fakeBody;
                 await next();
 
-                if (context.Response.ContentType?.Split(";")?.FirstOrDefault() == "text/html") {
+                if (context.Response.ContentType?.Split(';')?.FirstOrDefault() == "text/html") {
                     fakeBody.Seek(0, SeekOrigin.Begin);
 
                     // 讀取HTML內容
