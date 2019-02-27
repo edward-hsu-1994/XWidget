@@ -19,19 +19,18 @@ namespace XWidget.EFLogic.Test.Controllers {
 
         [HttpGet]
         public async Task Test() {
-
-
-
             var categoryLogic = Manager.GetLogicByType<Category, Guid>();
 
             var category = categoryLogic.Create(new Category() {
                 Name = "Test01"
             });
 
-            var m = categoryLogic.UpdateOrCreate(
-                category,
-                new object[0]
-            );
+            using (var d = new DisableCascadeScope<TestContext, object[]>(Manager)) {
+                var m = categoryLogic.UpdateOrCreate(
+                    category,
+                    new object[0]
+                );
+            }
 
 
             category = categoryLogic.Update(new Category() {
