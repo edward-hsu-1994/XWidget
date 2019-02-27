@@ -629,6 +629,7 @@ namespace XWidget.EFLogic {
 
                 if (member is ReferenceEntry) {
                     if (obj == null) continue;
+                    if (Manager.DisableCascade != null) continue;
 
                     if (Context.Model.FindEntityType(obj.GetType()) == null) continue;
 
@@ -662,6 +663,7 @@ namespace XWidget.EFLogic {
                     var collection = (IEnumerable)obj;
 
                     if (obj == null) continue;
+                    if (Manager.DisableCascade != null) continue;
 
                     foreach (var item in collection) {
                         if (item == null) continue;
@@ -778,7 +780,11 @@ namespace XWidget.EFLogic {
                 throw new NotFoundException();
             }
 
-            Context.RemoveCascade(instance);
+            if (Manager.DisableCascade == null) {
+                Context.RemoveCascade(instance);
+            } else {
+                Context.Remove(instance);
+            }
 
             await Manager.BeforeDelete(instance, parameters);
             await BeforeDelete(instance, parameters);
