@@ -9,6 +9,7 @@ using System.Runtime.Serialization;
 using System.ComponentModel.DataAnnotations.Schema;
 using XWidget.Utilities;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.AspNetCore.Mvc;
 
 namespace XWidget.EFLogic {
     /// <summary>
@@ -80,6 +81,7 @@ namespace XWidget.EFLogic {
                     $"ShouldRemoveCascade{property.Name}",
                     BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase);
 
+                // 選定排除
                 if (removeCascadeAttribute.Mode == RemoveCascadeMode.OptOut) {
                     if (shouldRemoveCascade != null && //如果存在連鎖刪除判斷方法且不允許連鎖刪除
                         false.Equals(shouldRemoveCascade.Invoke(entity, new object[0]))) {
@@ -87,10 +89,37 @@ namespace XWidget.EFLogic {
                         continue;
                     }
 
+                    // 阻擋器
                     if (property.PropertyInfo.GetCustomAttribute<RemoveCascadeStopperAttribute>() != null) {
                         SetNavigationToDefault(entityType, property.GetTargetType(), value);
                         continue;
                     }
+
+
+                    #region ModelType
+                    var metadataType = property.PropertyInfo.DeclaringType.GetCustomAttribute<ModelMetadataTypeAttribute>();
+                    if (metadataType != null) {
+                        shouldRemoveCascade = metadataType.MetadataType.GetMethod(
+                           $"ShouldRemoveCascade{property.PropertyInfo.Name}",
+                           BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase);
+
+                        var metadataEntity = FormatterServices.GetUninitializedObject(metadataType.MetadataType);
+
+                        if (shouldRemoveCascade != null && //如果存在連鎖刪除判斷方法且不允許連鎖刪除
+                            false.Equals(shouldRemoveCascade.Invoke(metadataEntity, new object[0]))) {
+                            SetNavigationToDefault(entityType, property.GetTargetType(), value);
+                            continue;
+                        }
+
+                        var propertyInfo = metadataType.MetadataType.GetProperty(property.PropertyInfo.Name);
+                        if (propertyInfo != null &&
+                            propertyInfo.GetCustomAttribute<RemoveCascadeStopperAttribute>() != null) {
+                            SetNavigationToDefault(entityType, property.GetTargetType(), value);
+                            continue;
+                        }
+                    }
+                    #endregion
+
 
                     if (value is IEnumerable enumValue) {
                         foreach (var element in enumValue) {
@@ -100,15 +129,45 @@ namespace XWidget.EFLogic {
                         result.Add(value);
                     }
                 } else if (removeCascadeAttribute.Mode == RemoveCascadeMode.OptIn) {
-                    if (shouldRemoveCascade != null && //如果存在連鎖刪除判斷方法且不允許連鎖刪除
-                        false.Equals(shouldRemoveCascade.Invoke(entity, new object[0]))) {
-                        SetNavigationToDefault(entityType, property.GetTargetType(), value);
-                        continue;
+                    // 是否可連鎖刪除
+                    bool cascade = false;
+                    if (shouldRemoveCascade != null && //如果存在連鎖刪除判斷方法且允許連鎖刪除
+                        true.Equals(shouldRemoveCascade.Invoke(entity, new object[0]))) {
+                        cascade = true;
                     }
 
-                    // 未明確標記可連鎖刪除
-                    if (property.PropertyInfo.GetCustomAttribute<RemoveCascadePropertyAttribute>() == null &&
+                    // 明確標記可連鎖刪除
+                    if (property.PropertyInfo.GetCustomAttribute<RemoveCascadePropertyAttribute>() != null &&
                         shouldRemoveCascade == null) {
+                        cascade = true;
+                    }
+
+
+                    #region ModelType
+                    var metadataType = property.PropertyInfo.DeclaringType.GetCustomAttribute<ModelMetadataTypeAttribute>();
+                    if (metadataType != null) {
+                        shouldRemoveCascade = metadataType.MetadataType.GetMethod(
+                           $"ShouldRemoveCascade{property.PropertyInfo.Name}",
+                           BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase);
+
+                        var metadataEntity = FormatterServices.GetUninitializedObject(metadataType.MetadataType);
+
+                        if (shouldRemoveCascade != null && //如果存在連鎖刪除判斷方法且允許連鎖刪除
+                            true.Equals(shouldRemoveCascade.Invoke(metadataEntity, new object[0]))) {
+                            cascade = true;
+                        }
+
+                        var propertyInfo = metadataType.MetadataType.GetProperty(property.PropertyInfo.Name);
+                        if (propertyInfo != null &&
+                            propertyInfo.GetCustomAttribute<RemoveCascadePropertyAttribute>() != null &&
+                            shouldRemoveCascade == null) {
+                            cascade = true;
+                        }
+                    }
+                    #endregion
+
+
+                    if (!cascade) {
                         SetNavigationToDefault(entityType, property.GetTargetType(), value);
                         continue;
                     }
@@ -229,10 +288,6 @@ namespace XWidget.EFLogic {
                     continue;
                 }
                 if (removeCascadeAttribute.Mode == RemoveCascadeMode.OptOut) {
-                    if (nav.PropertyInfo.GetCustomAttribute<RemoveCascadeStopperAttribute>() != null) {
-                        continue;
-                    }
-
                     var shouldRemoveCascade = type.GetMethod(
                         $"ShouldRemoveCascade{nav.Name}",
                         BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase);
@@ -240,6 +295,30 @@ namespace XWidget.EFLogic {
                     if (shouldRemoveCascade != null && //如果存在連鎖刪除判斷方法且不允許連鎖刪除
                         false.Equals(shouldRemoveCascade.Invoke(entity, new object[0]))) {
                         continue;
+                    }
+
+                    if (nav.PropertyInfo.GetCustomAttribute<RemoveCascadeStopperAttribute>() != null) {
+                        continue;
+                    }
+
+                    var metadataType = nav.PropertyInfo.DeclaringType.GetCustomAttribute<ModelMetadataTypeAttribute>();
+                    if (metadataType != null) {
+                        shouldRemoveCascade = metadataType.MetadataType.GetMethod(
+                           $"ShouldRemoveCascade{nav.Name}",
+                           BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase);
+
+                        var metadataEntity = FormatterServices.GetUninitializedObject(metadataType.MetadataType);
+
+                        if (shouldRemoveCascade != null && //如果存在連鎖刪除判斷方法且不允許連鎖刪除
+                            false.Equals(shouldRemoveCascade.Invoke(metadataEntity, new object[0]))) {
+                            continue;
+                        }
+
+                        var propertyInfo = metadataType.MetadataType.GetProperty(nav.PropertyInfo.Name);
+                        if (propertyInfo != null &&
+                            propertyInfo.GetCustomAttribute<RemoveCascadeStopperAttribute>() != null) {
+                            continue;
+                        }
                     }
 
                     LoadRemoveCascadeTypes(
@@ -247,23 +326,48 @@ namespace XWidget.EFLogic {
                             nav.GetTargetType().ClrType,
                             result);
                 } else if (removeCascadeAttribute.Mode == RemoveCascadeMode.OptIn) {
-                    if (nav.PropertyInfo.GetCustomAttribute<RemoveCascadePropertyAttribute>() == null) {
-                        continue;
-                    }
-
+                    bool cascade = false;
                     var shouldRemoveCascade = type.GetMethod(
                         $"ShouldRemoveCascade{nav.Name}",
                         BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase);
 
                     if (shouldRemoveCascade != null && //如果存在連鎖刪除判斷方法且不允許連鎖刪除
-                        false.Equals(shouldRemoveCascade.Invoke(entity, new object[0]))) {
+                        true.Equals(shouldRemoveCascade.Invoke(entity, new object[0]))) {
+                        cascade = true;
+                    }
+
+                    if (nav.PropertyInfo.GetCustomAttribute<RemoveCascadePropertyAttribute>() != null) {
+                        cascade = true;
+                    }
+
+                    var metadataType = nav.PropertyInfo.DeclaringType.GetCustomAttribute<ModelMetadataTypeAttribute>();
+                    if (metadataType != null) {
+                        shouldRemoveCascade = metadataType.MetadataType.GetMethod(
+                           $"ShouldRemoveCascade{nav.Name}",
+                           BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase);
+
+                        var metadataEntity = FormatterServices.GetUninitializedObject(metadataType.MetadataType);
+
+                        if (shouldRemoveCascade != null && //如果存在連鎖刪除判斷方法且不允許連鎖刪除
+                            true.Equals(shouldRemoveCascade.Invoke(metadataEntity, new object[0]))) {
+                            cascade = true;
+                        }
+
+                        var propertyInfo = metadataType.MetadataType.GetProperty(nav.PropertyInfo.Name);
+                        if (propertyInfo != null &&
+                            propertyInfo.GetCustomAttribute<RemoveCascadePropertyAttribute>() != null) {
+                            cascade = true;
+                        }
+                    }
+
+                    if (!cascade) {
                         continue;
                     }
 
                     LoadRemoveCascadeTypes(
-                            context,
-                            nav.GetTargetType().ClrType,
-                            result);
+                        context,
+                        nav.GetTargetType().ClrType,
+                        result);
                 }
             }
         }
