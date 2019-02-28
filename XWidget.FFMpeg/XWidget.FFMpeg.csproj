@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <Authors>XuPeiYao</Authors>
     <Company>XuPeiYao</Company>
     <PackageProjectUrl>https://github.com/XuPeiYao/XWidget/tree/master/XWidget.FFMpeg</PackageProjectUrl>

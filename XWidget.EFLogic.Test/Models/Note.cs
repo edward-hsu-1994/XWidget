@@ -1,10 +1,12 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 
 namespace XWidget.EFLogic.Test.Models {
+    [ModelMetadataType(typeof(NoteMetadata))]
     public class Note {
         public Note() {
         }
@@ -23,7 +25,9 @@ namespace XWidget.EFLogic.Test.Models {
         [ForeignKey("UserDataId")]
         [InverseProperty("Note")]
         public virtual UserData UserData { get; set; }
+    }
 
+    public class NoteMetadata {
         public bool ShouldRemoveCascadeCategory() => false;
     }
 }
