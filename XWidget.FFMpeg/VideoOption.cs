@@ -15,22 +15,6 @@ namespace XWidget.FFMpeg {
             public const string Placebo = "placebo";
         }
 
-        public enum CommonSize {
-            SD,
-            HD,
-            FullHD,
-            UHD,
-            /// <summary>
-            /// 4K
-            /// </summary>            
-            HV,
-            /// <summary>
-            /// 8K 
-            /// </summary>
-            SHV
-        }
-
-
         internal Dictionary<string, string> args = new Dictionary<string, string>();
 
         public VideoOption SetBitrate(uint bitrate) {

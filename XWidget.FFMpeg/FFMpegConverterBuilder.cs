@@ -1,14 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 
 namespace XWidget.FFMpeg {
     public class FFMpegConverterBuilder {
         private GenericOption generic = new GenericOption();
         private VideoOption video = new VideoOption();
         private AudioOption audio = new AudioOption();
-        private string exePath = "ffmpeg";
+        private string exePath;
         private string advancedArgs = string.Empty;
+
+        public FFMpegConverterBuilder() {
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) {
+                exePath = "ffmpeg.exe";
+            } else {
+                exePath = "ffmpeg";
+            }
+        }
 
         public FFMpegConverterBuilder SetExecutePath(string exePath) {
             this.exePath = exePath;
