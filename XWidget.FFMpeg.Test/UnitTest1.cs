@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using Xunit;
 
 namespace XWidget.FFMpeg.Test {
@@ -7,34 +7,42 @@ namespace XWidget.FFMpeg.Test {
         public void Test1() {
             var builder = new FFMpegConverterBuilder();
             builder
-                .ConfigGeneric(option => //¸õ¹L40¬í¨ú10¬í
+                .ConfigGeneric(option => //è·³é40ç§’å–10ç§’
                     option.SetStartPosition(40).SetDuration(10)
                 )
-                .ConfigVideo(option => //³]©w·s¤Ø¤o¥BÂà´«³t«×³]¬°«D±`§Ö¡A½Õ¾ã«~½è¬°23
-                    option.SetSize(352, 240).SetPreset(VideoOption.Preset.veryfast).SetCrf(23)
+                .ConfigVideo(option => //è¨­å®šæ–°å°ºå¯¸ä¸”è½‰æ›é€Ÿåº¦è¨­ç‚ºéå¸¸å¿«ï¼Œèª¿æ•´å“è³ªç‚º23
+                    option.SetSize(352, 240).SetPreset(VideoOption.Preset.VeryFast).SetCrf(23)
                 )
-                .ConfigAudio(option => //³]©wÁn­µ¨ú¼Ë²v¬°16K¥B¬°³æÁn¹D¡A¤ñ¯S²v¬°32K
+                .ConfigAudio(option => //è¨­å®šè²éŸ³å–æ¨£ç‡ç‚º16Kä¸”ç‚ºå–®è²é“ï¼Œæ¯”ç‰¹ç‡ç‚º32K
                     option.SetChannels(1).SetFrequency(16 * 1000).SetBitrate(32 * 1000)
                 );
 
-            var command = builder.CreateCommand(new string[] { "input.mp4" }, "output.mp4");
+            var converter = builder.Build();
+            /*
+            converter.Convert(
+                new string[] { @"C:\Users\xupeiyao\Downloads\NARUTO.mp4" },
+                @"C:\Users\xupeiyao\Downloads\FFMPEGConverter.mp4")
+                .Subscribe(r => {
+
+                });*/
+            //var command = builder.CreateCommand(new string[] { "input.mp4" }, "output.mp4");
         }
 
         [Fact]
         public void Test2() {
             var builder = new FFMpegConverterBuilder();
             builder
-                .ConfigGeneric(option => //¸õ¹L40¬í¨ú10¬í
+                .ConfigGeneric(option => //è·³é40ç§’å–10ç§’
                     option.SetStartPosition(40).SetDuration(10)
                 )
-                .ConfigVideo(option => //¥h°£¼v¹³
+                .ConfigVideo(option => //å»é™¤å½±åƒ
                     option.RemoveVideo()
                 )
-                .ConfigAudio(option => //³]©wÁn­µ¨ú¼Ë²v¬°16K¥B¬°³æÁn¹D¡A¤ñ¯S²v¬°32K
+                .ConfigAudio(option => //è¨­å®šè²éŸ³å–æ¨£ç‡ç‚º16Kä¸”ç‚ºå–®è²é“ï¼Œæ¯”ç‰¹ç‡ç‚º32K
                     option.SetChannels(1).SetFrequency(16 * 1000).SetBitrate(32 * 1000)
                 );
 
-            var kk = builder.CreateCommand(new string[] { "input.mp4" }, "output.mp3");
+            //var kk = builder.CreateCommand(new string[] { "input.mp4" }, "output.mp3");
         }
     }
 }

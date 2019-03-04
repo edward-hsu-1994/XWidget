@@ -20,6 +20,7 @@ namespace XWidget.EFLogic {
     /// <summary>
     /// 連鎖刪除設定
     /// </summary>
+    [AttributeUsage(AttributeTargets.Class)]
     public class RemoveCascadeAttribute : Attribute {
         /// <summary>
         /// 連鎖刪除模式
