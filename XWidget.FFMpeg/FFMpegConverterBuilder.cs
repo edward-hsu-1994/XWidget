@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace XWidget.FFMpeg {
@@ -34,19 +35,27 @@ namespace XWidget.FFMpeg {
             return this;
         }
 
-        private string CreateCommand() {
-            var generic_str = string.Join(" ", generic.args.Select(x => $"-{x.Key} {x.Value ?? ""}"));
-            var video_str = string.Join(" ", video.args.Select(x => $"-{x.Key} {x.Value ?? ""}"));
-            var audio_str = string.Join(" ", audio.args.Select(x => $"-{x.Key} {x.Value ?? ""}"));
+        private Dictionary<string, string> MergeArgs() {
+            Dictionary<string, string> merge = new Dictionary<string, string>();
 
-            var command = string.Join(" ", generic_str, video_str, audio_str, advancedArgs);
+            foreach (var kv in generic.args) {
+                merge[kv.Key] = kv.Value;
+            }
 
-            return command;
+            foreach (var kv in video.args) {
+                merge[kv.Key] = kv.Value;
+            }
+
+            foreach (var kv in audio.args) {
+                merge[kv.Key] = kv.Value;
+            }
+
+            return merge;
             //return string.Join(" ", command, string.Join(" ", inputs.Select(x => "-i " + x)), output);
         }
 
         public FFMpegConverter Build() {
-            return new FFMpegConverter(exePath, CreateCommand());
+            return new FFMpegConverter(exePath, MergeArgs());
         }
     }
 }
