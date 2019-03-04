@@ -7,7 +7,6 @@ namespace XWidget.FFMpeg.Test {
         public void Test1() {
             var builder = new FFMpegConverterBuilder();
             builder
-                .SetExecutePath(@"D:\富邦壓測_2018_5_1\fubondata\ffmpeg.exe")
                 .ConfigGeneric(option => //跳過40秒取10秒
                     option.SetStartPosition(40).SetDuration(10)
                 )
@@ -19,13 +18,13 @@ namespace XWidget.FFMpeg.Test {
                 );
 
             var converter = builder.Build();
-
+            /*
             converter.Convert(
                 new string[] { @"C:\Users\xupeiyao\Downloads\NARUTO.mp4" },
                 @"C:\Users\xupeiyao\Downloads\FFMPEGConverter.mp4")
                 .Subscribe(r => {
 
-                });
+                });*/
             //var command = builder.CreateCommand(new string[] { "input.mp4" }, "output.mp4");
         }
 
