@@ -15,6 +15,21 @@ namespace XWidget.FFMpeg {
             public const string Placebo = "placebo";
         }
 
+        public enum CommonSize {
+            SD,
+            HD,
+            FullHD,
+            UHD,
+            /// <summary>
+            /// 4K
+            /// </summary>            
+            HV,
+            /// <summary>
+            /// 8K 
+            /// </summary>
+            SHV
+        }
+
 
         internal Dictionary<string, string> args = new Dictionary<string, string>();
 
@@ -47,6 +62,30 @@ namespace XWidget.FFMpeg {
 
         public VideoOption SetSize(uint width, uint height) {
             args["s"] = $"{width}x{height}";
+            return this;
+        }
+
+        public VideoOption SetSize(CommonSize size) {
+            switch (size) {
+                case CommonSize.SD:
+                    SetSize(720, 576);
+                    break;
+                case CommonSize.HD:
+                    SetSize(1280, 720);
+                    break;
+                case CommonSize.FullHD:
+                    SetSize(1920, 1080);
+                    break;
+                case CommonSize.UHD:
+                    SetSize(3840, 2160);
+                    break;
+                case CommonSize.HV:
+                    SetSize(4096, 2160);
+                    break;
+                case CommonSize.SHV:
+                    SetSize(7680, 4320);
+                    break;
+            }
             return this;
         }
 
