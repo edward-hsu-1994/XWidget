@@ -17,7 +17,7 @@ namespace XWidget.FFMpeg.Test {
                     option.SetChannels(1).SetFrequency(16 * 1000).SetBitrate(32 * 1000)
                 );
 
-            var command = builder.CreateCommand(new string[] { "input.mp4" }, "output.mp4");
+            //var command = builder.CreateCommand(new string[] { "input.mp4" }, "output.mp4");
         }
 
         [Fact]
@@ -34,7 +34,7 @@ namespace XWidget.FFMpeg.Test {
                     option.SetChannels(1).SetFrequency(16 * 1000).SetBitrate(32 * 1000)
                 );
 
-            var kk = builder.CreateCommand(new string[] { "input.mp4" }, "output.mp3");
+            //var kk = builder.CreateCommand(new string[] { "input.mp4" }, "output.mp3");
         }
     }
 }

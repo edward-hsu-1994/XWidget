@@ -56,6 +56,7 @@ namespace XWidget.FFMpeg {
         }
 
         public VideoOption Copy() {
+            args.Clear();
             return Codec("copy");
         }
 
