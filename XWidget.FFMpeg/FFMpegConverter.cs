@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Linq;
 using System.Reactive.Linq;
+using System.Text.RegularExpressions;
 
 namespace XWidget.FFMpeg {
     public class FFMpegConverter {
@@ -16,7 +17,7 @@ namespace XWidget.FFMpeg {
             var process = new Process();
             process.StartInfo.FileName = exePath;
             process.StartInfo.Verb = "runas";
-            process.StartInfo.Arguments = string.Join(" ", args, string.Join(" ", inputPaths.Select(x => "-i " + x)), outputPath);
+            process.StartInfo.Arguments = string.Join(" ", string.Join(" ", inputPaths.Select(x => $"-i \"{x.Replace("\\", "/")}\"")), args, $"\"{outputPath.Replace("\\", "/")}\"");
             process.StartInfo.UseShellExecute = false;
             process.StartInfo.CreateNoWindow = false;
             process.StartInfo.RedirectStandardOutput = true;
