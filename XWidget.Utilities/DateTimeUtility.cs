@@ -8,6 +8,18 @@ namespace XWidget.Utilities {
     /// </summary>
     public static class DateTimeUtility {
         /// <summary>
+        /// 取得現在Unix Timestamp
+        /// </summary>
+        /// <returns>Unix Timestamp值</returns>
+        public static long GetNowUnixTimestamp() => ToUnixTimestamp(DateTime.Now);
+
+        /// <summary>
+        /// 取得現在Unix Timestamp Milliseconds
+        /// </summary>
+        /// <returns>Unix Timestamp Milliseconds值</returns>
+        public static long GetUnixTimestampMilliseconds() => ToUnixTimestampMilliseconds(DateTime.Now);
+
+        /// <summary>
         /// 將目標<see cref="DateTime"/>實例轉換為Unix Timestamp
         /// </summary>
         /// <param name="datetime"><see cref="DateTime"/>實例</param>
