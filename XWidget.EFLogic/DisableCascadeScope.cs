@@ -9,8 +9,6 @@ namespace XWidget.EFLogic {
     /// </summary> 
     public class DisableCascadeScope<TContext> : DisableCascadeScope<TContext, object[]>
         where TContext : DbContext {
-        public LogicManagerBase<TContext> Manager { get; private set; }
-
         public DisableCascadeScope(LogicManagerBase<TContext> manager) : base(manager) {
         }
     }
