@@ -781,6 +781,14 @@ namespace XWidget.EFLogic {
             }
 
             if (Manager.DisableCascade == null) {
+                if (Manager.SafeRemoveCascade != null) {
+                    var realScopes = Context.GetRemoveCascadeTypes(typeof(TEntity));
+                    if (!realScopes.All(x => Manager.SafeRemoveCascade.Types.Contains(x))) {
+                        Console.WriteLine(string.Join(",", realScopes.Select(x => x.Name)));
+                        throw new OperatorException($"Not in safe cascade scope: {string.Join(",", realScopes.Select(x => x.Name))}");
+                    }
+                }
+
                 Context.RemoveCascade(instance);
             } else {
                 Context.Remove(instance);

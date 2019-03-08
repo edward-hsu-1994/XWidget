@@ -27,7 +27,7 @@ namespace XWidget.EFLogic {
     /// </summary>
     public abstract class LogicManagerBase<TContext, TParameters> where TContext : DbContext {
         internal DisableCascadeScope<TContext, TParameters> DisableCascade { get; set; }
-
+        internal SafeRemoveCascadeScope<TContext, TParameters> SafeRemoveCascade { get; set; }
 
         internal DynamicLogicMapBuilder<TContext> MapBuilder { get; set; }
 

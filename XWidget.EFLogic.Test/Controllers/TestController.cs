@@ -69,7 +69,9 @@ namespace XWidget.EFLogic.Test.Controllers {
             var deleteTargets = categoryLogic.List(x => x.Notes.Count > 0).ToArray();
             foreach (var cate in deleteTargets) {
                 if (categoryLogic.Exists(cate.Id) && Manager.Exists<Category>(cate.Id)) {
-                    Manager.Delete<Category>(cate.Id);
+                    using (var safeScope = new SafeRemoveCascadeScope<TestContext, object[]>(Manager, typeof(Category), typeof(Note))) {
+                        Manager.Delete<Category>(cate.Id);
+                    }
                 }
             }
 
