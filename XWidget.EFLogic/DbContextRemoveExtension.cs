@@ -126,7 +126,7 @@ namespace XWidget.EFLogic {
                             result.AddRange(GetRefEntities(context, element));
                         }
                     } else {
-                        result.Add(value);
+                        result.AddRange(GetRefEntities(context, value));
                     }
                 } else if (removeCascadeAttribute.Mode == RemoveCascadeMode.OptIn) {
                     // 是否可連鎖刪除
@@ -177,7 +177,7 @@ namespace XWidget.EFLogic {
                             result.AddRange(GetRefEntities(context, element));
                         }
                     } else {
-                        result.Add(value);
+                        result.AddRange(GetRefEntities(context, value));
                     }
                 }
             }
