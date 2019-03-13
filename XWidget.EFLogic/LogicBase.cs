@@ -615,12 +615,15 @@ namespace XWidget.EFLogic {
                 var obj = member.Metadata.PropertyInfo.GetValue(entity);
                 var old_obj = member.Metadata.PropertyInfo.GetValue(instance);
 
+                // 沒變化
                 if (obj == old_obj) {
                     continue;
                 }
 
                 if (obj != null) {
-                    if (!obj.GetType().IsValueType && refList.Contains(obj)) { // 防止循環參照
+                    if (obj.GetType() != typeof(string) &&
+                        !obj.GetType().IsValueType &&
+                        refList.Any(x => Object.ReferenceEquals(x, obj))) { // 防止循環參照
                         continue;
                     }
 

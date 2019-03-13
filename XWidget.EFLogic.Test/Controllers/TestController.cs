@@ -109,6 +109,19 @@ namespace XWidget.EFLogic.Test.Controllers {
             var diff = Manager.GetDifferences(newObj);
 
             Assert.NotEqual(0, diff.Count);
+
+            var t = Manager.Create(new Category() {
+                Name = "Hello",
+                Description = "DD"
+            });
+
+            var t2 = Manager.UpdateOrCreate(new Category() {
+                Id = t.Id,
+                Name = "A",
+                Description = "A"
+            });
+
+            Assert.Equal(t2.Name, t2.Description);
         }
     }
 }
