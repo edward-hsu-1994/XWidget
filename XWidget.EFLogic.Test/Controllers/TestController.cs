@@ -122,6 +122,15 @@ namespace XWidget.EFLogic.Test.Controllers {
             });
 
             Assert.Equal(t2.Name, t2.Description);
+
+            t2.Notes.Add(new Note() {
+                Title = "NNNNN",
+                Context = "CCCCC"
+            });
+
+            Manager.Update(t2);
+
+
         }
     }
 }

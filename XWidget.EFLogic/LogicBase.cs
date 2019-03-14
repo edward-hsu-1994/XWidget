@@ -611,12 +611,17 @@ namespace XWidget.EFLogic {
             TId id = (TId)type.GetProperty(IdentityPropertyName).GetValue(entity);
             var instance = await InternalGetAsync(id);
 
+            // 檢驗該物件是否沒被EF追蹤
+            bool isDetached = Context.Entry(entity).State == EntityState.Detached;
+
             foreach (var member in Context.Entry(entity).Members) {
                 var obj = member.Metadata.PropertyInfo.GetValue(entity);
                 var old_obj = member.Metadata.PropertyInfo.GetValue(instance);
 
                 // 沒變化
-                if (obj == old_obj) {
+                if (!isDetached && // 被追蹤
+                    !(member is ReferenceEntry || member is CollectionEntry) && // 非關聯的值
+                    !member.IsModified) { // 沒變化
                     continue;
                 }
 
@@ -667,6 +672,13 @@ namespace XWidget.EFLogic {
 
                     if (obj == null) continue;
                     if (Manager.DisableCascade != null) continue;
+
+                    // 目前物件是被EF追蹤的，表示有可能這個集合並未被變更
+                    if (!isDetached && // 被追蹤
+                        !Context.Entry(entity).Collection(member.Metadata.PropertyInfo.Name).IsModified) { // 沒變更
+                        // 集合未被變更省略更新
+                        continue;
+                    }
 
                     foreach (var item in collection) {
                         if (item == null) continue;
