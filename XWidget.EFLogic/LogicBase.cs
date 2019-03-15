@@ -335,7 +335,23 @@ namespace XWidget.EFLogic {
             return FindOneAsync(cond).ToSync();
         }
 
+        /// <summary>
+        /// 是否存在符合條件的項目
+        /// </summary>
+        /// <param name="cond">條件</param>
+        /// <returns>是否存在</returns>
+        public virtual async Task<bool> AnyAsync(Expression<Func<TEntity, bool>> cond = null) {
+            return (await ListAsync(cond)).Any();
+        }
 
+        /// <summary>
+        /// 是否存在符合條件的項目
+        /// </summary>
+        /// <param name="cond">條件</param>
+        /// <returns>是否存在</returns>
+        public virtual bool Any(Expression<Func<TEntity, bool>> cond = null) {
+            return AnyAsync(cond).GetAwaiter().GetResult();
+        }
 
         /// <summary>
         /// 透過唯一識別號取得指定物件實例
