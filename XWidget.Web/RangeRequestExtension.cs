@@ -11,6 +11,7 @@ namespace Microsoft.Extensions.DependencyInjection {
         /// <summary>
         /// 啟用Range Request
         /// </summary>
+        [Obsolete("2.2之後版本內建", true)]
         public static IServiceCollection EnableRangeRequest(this IServiceCollection service) {
             AppContext.SetSwitch("Switch.Microsoft.AspNetCore.Mvc.EnableRangeProcessing", true);
             return service;
