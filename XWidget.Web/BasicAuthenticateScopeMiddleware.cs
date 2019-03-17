@@ -26,7 +26,7 @@ namespace XWidget.Web {
         public async Task Invoke(HttpContext context) {
             if (context.Request.Path.StartsWithSegments(Path)) {
                 if (context.Request.Headers.ContainsKey("Authorization")) {
-                    var authData = Encoding.UTF8.GetString(Convert.FromBase64String(context.Request.Headers["Authorization"].ToString().Split(" ")[1])).Split(':');
+                    var authData = Encoding.UTF8.GetString(Convert.FromBase64String(context.Request.Headers["Authorization"].ToString().Split(' ')[1])).Split(':');
                     if (Authorize(authData[0], authData[1])) {
                         await Next(context);
                     } else {
