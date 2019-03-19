@@ -696,7 +696,12 @@ namespace XWidget.EFLogic {
                         continue;
                     }
 
+                    List<object> tempCollection = new List<object>();
                     foreach (var item in collection) {
+                        tempCollection.Add(item);
+                    }
+
+                    foreach (var item in tempCollection) {
                         if (item == null) continue;
                         if (Context.Model.FindEntityType(item.GetType()) == null) continue;
 
