@@ -1,3 +1,6 @@
+# Read Version
+version=$(cat version)
+
 # Restore Projects
 find . -type d | grep '^./XWidget.[^/]*$' | { while read -r project; do eval "dotnet restore $project;"; done }
 
@@ -5,4 +8,4 @@ find . -type d | grep '^./XWidget.[^/]*$' | { while read -r project; do eval "do
 find . -type d | grep '^./XWidget.[^/]*$' | grep '\b\.Test$' | { while read -r project; do eval "dotnet test $project;"; done }
 
 # Pack
-find . -type d | grep '^./XWidget.[^/]*$' | grep -v '\b\.Test$' | { while read -r project; do eval "dotnet pack $project;"; done }
+find . -type d | grep '^./XWidget.[^/]*$' | grep -v '\b\.Test$' | { while read -r project; do eval "dotnet pack $project --version-suffix=$version --output ./ngpkgs; "; done }
