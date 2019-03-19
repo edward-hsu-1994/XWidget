@@ -8,7 +8,6 @@
     <PackageIconUrl>https://i.imgur.com/fF6aNHL.png</PackageIconUrl>
     <RepositoryUrl>https://github.com/XuPeiYao/XWidget.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <Version>$(VersionSuffix)</Version>
   </PropertyGroup>
 
   <ItemGroup>
