@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
@@ -10,6 +10,7 @@
     <RepositoryType>git</RepositoryType>
     <Description>System.Linq查詢擴充，提供列舉分頁、範圍查詢、最大小值查詢等擴充</Description>
     <PackageIconUrl>https://i.imgur.com/fF6aNHL.png</PackageIconUrl>
+    <Version>$(VersionSuffix)</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
@@ -11,6 +11,7 @@
     <PackageTags></PackageTags>
     <PackageProjectUrl>https://github.com/XuPeiYao/XWidget/tree/master/XWidget.Web.Mvc.JsonMask</PackageProjectUrl>
     <PackageIconUrl>https://i.imgur.com/fF6aNHL.png</PackageIconUrl>
+    <Version>$(VersionSuffix)</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

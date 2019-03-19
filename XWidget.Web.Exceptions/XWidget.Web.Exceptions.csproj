@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
@@ -10,6 +10,7 @@
     <RepositoryType>git</RepositoryType>
     <Description>網頁應用程式常用例外類別</Description>
     <PackageIconUrl>https://i.imgur.com/fF6aNHL.png</PackageIconUrl>
+    <Version>$(VersionSuffix)</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
