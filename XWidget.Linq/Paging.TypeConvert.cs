@@ -65,16 +65,16 @@ namespace XWidget.Linq {
         /// <summary>
         /// 分頁結果
         /// </summary>
-        public virtual IEnumerable<Tin> Result {
+        public virtual IEnumerable<Tout> Result {
             get {
-                if (Take == -1) return Source.Skip(Skip);
-                var result = Source.Skip(Skip).Take(Take).ToArray();
-
-                if (Selector != null) {
-                    return result.Select(x => Selector(x));
+                IEnumerable<Tin> result = null;
+                if (Take == -1) {
+                    result = Source.Skip(Skip);
+                } else {
+                    result = Source.Skip(Skip).Take(Take).ToArray();
                 }
 
-                return result;
+                return result.Select(x => Selector(x));
             }
         }
 

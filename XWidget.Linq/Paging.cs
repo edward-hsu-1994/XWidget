@@ -66,8 +66,12 @@ namespace XWidget.Linq {
         /// </summary>
         public virtual IEnumerable<TSource> Result {
             get {
-                if (Take == -1) return Source.Skip(Skip);
-                var result = Source.Skip(Skip).Take(Take).ToArray();
+                IEnumerable<TSource> result = null;
+                if (Take == -1) {
+                    result = Source.Skip(Skip);
+                } else {
+                    result = Source.Skip(Skip).Take(Take).ToArray();
+                }
 
                 if (Selector != null) {
                     return result.Select(x => Selector(x));
