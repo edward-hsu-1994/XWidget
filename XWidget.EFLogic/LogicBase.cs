@@ -237,16 +237,6 @@ namespace XWidget.EFLogic {
 
             var EFFunctionsMember = typeof(EF).GetProperty("Functions");
 
-            MemberExpression ReplaceParameter(MemberExpression expression) {
-                if (expression.Expression is ParameterExpression exp) {
-                    return Expression.MakeMemberAccess(p, expression.Member);
-                } else if (expression.Expression is MemberExpression exm) {
-                    return Expression.MakeMemberAccess(ReplaceParameter(exm), expression.Member);
-                } else {
-                    return expression;
-                }
-            }
-
             propertySelectors //轉換MemberEXpression為Like呼叫
                 .Select(x => {
                     equalExpList.Add(
@@ -254,7 +244,7 @@ namespace XWidget.EFLogic {
                             likeMethod,
                             new Expression[]{
                                 Expression.MakeMemberAccess(null,EFFunctionsMember),
-                                ReplaceParameter((MemberExpression)x.Body),
+                                Expression.Invoke(x, p),
                                 Expression.Constant(likePatten)
                             }
                         )
