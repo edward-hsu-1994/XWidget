@@ -8,8 +8,9 @@ namespace XWidget.Linq {
     /// <summary>
     /// 分頁
     /// </summary>
-    /// <typeparam name="TSource">列舉成員類型</typeparam>
-    public class Paging<TSource> {
+    /// <typeparam name="Tin">輸入列舉成員類型</typeparam>
+    /// <typeparam name="Tout">輸出列舉成員類型</typeparam>
+    public class Paging<Tin, Tout> {
         /// <summary>
         /// 起始索引
         /// </summary>
@@ -59,25 +60,21 @@ namespace XWidget.Linq {
         /// 對應方法
         /// </summary>
         [JsonIgnore]
-        public Func<TSource, TSource> Selector { get; set; }
+        public Func<Tin, Tout> Selector { get; set; }
 
         /// <summary>
         /// 分頁結果
         /// </summary>
-        public virtual IEnumerable<TSource> Result {
+        public virtual IEnumerable<Tout> Result {
             get {
-                IEnumerable<TSource> result = null;
+                IEnumerable<Tin> result = null;
                 if (Take == -1) {
                     result = Source.Skip(Skip);
                 } else {
                     result = Source.Skip(Skip).Take(Take).ToArray();
                 }
 
-                if (Selector != null) {
-                    return result.Select(x => Selector(x));
-                }
-
-                return result;
+                return result.Select(x => Selector(x));
             }
         }
 
@@ -85,7 +82,7 @@ namespace XWidget.Linq {
         /// 分頁資料來源
         /// </summary>
         [JsonIgnore]
-        public virtual IEnumerable<TSource> Source { get; private set; }
+        public virtual IEnumerable<Tin> Source { get; private set; }
 
         /// <summary>
         /// 預設建構子
@@ -99,7 +96,7 @@ namespace XWidget.Linq {
         /// <param name="source">分頁資料來源</param>
         /// <param name="skip">起始索引</param>
         /// <param name="take">取得筆數，如果為-1則表示取得所有資訊不分頁</param>
-        public Paging(IEnumerable<TSource> source, int skip, int take) {
+        public Paging(IEnumerable<Tin> source, int skip, int take) {
             this.Source = source;
             this.Skip = skip;
             this.Take = take;
@@ -129,7 +126,7 @@ namespace XWidget.Linq {
         /// </summary>
         /// <param name="pageIndex">頁數索引</param>
         /// <returns>分頁物件</returns>
-        public Paging<TSource> GetMoveToPage(int pageIndex) {
+        public Paging<Tin, Tout> GetMoveToPage(int pageIndex) {
             if (Take == -1 && pageIndex != 0) {
                 pageIndex = 0;
             }
@@ -138,7 +135,7 @@ namespace XWidget.Linq {
 
             if (newSkip < 0 || newSkip >= TotalCount) return null;
 
-            var result = new Paging<TSource>(Source, newSkip, Take);
+            var result = new Paging<Tin, Tout>(Source, newSkip, Take);
             result.Selector = Selector;
 
             return result;
@@ -168,7 +165,7 @@ namespace XWidget.Linq {
         /// </summary>
         /// <param name="deltaPageCount">分頁索引變動量</param>
         /// <returns>分頁物件</returns>
-        public Paging<TSource> GetMovePage(int deltaPageCount) {
+        public Paging<Tin, Tout> GetMovePage(int deltaPageCount) {
             if (Take == -1 && deltaPageCount != 0) {
                 return null;
             }
@@ -177,7 +174,7 @@ namespace XWidget.Linq {
 
             if (newSkip < 0 || newSkip >= TotalCount) return null;
 
-            var result = new Paging<TSource>(Source, newSkip, Take);
+            var result = new Paging<Tin, Tout>(Source, newSkip, Take);
             result.Selector = Selector;
 
             return result;

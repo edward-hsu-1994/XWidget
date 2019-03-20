@@ -13,6 +13,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		appveyor.yml = appveyor.yml
 		LICENSE = LICENSE
 		README.md = README.md
+		version = version
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XWidget.Web.Mvc.Multipart", "XWidget.Web.Mvc.Multipart\XWidget.Web.Mvc.Multipart.csproj", "{EC61BCC6-D3E5-4B61-8584-3E59901AC627}"
@@ -77,7 +78,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XWidget.FFMpeg", "XWidget.F
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XWidget.FFMpeg.Test", "XWidget.FFMpeg.Test\XWidget.FFMpeg.Test.csproj", "{264BCA06-5C65-4931-A725-114EC86EB5E7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XWidget.Web.AddThis", "XWidget.Web.AddThis\XWidget.Web.AddThis.csproj", "{2ED1C7FA-27C3-458D-B40E-DEE35452AF30}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XWidget.Web.AddThis", "XWidget.Web.AddThis\XWidget.Web.AddThis.csproj", "{2ED1C7FA-27C3-458D-B40E-DEE35452AF30}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XWidget.Web.AddThis.Test", "XWidget.Web.AddThis.Test\XWidget.Web.AddThis.Test.csproj", "{8C0A19FF-BA57-4165-9964-7823ED9AE2CD}"
 EndProject

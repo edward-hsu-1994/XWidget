@@ -195,7 +195,7 @@ namespace XWidget.EFLogic {
         /// <returns>搜尋結果</returns>
         public virtual async Task<IQueryable<TEntity>> SearchAsync<TEntity>(
             string likePatten,
-            params Expression<Func<TEntity, object>>[] propertySelectors)
+            params Expression<Func<TEntity, string>>[] propertySelectors)
             where TEntity : class {
             var targetLogic = (dynamic)GetLogicByType(typeof(TEntity));
 
@@ -210,7 +210,7 @@ namespace XWidget.EFLogic {
         /// <returns>搜尋結果</returns>
         public virtual IQueryable<TEntity> Search<TEntity>(
             string likePatten,
-            params Expression<Func<TEntity, object>>[] propertySelectors)
+            params Expression<Func<TEntity, string>>[] propertySelectors)
             where TEntity : class {
             return SearchAsync<TEntity>(likePatten, propertySelectors).ToSync();
         }
