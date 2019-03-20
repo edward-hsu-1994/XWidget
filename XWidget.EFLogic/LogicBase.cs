@@ -154,7 +154,7 @@ namespace XWidget.EFLogic {
         /// <returns>搜尋結果</returns>
         public virtual async Task<IQueryable<TEntity>> SearchAsync(
             string likePatten) {
-            return await SearchAsync(likePatten, new Expression<Func<TEntity, object>>[] { });
+            return await SearchAsync(likePatten, new Expression<Func<TEntity, string>>[] { });
         }
 
         /// <summary>
@@ -179,7 +179,7 @@ namespace XWidget.EFLogic {
             return await SearchAsync(likePatten, properties.Select(x => {
                 var p = Expression.Parameter(typeof(TEntity), "x");
 
-                return Expression.Lambda<Func<TEntity, object>>(
+                return Expression.Lambda<Func<TEntity, string>>(
                     Expression.MakeMemberAccess(p, typeof(TEntity).GetMember(x).First()), p
                 );
             }).ToArray());
@@ -205,7 +205,7 @@ namespace XWidget.EFLogic {
         /// <returns>搜尋結果</returns>
         public virtual async Task<IQueryable<TEntity>> SearchAsync(
             string likePatten,
-            params Expression<Func<TEntity, object>>[] propertySelectors) {
+            params Expression<Func<TEntity, string>>[] propertySelectors) {
             if (propertySelectors.Length == 0) {
                 var clrType = Context.Model.FindEntityType(typeof(TEntity));
                 var properties = clrType.GetProperties()
@@ -276,7 +276,7 @@ namespace XWidget.EFLogic {
         /// <returns>搜尋結果</returns>
         public IQueryable<TEntity> Search(
             string likePatten,
-            params Expression<Func<TEntity, object>>[] propertySelectors) {
+            params Expression<Func<TEntity, string>>[] propertySelectors) {
             return SearchAsync(likePatten, propertySelectors).ToSync();
         }
 
