@@ -134,7 +134,10 @@ namespace XWidget.Linq {
 
             if (newSkip < 0 || newSkip >= TotalCount) return null;
 
-            return new Paging<TSource>(Source, newSkip, Take);
+            var result = new Paging<TSource>(Source, newSkip, Take);
+            result.Selector = Selector;
+
+            return result;
         }
 
         /// <summary>
@@ -170,7 +173,10 @@ namespace XWidget.Linq {
 
             if (newSkip < 0 || newSkip >= TotalCount) return null;
 
-            return new Paging<TSource>(Source, newSkip, Take);
+            var result = new Paging<TSource>(Source, newSkip, Take);
+            result.Selector = Selector;
+
+            return result;
         }
 
         /// <summary>
