@@ -21,14 +21,14 @@ namespace XWidget.JobQueue {
         public IReadOnlyList<Worker> Workers => _worker.AsReadOnly();
 
         /// <summary>
-        /// 工作列隊
+        /// 待分配工作列隊
         /// </summary>
         private List<IJob> _jobQueue { get; set; } = new List<IJob>();
 
         /// <summary>
         /// 工作列隊
         /// </summary>
-        public IReadOnlyList<IJob> JobQueue => _jobQueue.AsReadOnly();
+        public IReadOnlyList<IJob> JobQueue => Workers.SelectMany(x => x.JobQueue).Concat(_jobQueue.AsReadOnly()).ToList().AsReadOnly();
 
         /// <summary>
         /// 是否閒置中
@@ -103,6 +103,12 @@ namespace XWidget.JobQueue {
         /// </summary>
         /// <param name="jobId">工作唯一識別號</param>
         public void Remove(Guid jobId) {
+            lock (_jobQueue) {
+                var jobs = _jobQueue.Where(x => x.Id == jobId).ToList();
+                foreach (var job in jobs) {
+                    _jobQueue.Remove(job);
+                }
+            }
             foreach (var worker in Workers) {
                 worker.Remove(jobId);
             }

@@ -67,17 +67,19 @@ namespace XWidget.JobQueue {
         /// <param name="jobId">工作唯一識別號</param>
         public void Remove(Guid jobId) {
             lock (this) {
-                var job = this.jobQueue.SingleOrDefault(x => x.Id == jobId);
+                var jobs = this.jobQueue.Where(x => x.Id == jobId).ToList();
 
-                if (job == null) {
+                if (!jobs.Any()) {
                     return;
                 }
 
-                if (job.Running) {
-                    job.Cancel();
-                }
+                foreach (var job in jobs) {
+                    if (job.Running) {
+                        job.Cancel();
+                    }
 
-                jobQueue.Remove(job);
+                    jobQueue.Remove(job);
+                }
             }
         }
 
