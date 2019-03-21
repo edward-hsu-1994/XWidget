@@ -32,6 +32,36 @@ namespace XWidget.Linq.Test {
             Assert.Equal(Enumerable.Range(0, 100).AsPaging().Result, Enumerable.Range(0, 10));
 
             Assert.Equal(Enumerable.Range(0, 100).AsPaging().GetMoveToPage(1).Result, Enumerable.Range(10, 10));
+
+            Assert.Equal(Enumerable.Range(0, 100).AsPaging<int>(x => x * 2).GetMoveToPage(1).Result, Enumerable.Range(10, 10).Select(x => x * 2));
+        }
+
+        [Fact(DisplayName = "PagingTypeConvertTest")]
+        public void PagingTypeConvert() {
+            var paging = new Paging<int, bool>(Enumerable.Range(0, 100), x => x % 2 == 0, 0, 10);
+
+
+            Assert.Equal(paging.Result, Enumerable.Range(0, 10).Select(x => x % 2 == 0));
+
+            paging.MovePage(1);
+
+            Assert.Equal(paging.Result, Enumerable.Range(10, 10).Select(x => x % 2 == 0));
+
+            var newPaging = paging.GetMovePage(3);
+
+            Assert.Equal(newPaging.Result, Enumerable.Range(40, 10).Select(x => x % 2 == 0));
+
+            newPaging.Reset();
+            paging.Reset();
+
+            Assert.Equal(newPaging.Result, paging.Result);
+
+            var noPaging = new Paging<int, bool>(Enumerable.Range(0, 100), x => x % 2 == 0, 0, -1);
+            Assert.Equal(noPaging.Result, Enumerable.Range(0, 100).Select(x => x % 2 == 0));
+
+            Assert.Equal(Enumerable.Range(0, 100).AsPaging(x => x % 2 == 0).Result, Enumerable.Range(0, 10).Select(x => x % 2 == 0));
+
+            Assert.Equal(Enumerable.Range(0, 100).AsPaging(x => x % 2 == 0).GetMoveToPage(1).Result, Enumerable.Range(10, 10).Select(x => x % 2 == 0));
         }
     }
 }
