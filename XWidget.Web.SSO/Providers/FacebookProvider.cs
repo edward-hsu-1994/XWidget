@@ -4,6 +4,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Primitives;
 using Newtonsoft.Json.Linq;
 
 namespace XWidget.Web.SSO.Providers {
@@ -16,11 +17,7 @@ namespace XWidget.Web.SSO.Providers {
 
         public override string Name => "Facebook";
 
-        public override async Task<string> GetLoginCallbackToken(HttpContext context) {
-            return context.Request.Query["access_token"][0].ToString();
-        }
-
-        public override async Task<string> GetLoginUrl(HttpContext context) {
+        public override async Task<string> GetLoginUrlAsync(HttpContext context) {
             var url = new UriBuilder();
             url.Host = "www.facebook.com";
             url.Scheme = "https";
@@ -34,7 +31,22 @@ namespace XWidget.Web.SSO.Providers {
             return url.ToString();
         }
 
-        public override async Task<bool> VerifyToken(string token) {
+        public override async Task<bool> VerifyCallbackRequest(HttpContext context) {
+            if (context.Request.Query.TryGetValue("state", out StringValues value)) {
+                return VerifyStateCode(value[0]);
+            } else {
+                return false;
+            }
+        }
+        public override async Task<string> GetLoginCallbackTokenAsync(HttpContext context) {
+            try {
+                return context.Request.Query["access_token"][0].ToString();
+            } catch {
+                return null;
+            }
+        }
+
+        public override async Task<bool> VerifyTokenAsync(string token) {
             try {
                 var responseJson = JObject.Parse(await client.GetStringAsync($"https://graph.facebook.com/debug_token?input_token={token}&access_token={Configuration.AppKey}"));
 
@@ -43,5 +55,6 @@ namespace XWidget.Web.SSO.Providers {
                 return false;
             }
         }
+
     }
 }

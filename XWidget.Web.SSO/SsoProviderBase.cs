@@ -6,18 +6,19 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace XWidget.Web.SSO {
-    public abstract class SsoProviderBase<TConfig>
+    public abstract class SsoProviderBase<TConfig> : ISsoProvider
         where TConfig : ISsoConfiguration {
 
         public abstract string Name { get; }
 
         public TConfig Configuration { get; set; }
+        ISsoConfiguration ISsoProvider.Configuration => this.Configuration;
 
         public SsoProviderBase(TConfig config) {
             Configuration = config;
         }
 
-        public abstract Task<string> GetLoginUrl(HttpContext context);
+        public abstract Task<string> GetLoginUrlAsync(HttpContext context);
 
         public string GetCallbackUrl(HttpContext context) {
             var currentPath = string.Concat(
@@ -38,9 +39,11 @@ namespace XWidget.Web.SSO {
             return currentPath;
         }
 
-        public abstract Task<string> GetLoginCallbackToken(HttpContext context);
+        public abstract Task<string> GetLoginCallbackTokenAsync(HttpContext context);
 
-        public abstract Task<bool> VerifyToken(string token);
+        public abstract Task<bool> VerifyTokenAsync(string token);
+
+        public abstract Task<bool> VerifyCallbackRequest(HttpContext context);
 
         /// <summary>
         /// 產生狀態碼
