@@ -10,6 +10,10 @@ namespace XWidget.Web.SSO.Providers {
     public class FacebookProvider : SsoProviderBase<DefaultSsoConfiguration> {
         private HttpClient client = new HttpClient();
 
+        public FacebookProvider(DefaultSsoConfiguration config, HttpClient client) : base(config) {
+            this.client = client;
+        }
+
         public override string Name => "Facebook";
 
         public override async Task<string> GetLoginCallbackToken(HttpContext context) {
@@ -21,7 +25,7 @@ namespace XWidget.Web.SSO.Providers {
             url.Host = "www.facebook.com";
             url.Scheme = "https";
             url.Path = "/v3.2/dialog/oauth";
-            url.Query = $"?client_id={Configuration.AppId}&redirect_uri={GetCallbackUrl(context)}&response_type=token&state={GenerateStateCode()}";
+            url.Query = $"?client_id={Configuration.AppId}&redirect_uri={Uri.EscapeDataString(GetCallbackUrl(context))}&response_type=token&state={GenerateStateCode()}";
 
             if (Configuration.Scopes != null && Configuration.Scopes.Count > 0) {
                 url.Query += "&scopes=" + string.Join(",", Configuration.Scopes);

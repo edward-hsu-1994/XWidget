@@ -8,9 +8,14 @@ using System.Threading.Tasks;
 namespace XWidget.Web.SSO {
     public abstract class SsoProviderBase<TConfig>
         where TConfig : ISsoConfiguration {
+
         public abstract string Name { get; }
 
         public TConfig Configuration { get; set; }
+
+        public SsoProviderBase(TConfig config) {
+            Configuration = config;
+        }
 
         public abstract Task<string> GetLoginUrl(HttpContext context);
 
@@ -27,6 +32,8 @@ namespace XWidget.Web.SSO {
             }
 
             currentPath += "-callback";
+
+            currentPath += context.Request.QueryString.ToUriComponent();
 
             return currentPath;
         }
