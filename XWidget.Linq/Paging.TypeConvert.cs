@@ -10,7 +10,7 @@ namespace XWidget.Linq {
     /// </summary>
     /// <typeparam name="Tin">輸入列舉成員類型</typeparam>
     /// <typeparam name="Tout">輸出列舉成員類型</typeparam>
-    public class Paging<Tin, Tout> {
+    public class Paging<Tin, Tout> : IPagingModel<Tout> {
         /// <summary>
         /// 起始索引
         /// </summary>

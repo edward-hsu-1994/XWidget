@@ -9,7 +9,7 @@ namespace XWidget.Linq {
     /// 分頁
     /// </summary>
     /// <typeparam name="TSource">列舉成員類型</typeparam>
-    public class Paging<TSource> {
+    public class Paging<TSource> : IPagingModel<TSource> {
         /// <summary>
         /// 起始索引
         /// </summary>
