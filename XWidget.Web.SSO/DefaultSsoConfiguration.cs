@@ -11,7 +11,7 @@ namespace XWidget.Web.SSO {
         /// 應用程式唯一識別號
         /// </summary>
         public string AppId { get; set; }
-        -
+
         /// <summary>
         /// 
         /// </summary>
