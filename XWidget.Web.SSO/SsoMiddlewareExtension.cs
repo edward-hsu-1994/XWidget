@@ -10,7 +10,7 @@ namespace XWidget.Web.SSO {
         public static IApplicationBuilder UseSSO<TSSOHandler>(
             this IApplicationBuilder app,
             PathString pathMatch
-            ) where TSSOHandler : ISSOHandler {
+            ) where TSSOHandler : ISsoHandler {
             return app.Map(pathMatch, (Action<IApplicationBuilder>)(app2 => {
                 foreach (var provider in Providers.GetAllProviders()) {
                     app2.Map($"/{provider}/bind", app3 => {

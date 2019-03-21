@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace XWidget.Web.SSO {
     public abstract class SsoProviderBase<TConfig>
@@ -11,7 +12,7 @@ namespace XWidget.Web.SSO {
 
         public TConfig Configuration { get; set; }
 
-        public abstract string GetLoginUrl(HttpContext context);
+        public abstract Task<string> GetLoginUrl(HttpContext context);
 
         public string GetCallbackUrl(HttpContext context) {
             var currentPath = string.Concat(
@@ -30,9 +31,9 @@ namespace XWidget.Web.SSO {
             return currentPath;
         }
 
-        public abstract string GetLoginCallbackToken(HttpContext context);
+        public abstract Task<string> GetLoginCallbackToken(HttpContext context);
 
-        public abstract bool VerifyToken(string token);
+        public abstract Task<bool> VerifyToken(string token);
 
         /// <summary>
         /// 產生狀態碼
