@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace XWidget.Web.SSO {
-    public interface ISSOHandler {
+    public interface ISsoHandler {
         Task OnBinding(HttpContext context);
         Task OnLogin(HttpContext context);
     }

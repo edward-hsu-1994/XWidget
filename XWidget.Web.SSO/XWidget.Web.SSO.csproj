@@ -29,4 +29,8 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="2.1.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\XWidget.Cryptography\XWidget.Cryptography.csproj" />
+  </ItemGroup>
+
 </Project>
