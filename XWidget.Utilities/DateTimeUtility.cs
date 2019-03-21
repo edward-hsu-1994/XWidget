@@ -17,7 +17,7 @@ namespace XWidget.Utilities {
         /// 取得現在Unix Timestamp Milliseconds
         /// </summary>
         /// <returns>Unix Timestamp Milliseconds值</returns>
-        public static long GetUnixTimestampMilliseconds() => ToUnixTimestampMilliseconds(DateTime.Now);
+        public static long GetNowUnixTimestampMilliseconds() => ToUnixTimestampMilliseconds(DateTime.Now);
 
         /// <summary>
         /// 將目標<see cref="DateTime"/>實例轉換為Unix Timestamp
