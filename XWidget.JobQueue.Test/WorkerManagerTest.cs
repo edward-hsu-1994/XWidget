@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using Xunit;
@@ -84,6 +85,37 @@ namespace XWidget.JobQueue.Test {
             worker.Reboot();
 
             Assert.Equal(-8, value);
+        }
+
+
+        [Fact(DisplayName = "XWidget.JobQueue.WorkerManagerTest4")]
+        public void Test4() {
+            WorkerManager worker = new WorkerManager(1);
+
+
+            var job1 = new Job<int>(j => {
+                Thread.Sleep(500);
+                return 1;
+            });
+            var job2 = new Job<int>(j => {
+                Thread.Sleep(500);
+                return 2;
+            });
+            worker.Add(job1);
+            worker.Add(job2);
+
+            Assert.Equal(2, worker.JobQueue.Count);
+
+            Assert.True(worker.JobQueue.First().Id == job1.Id);
+
+            worker.Remove(job2);
+            worker.WaitForIdle();
+
+            Assert.False(worker.IsDead);
+
+            Assert.True(worker.IsIdle);
+
+            Assert.Empty(worker.JobQueue);
         }
     }
 }

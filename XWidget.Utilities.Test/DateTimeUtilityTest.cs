@@ -20,5 +20,15 @@ namespace XWidget.Utilities.Test {
 
             Assert.Equal(now.ToString("yyyyMMdd-HHmmss"), now2.ToString("yyyyMMdd-HHmmss"));
         }
+
+        [Fact(DisplayName = "DateTimeUtility.UnixTimestampNow")]
+        public void UnixTimestampNow() {
+            DateTimeUtility.GetNowUnixTimestamp();
+        }
+
+        [Fact(DisplayName = "DateTimeUtility.UnixTimestampMillisecondsNow")]
+        public void UnixTimestampMillisecondsNow() {
+            DateTimeUtility.GetNowUnixTimestampMilliseconds();
+        }
     }
 }

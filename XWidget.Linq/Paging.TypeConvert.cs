@@ -10,7 +10,7 @@ namespace XWidget.Linq {
     /// </summary>
     /// <typeparam name="Tin">輸入列舉成員類型</typeparam>
     /// <typeparam name="Tout">輸出列舉成員類型</typeparam>
-    public class Paging<Tin, Tout> {
+    public class Paging<Tin, Tout> : IPagingModel<Tout> {
         /// <summary>
         /// 起始索引
         /// </summary>
@@ -94,10 +94,12 @@ namespace XWidget.Linq {
         /// 分頁建構子
         /// </summary>
         /// <param name="source">分頁資料來源</param>
+        /// <param name="selector">對應方法</param>
         /// <param name="skip">起始索引</param>
         /// <param name="take">取得筆數，如果為-1則表示取得所有資訊不分頁</param>
-        public Paging(IEnumerable<Tin> source, int skip, int take) {
+        public Paging(IEnumerable<Tin> source, Func<Tin, Tout> selector, int skip, int take) {
             this.Source = source;
+            this.Selector = selector;
             this.Skip = skip;
             this.Take = take;
         }
@@ -135,8 +137,7 @@ namespace XWidget.Linq {
 
             if (newSkip < 0 || newSkip >= TotalCount) return null;
 
-            var result = new Paging<Tin, Tout>(Source, newSkip, Take);
-            result.Selector = Selector;
+            var result = new Paging<Tin, Tout>(Source, Selector, newSkip, Take);
 
             return result;
         }
@@ -174,8 +175,7 @@ namespace XWidget.Linq {
 
             if (newSkip < 0 || newSkip >= TotalCount) return null;
 
-            var result = new Paging<Tin, Tout>(Source, newSkip, Take);
-            result.Selector = Selector;
+            var result = new Paging<Tin, Tout>(Source, Selector, newSkip, Take);
 
             return result;
         }

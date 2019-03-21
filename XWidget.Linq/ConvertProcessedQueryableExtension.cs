@@ -13,7 +13,7 @@ namespace XWidget.Linq {
         /// <param name="obj">查詢</param>
         /// <param name="process">處理程序</param>
         /// <returns>隱含處理的查詢物件</returns>
-        public static ConvertProcessedQueryable<Tin, Tout> ConvertProcess<Tin, Tout>(this IQueryable<Tin> obj, Func<Tin, Tout> process) {
+        public static ConvertProcessedQueryable<Tin, Tout> Process<Tin, Tout>(this IQueryable<Tin> obj, Func<Tin, Tout> process) {
             return new ConvertProcessedQueryable<Tin, Tout>() {
                 Source = obj,
                 Process = process

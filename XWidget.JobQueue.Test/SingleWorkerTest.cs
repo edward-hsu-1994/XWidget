@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using Xunit;
 
 namespace XWidget.JobQueue.Test {
@@ -46,6 +47,35 @@ namespace XWidget.JobQueue.Test {
             worker.WaitForIdle();
 
             Assert.Equal(16, value);
+        }
+
+        [Fact(DisplayName = "XWidget.JobQueue.SingleWorkerTest3")]
+        public void Test3() {
+            IWorker worker = new Worker();
+
+            int value = 1;
+            Job<int> job = null;
+            worker.Add(new Job<int>(j => {
+                Thread.Sleep(100);
+                value -= 2;
+                return value;
+            }));
+            worker.Add(job = new Job<int>(j => {
+                Thread.Sleep(100);
+                value += 2;
+                return value;
+            }));
+
+            worker.Remove(job);
+            worker.WaitForIdle();
+
+            Assert.Equal(-1, value);
+
+            Assert.False(worker.IsDead);
+
+            Assert.True(worker.IsIdle);
+
+            Assert.Empty(worker.JobQueue);
         }
     }
 }
