@@ -20,7 +20,7 @@ namespace XWidget.JobQueue {
         /// <summary>
         /// 工作編號
         /// </summary>
-        public Guid Id { get; private set; } = Guid.NewGuid();
+        public Guid Id { get; private set; }
 
         /// <summary>
         /// 是否執行中
@@ -49,6 +49,7 @@ namespace XWidget.JobQueue {
         /// </summary>
         /// <param name="content">工作內容</param>
         public Job(Func<Job<T>, T> content) {
+            Id = Guid.NewGuid();
             Content = content;
         }
 
