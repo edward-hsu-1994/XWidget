@@ -8,6 +8,13 @@ using System.Text;
 
 namespace XWidget.Web.SSO {
     public static class SsoMiddlewareExtension {
+        /// <summary>
+        /// 使用SSO
+        /// </summary>
+        /// <param name="app">應用程式建構器</param>
+        /// <param name="pathMatch">SSO路徑</param>
+        /// <param name="onLogin">登入回呼</param>
+        /// <returns>應用程式建構器</returns>
         public static IApplicationBuilder UseSSO(
             this IApplicationBuilder app,
             PathString pathMatch,
