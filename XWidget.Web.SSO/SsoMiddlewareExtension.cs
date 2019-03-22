@@ -66,7 +66,7 @@ namespace XWidget.Web.SSO {
         public static IApplicationBuilder UseSSO<THandler>(
             this IApplicationBuilder app,
             PathString pathMatch) {
-
+            return app;
         }
     }
 }
