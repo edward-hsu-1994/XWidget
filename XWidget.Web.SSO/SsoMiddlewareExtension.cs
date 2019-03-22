@@ -18,7 +18,8 @@ namespace XWidget.Web.SSO {
         public static IApplicationBuilder UseSSO(
             this IApplicationBuilder app,
             PathString pathMatch,
-            Action<ISsoProvider, string, HttpContext> onLogin
+            Action<ISsoProvider, string, HttpContext> onLogin,
+            Action<ISsoProvider, HttpContext> onError
             ) {
             return app.Use(async (context, next) => {
                 if (!context.Request.Path.StartsWithSegments(pathMatch)) {
@@ -35,6 +36,7 @@ namespace XWidget.Web.SSO {
                     if (context.Request.Path.StartsWithSegments(pathMatch + "/" + provider.Name + "/login-callback")) {
                         if (!await provider.VerifyCallbackRequest(context)) {
                             context.Response.StatusCode = 400;
+                            onError(provider, context);
                             return;
                         }
 
@@ -42,6 +44,7 @@ namespace XWidget.Web.SSO {
 
                         if (token == null) {
                             context.Response.StatusCode = 400;
+                            onError(provider, context);
                             return;
                         }
 
@@ -50,6 +53,7 @@ namespace XWidget.Web.SSO {
                             return;
                         } else {
                             context.Response.StatusCode = 400;
+                            onError(provider, context);
                             return;
                         }
                     }

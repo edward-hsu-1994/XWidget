@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Primitives;
@@ -11,8 +9,8 @@ namespace XWidget.Web.SSO.Providers {
     public class FacebookProvider : SsoProviderBase<DefaultSsoConfiguration> {
         private HttpClient client = new HttpClient();
 
-        public FacebookProvider(DefaultSsoConfiguration config, HttpClient client) : base(config) {
-            this.client = client;
+        public FacebookProvider(DefaultSsoConfiguration config, IHttpClientFactory clientFactory) : base(config) {
+            this.client = clientFactory.CreateClient();
         }
 
         public override string Name => "Facebook";
