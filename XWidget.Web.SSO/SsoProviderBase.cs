@@ -7,15 +7,13 @@ using System.Threading.Tasks;
 using XWidget.Utilities;
 
 namespace XWidget.Web.SSO {
-    public abstract class SsoProviderBase<TConfig> : ISsoProvider
-        where TConfig : ISsoConfiguration {
+    public abstract class SsoProviderBase : ISsoProvider {
 
         public abstract string Name { get; }
 
-        public TConfig Configuration { get; set; }
-        ISsoConfiguration ISsoProvider.Configuration => this.Configuration;
+        public ISsoConfiguration Configuration { get; set; }
 
-        public SsoProviderBase(TConfig config) {
+        public SsoProviderBase(ISsoConfiguration config) {
             Configuration = config;
         }
 

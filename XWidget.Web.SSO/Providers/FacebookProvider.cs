@@ -6,10 +6,10 @@ using Microsoft.Extensions.Primitives;
 using Newtonsoft.Json.Linq;
 
 namespace XWidget.Web.SSO.Providers {
-    public class FacebookProvider : SsoProviderBase<DefaultSsoConfiguration> {
+    public class FacebookProvider : SsoProviderBase {
         private HttpClient client = new HttpClient();
 
-        public FacebookProvider(DefaultSsoConfiguration config, IHttpClientFactory clientFactory) : base(config) {
+        public FacebookProvider(DefaultProviderConfiguration<FacebookProvider> config, IHttpClientFactory clientFactory) : base(config) {
             this.client = clientFactory.CreateClient();
         }
 
