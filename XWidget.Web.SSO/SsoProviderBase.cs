@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using XWidget.Utilities;
 
 namespace XWidget.Web.SSO {
     public abstract class SsoProviderBase<TConfig> : ISsoProvider
@@ -32,7 +33,11 @@ namespace XWidget.Web.SSO {
                 currentPath = currentPath.Substring(0, currentPath.Length - 1);
             }
 
-            currentPath += "-callback";
+            if (currentPath.EndsWith("-callback", StringComparison.CurrentCultureIgnoreCase)) {
+
+            } else {
+                currentPath += "-callback";
+            }
 
             currentPath += context.Request.QueryString.ToUriComponent();
 
@@ -51,7 +56,7 @@ namespace XWidget.Web.SSO {
         /// <returns>狀態碼</returns>
         public virtual string GenerateStateCode() {
             var part1 = Guid.NewGuid().ToString().Replace("-", "").Substring(0, 16);
-            var part2 = DateTime.Now.Ticks;
+            var part2 = DateTimeUtility.GetNowUnixTimestamp();
 
             var head = (part1 + part2).ToUpper();
             var hash = (head + Configuration.AppId + Configuration.AppKey).ToHashString<MD5>();
@@ -67,6 +72,11 @@ namespace XWidget.Web.SSO {
             stateCode = Encoding.UTF8.GetString(Convert.FromBase64String(stateCode));
 
             var head = stateCode.Substring(0, stateCode.Length - 32);
+
+            if (DateTimeUtility.GetNowUnixTimestamp() - long.Parse(head.Substring(16)) > 60 * 15) {
+                return false;
+            }
+
             var hash = stateCode.Substring(stateCode.Length - 32);
 
             return (head + Configuration.AppId + Configuration.AppKey).ToHashString<MD5>() == hash;

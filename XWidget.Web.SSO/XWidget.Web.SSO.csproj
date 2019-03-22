@@ -32,6 +32,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\XWidget.Cryptography\XWidget.Cryptography.csproj" />
+    <ProjectReference Include="..\XWidget.Utilities\XWidget.Utilities.csproj" />
+    <ProjectReference Include="..\XWidget.Web\XWidget.Web.csproj" />
   </ItemGroup>
 
 </Project>

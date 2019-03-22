@@ -20,7 +20,7 @@ namespace XWidget.Web.SSO.Providers {
             url.Host = "www.facebook.com";
             url.Scheme = "https";
             url.Path = "/v3.2/dialog/oauth";
-            url.Query = $"?client_id={Configuration.AppId}&redirect_uri={Uri.EscapeDataString(GetCallbackUrl(context))}&response_type=token&state={GenerateStateCode()}";
+            url.Query = $"?client_id={Configuration.AppId}&redirect_uri={Uri.EscapeDataString(GetCallbackUrl(context))}&response_type=code&state={GenerateStateCode()}";
 
             if (Configuration.Scopes != null && Configuration.Scopes.Count > 0) {
                 url.Query += "&scopes=" + string.Join(",", Configuration.Scopes);
@@ -37,21 +37,24 @@ namespace XWidget.Web.SSO.Providers {
             }
         }
         public override async Task<string> GetLoginCallbackTokenAsync(HttpContext context) {
-            try {
-                return context.Request.Query["access_token"][0].ToString();
-            } catch {
+            if (context.Request.Query.TryGetValue("code", out StringValues code)) {
+                try {
+                    var currentUrl = context.Request.GetAbsoluteUri().ToString();
+                    currentUrl = currentUrl.Split(new char[] { '?' }, 2)[0];
+
+                    var responseJson = JObject.Parse(await client.GetStringAsync($"https://graph.facebook.com/v3.2/oauth/access_token?client_id={Configuration.AppId}&redirect_uri={Uri.EscapeDataString(currentUrl)}&client_secret={Configuration.AppKey}&code={code[0]}"));
+
+                    return responseJson["access_token"].Value<string>();
+                } catch {
+                    return null;
+                }
+            } else {
                 return null;
             }
         }
 
         public override async Task<bool> VerifyTokenAsync(string token) {
-            try {
-                var responseJson = JObject.Parse(await client.GetStringAsync($"https://graph.facebook.com/debug_token?input_token={token}&access_token={Configuration.AppKey}"));
-
-                return responseJson["data"]["id"].Value<string>() == Configuration.AppId;
-            } catch {
-                return false;
-            }
+            return token != null;
         }
 
     }
