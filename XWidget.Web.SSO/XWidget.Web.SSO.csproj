@@ -13,11 +13,11 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile>bin\Debug\netstandard2.0\XWidget.Web.xml</DocumentationFile>
+    <DocumentationFile>bin\Debug\netstandard2.0\XWidget.Web.SSO.xml</DocumentationFile>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DocumentationFile>bin\Release\netstandard2.0\XWidget.Web.xml</DocumentationFile>
+    <DocumentationFile>bin\Release\netstandard2.0\XWidget.Web.SSO.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
@@ -27,10 +27,13 @@
     <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="2.1.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="2.1.0" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="2.1.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\XWidget.Cryptography\XWidget.Cryptography.csproj" />
+    <ProjectReference Include="..\XWidget.Utilities\XWidget.Utilities.csproj" />
+    <ProjectReference Include="..\XWidget.Web\XWidget.Web.csproj" />
   </ItemGroup>
 
 </Project>
