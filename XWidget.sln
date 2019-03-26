@@ -82,7 +82,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XWidget.Web.AddThis", "XWid
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XWidget.Web.AddThis.Test", "XWidget.Web.AddThis.Test\XWidget.Web.AddThis.Test.csproj", "{8C0A19FF-BA57-4165-9964-7823ED9AE2CD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XWidget.Web.SSO", "XWidget.Web.SSO\XWidget.Web.SSO.csproj", "{4C0F5CC6-4C34-4497-A44D-6562E89EC2E0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XWidget.Web.SSO", "XWidget.Web.SSO\XWidget.Web.SSO.csproj", "{4C0F5CC6-4C34-4497-A44D-6562E89EC2E0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XWidget.HtmlToPdf", "XWidget.HtmlToPdf\XWidget.HtmlToPdf.csproj", "{DCE61FD8-969A-4849-ADF3-A0128DA61F41}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -234,6 +236,10 @@ Global
 		{4C0F5CC6-4C34-4497-A44D-6562E89EC2E0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4C0F5CC6-4C34-4497-A44D-6562E89EC2E0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4C0F5CC6-4C34-4497-A44D-6562E89EC2E0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DCE61FD8-969A-4849-ADF3-A0128DA61F41}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DCE61FD8-969A-4849-ADF3-A0128DA61F41}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DCE61FD8-969A-4849-ADF3-A0128DA61F41}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DCE61FD8-969A-4849-ADF3-A0128DA61F41}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
