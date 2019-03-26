@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
@@ -39,10 +40,22 @@ namespace XWidget.Web.SSO.Providers {
         public override async Task<string> GetLoginCallbackTokenAsync(HttpContext context) {
             if (context.Request.Query.TryGetValue("code", out StringValues code)) {
                 try {
-                    var currentUrl = context.Request.GetAbsoluteUri().ToString();
-                    currentUrl = currentUrl.Split(new char[] { '?' }, 2)[0];
+                    var currentUrl = context.Request.GetAbsoluteUri();
+                    var ignoreQuery = new string[] {
+                        "code",
+                        "state"
+                    }.Select(x => x.ToUpper());
+                    var okQuery = string.Join("&", currentUrl.Query.Split('&').Where(x => {
+                        var name = x.Split(new char[] { '=', '?' }, 2, StringSplitOptions.RemoveEmptyEntries)[0].ToUpper();
+                        return !ignoreQuery.Contains(name.ToUpper());
+                    }));
 
-                    var responseJson = JObject.Parse(await client.GetStringAsync($"https://graph.facebook.com/v3.2/oauth/access_token?client_id={Configuration.AppId}&redirect_uri={Uri.EscapeDataString(currentUrl)}&client_secret={Configuration.AppKey}&code={code[0]}"));
+                    var callbackUrl = currentUrl.ToString().Split(new char[] { '?' }, 2)[0];
+                    if (okQuery?.Length > 0) {
+                        callbackUrl += '?' + okQuery;
+                    }
+
+                    var responseJson = JObject.Parse(await client.GetStringAsync($"https://graph.facebook.com/v3.2/oauth/access_token?client_id={Configuration.AppId}&redirect_uri={Uri.EscapeDataString(callbackUrl)}&client_secret={Configuration.AppKey}&code={code[0]}"));
 
                     return responseJson["access_token"].Value<string>();
                 } catch {

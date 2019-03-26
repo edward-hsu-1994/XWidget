@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -42,13 +43,25 @@ namespace XWidget.Web.SSO.Providers {
         public override async Task<string> GetLoginCallbackTokenAsync(HttpContext context) {
             if (context.Request.Query.TryGetValue("code", out StringValues code)) {
                 try {
-                    var currentUrl = context.Request.GetAbsoluteUri().ToString();
-                    currentUrl = currentUrl.Split(new char[] { '?' }, 2)[0];
+                    var currentUrl = context.Request.GetAbsoluteUri();
+                    var ignoreQuery = new string[] {
+                        "code",
+                        "state"
+                    }.Select(x => x.ToUpper());
+                    var okQuery = string.Join("&", currentUrl.Query.Split('&').Where(x => {
+                        var name = x.Split(new char[] { '=', '?' }, 2, StringSplitOptions.RemoveEmptyEntries)[0].ToUpper();
+                        return !ignoreQuery.Contains(name.ToUpper());
+                    }));
+
+                    var callbackUrl = currentUrl.ToString().Split(new char[] { '?' }, 2)[0];
+                    if (okQuery?.Length > 0) {
+                        callbackUrl += okQuery;
+                    }
 
                     var dict = new Dictionary<string, string>();
                     dict.Add("grant_type", "authorization_code");
                     dict.Add("code", code);
-                    dict.Add("redirect_uri", currentUrl);
+                    dict.Add("redirect_uri", callbackUrl);
                     dict.Add("client_id", Configuration.AppId);
                     dict.Add("client_secret", Configuration.AppKey);
 
