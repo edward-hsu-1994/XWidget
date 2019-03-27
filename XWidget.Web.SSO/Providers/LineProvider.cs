@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
@@ -8,26 +10,26 @@ using Microsoft.Extensions.Primitives;
 using Newtonsoft.Json.Linq;
 
 namespace XWidget.Web.SSO.Providers {
-    public class FacebookProvider : SsoProviderBase {
+    public class LineProvider : SsoProviderBase {
         private HttpClient client = new HttpClient();
 
-        public FacebookProvider(
-            IOptions<DefaultSsoProviderConfiguration<FacebookProvider>> config,
+        public LineProvider(
+            IOptions<DefaultSsoProviderConfiguration<LineProvider>> config,
             IHttpClientFactory clientFactory) : base(config.Value) {
             this.client = clientFactory.CreateClient();
         }
 
-        public override string Name => "Facebook";
+        public override string Name => "Line";
 
         public override async Task<string> GetLoginUrlAsync(HttpContext context) {
             var url = new UriBuilder();
-            url.Host = "www.facebook.com";
+            url.Host = "access.line.me";
             url.Scheme = "https";
-            url.Path = "/v3.2/dialog/oauth";
-            url.Query = $"?client_id={Configuration.AppId}&redirect_uri={Uri.EscapeDataString(GetCallbackUrl(context))}&response_type=code&state={GenerateStateCode()}";
+            url.Path = "/oauth2/v2.1/authorize";
+            url.Query = $"?clientId={Configuration.AppId}&response_type=code&redirect_uri={Uri.EscapeDataString(GetCallbackUrl(context))}&state={GenerateStateCode()}";
 
             if (Configuration.Scopes != null && Configuration.Scopes.Count > 0) {
-                url.Query += "&scopes=" + string.Join(",", Configuration.Scopes.Select(x => Uri.EscapeDataString(x)));
+                url.Query += "&scope=" + string.Join("%20", Configuration.Scopes.Select(x => Uri.EscapeDataString(x)));
             }
 
             return url.ToString();
@@ -40,6 +42,7 @@ namespace XWidget.Web.SSO.Providers {
                 return false;
             }
         }
+
         public override async Task<string> GetLoginCallbackTokenAsync(HttpContext context) {
             if (context.Request.Query.TryGetValue("code", out StringValues code)) {
                 try {
@@ -55,12 +58,26 @@ namespace XWidget.Web.SSO.Providers {
 
                     var callbackUrl = currentUrl.ToString().Split(new char[] { '?' }, 2)[0];
                     if (okQuery?.Length > 0) {
-                        callbackUrl += '?' + okQuery;
+                        callbackUrl += okQuery;
                     }
 
-                    var responseJson = JObject.Parse(await client.GetStringAsync($"https://graph.facebook.com/v3.2/oauth/access_token?client_id={Configuration.AppId}&redirect_uri={Uri.EscapeDataString(callbackUrl)}&client_secret={Configuration.AppKey}&code={code[0]}"));
+                    var dict = new Dictionary<string, string>();
+                    dict.Add("grant_type", "authorization_code");
+                    dict.Add("code", code);
+                    dict.Add("redirect_uri", callbackUrl);
+                    dict.Add("client_id", Configuration.AppId);
+                    dict.Add("client_secret", Configuration.AppKey);
 
-                    return responseJson["access_token"].Value<string>();
+                    var req = new HttpRequestMessage(HttpMethod.Post, "https://api.line.me/oauth2/v2.1/token") { Content = new FormUrlEncodedContent(dict) };
+                    var res = await client.SendAsync(req);
+
+                    if (!res.IsSuccessStatusCode) {
+                        return null;
+                    }
+
+                    var responseJson = JObject.Parse(await res.Content.ReadAsStringAsync());
+
+                    return responseJson["token_type"].Value<string>() + " " + responseJson["access_token"].Value<string>();
                 } catch {
                     return null;
                 }

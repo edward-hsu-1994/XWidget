@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Primitives;
 using Newtonsoft.Json.Linq;
 
@@ -10,7 +12,9 @@ namespace XWidget.Web.SSO.Providers {
     public class GithubProvider : SsoProviderBase {
         private HttpClient client = new HttpClient();
 
-        public GithubProvider(DefaultProviderConfiguration<GithubProvider> config, IHttpClientFactory clientFactory) : base(config) {
+        public GithubProvider(
+            IOptions<DefaultSsoProviderConfiguration<GithubProvider>> config,
+            IHttpClientFactory clientFactory) : base(config.Value) {
             this.client = clientFactory.CreateClient();
         }
 
@@ -24,7 +28,7 @@ namespace XWidget.Web.SSO.Providers {
             url.Query = $"?client_id={Configuration.AppId}&redirect_uri={Uri.EscapeDataString(GetCallbackUrl(context))}&state={GenerateStateCode()}";
 
             if (Configuration.Scopes != null && Configuration.Scopes.Count > 0) {
-                url.Query += "&scope=" + string.Join("%20", Configuration.Scopes);
+                url.Query += "&scope=" + string.Join("%20", Configuration.Scopes.Select(x => Uri.EscapeDataString(x)));
             }
 
             return url.ToString();
@@ -49,7 +53,7 @@ namespace XWidget.Web.SSO.Providers {
 
                     var responseJson = JObject.Parse(responseString);
 
-                    return responseJson["access_token"].Value<string>();
+                    return responseJson["token_type"].Value<string>() + " " + responseJson["access_token"].Value<string>();
                 } catch {
                     return null;
                 }
