@@ -3,6 +3,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Primitives;
 using Newtonsoft.Json.Linq;
 
@@ -10,7 +11,9 @@ namespace XWidget.Web.SSO.Providers {
     public class GithubProvider : SsoProviderBase {
         private HttpClient client = new HttpClient();
 
-        public GithubProvider(DefaultProviderConfiguration<GithubProvider> config, IHttpClientFactory clientFactory) : base(config) {
+        public GithubProvider(
+            IOptions<DefaultSsoProviderConfiguration<GithubProvider>> config,
+            IHttpClientFactory clientFactory) : base(config.Value) {
             this.client = clientFactory.CreateClient();
         }
 
