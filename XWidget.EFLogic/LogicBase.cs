@@ -736,7 +736,7 @@ namespace XWidget.EFLogic {
             await AfterUpdate(instance, parameters);
             await Manager.AfterUpdate(instance, parameters);
 
-            return await GetAsync(id);
+            return await GetAsync(id, parameters);
         }
 
         /// <summary>
