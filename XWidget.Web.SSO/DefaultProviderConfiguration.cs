@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 
 namespace XWidget.Web.SSO {
-    public class DefaultProviderConfiguration<TProvider> : DefaultSsoConfiguration
+    public class DefaultSsoProviderConfiguration<TProvider> : DefaultSsoConfiguration
        where TProvider : ISsoProvider {
 
     }

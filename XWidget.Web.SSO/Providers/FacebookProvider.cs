@@ -3,6 +3,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Primitives;
 using Newtonsoft.Json.Linq;
 
@@ -10,7 +11,9 @@ namespace XWidget.Web.SSO.Providers {
     public class FacebookProvider : SsoProviderBase {
         private HttpClient client = new HttpClient();
 
-        public FacebookProvider(DefaultProviderConfiguration<FacebookProvider> config, IHttpClientFactory clientFactory) : base(config) {
+        public FacebookProvider(
+            IOptions<DefaultSsoProviderConfiguration<FacebookProvider>> config,
+            IHttpClientFactory clientFactory) : base(config.Value) {
             this.client = clientFactory.CreateClient();
         }
 
@@ -24,7 +27,7 @@ namespace XWidget.Web.SSO.Providers {
             url.Query = $"?client_id={Configuration.AppId}&redirect_uri={Uri.EscapeDataString(GetCallbackUrl(context))}&response_type=code&state={GenerateStateCode()}";
 
             if (Configuration.Scopes != null && Configuration.Scopes.Count > 0) {
-                url.Query += "&scopes=" + string.Join(",", Configuration.Scopes);
+                url.Query += "&scopes=" + string.Join(",", Configuration.Scopes.Select(x => Uri.EscapeDataString(x)));
             }
 
             return url.ToString();
