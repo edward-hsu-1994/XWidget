@@ -34,13 +34,6 @@ namespace XWidget.Web {
         protected override JsonProperty CreateProperty(MemberInfo member, MemberSerialization memberSerialization) {
             JsonProperty prop = base.CreateProperty(member, memberSerialization);
 
-            var shouldSerializeMethod = member.DeclaringType.GetMethod("ShouldSerialize" + member.Name);
-            if (shouldSerializeMethod != null &&
-                shouldSerializeMethod.ReturnType == typeof(bool)) {
-                var should = (bool)shouldSerializeMethod.Invoke(FormatterServices.GetUninitializedObject(member.DeclaringType), new object[] { });
-                prop.Ignored = !should;
-            }
-
             if (member is PropertyInfo property) {
                 if (property.PropertyType == typeof(ILazyLoader) ||
                     property.PropertyType.GetInterfaces().Contains(typeof(ILazyLoader))) {
