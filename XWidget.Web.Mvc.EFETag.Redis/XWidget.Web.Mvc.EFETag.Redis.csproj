@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Description>使用Redis同步ETag</Description>
+    <Authors>XuPeiYao</Authors>
+    <Company>XuPeiYao</Company>
+    <PackageProjectUrl>https://github.com/XuPeiYao/XWidget/tree/master/XWidget.Web.Mvc.EFETag.Redis</PackageProjectUrl>
+    <PackageIconUrl>https://i.imgur.com/fF6aNHL.png</PackageIconUrl>
+    <RepositoryUrl>https://github.com/XuPeiYao/XWidget.git</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\XWidget.Web.Mvc.EFETag\XWidget.Web.Mvc.EFETag.csproj" />
+  </ItemGroup>
+
+</Project>
