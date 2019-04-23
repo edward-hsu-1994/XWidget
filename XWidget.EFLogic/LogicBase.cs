@@ -387,6 +387,10 @@ namespace XWidget.EFLogic {
         public virtual async Task<TEntity> GetAsync(TId id, TParameters parameters = default(TParameters)) {
             var instance = Context.Set<TEntity>().SingleOrDefault($"{IdentityPropertyName} == @0", id);
 
+            if (instance == null) {
+                throw new NotFoundException();
+            }
+
             await Manager.AfterGet(instance, parameters);
             await AfterGet(instance, parameters);
             return instance;
