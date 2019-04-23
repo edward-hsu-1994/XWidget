@@ -1,16 +1,26 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Authors>XuPeiYao</Authors>
-    <Company>XuPeiYaoXuPeiYao</Company>
+    <Company>XuPeiYao</Company>
     <Description>Mvc API支援使用EntityFramework作為ETag參照</Description>
     <PackageProjectUrl>https://github.com/XuPeiYao/XWidget/tree/master/XWidget.Web.Mvc.EFETag</PackageProjectUrl>
     <PackageIconUrl>https://i.imgur.com/fF6aNHL.png</PackageIconUrl>
     <RepositoryUrl>https://github.com/XuPeiYao/XWidget.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
   </PropertyGroup>
+
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile>bin\Debug\netstandard2.0\XWidget.Web.Mvc.EFETag.xml</DocumentationFile>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DocumentationFile>bin\Release\netstandard2.0\XWidget.Web.Mvc.EFETag.xml</DocumentationFile>
+  </PropertyGroup>
+
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Buffering" Version="0.2.2" />

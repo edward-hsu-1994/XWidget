@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
@@ -11,6 +11,16 @@
     <RepositoryUrl>https://github.com/XuPeiYao/XWidget.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
   </PropertyGroup>
+
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile>bin\Debug\netstandard2.0\XWidget.Web.Mvc.EFETag.Redis.xml</DocumentationFile>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DocumentationFile>bin\Release\netstandard2.0\XWidget.Web.Mvc.EFETag.Redis.xml</DocumentationFile>
+  </PropertyGroup>
+
 
   <ItemGroup>
     <ProjectReference Include="..\XWidget.Web.Mvc.EFETag\XWidget.Web.Mvc.EFETag.csproj" />
