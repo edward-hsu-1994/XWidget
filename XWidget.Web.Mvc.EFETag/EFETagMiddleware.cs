@@ -52,7 +52,7 @@ namespace XWidget.Web.Mvc.EFETag {
                     .Select(x => x.PropertyType.GenericTypeArguments[0]).Distinct();
 
                 foreach (var modelType in modelTypes) {
-                    eTags[modelType.Name] = DateTime.Now.Ticks.ToString();
+                    ETags[modelType.Name] = DateTime.Now.Ticks.ToString();
                 }
 
                 ETagInit?.Invoke(this, null);
