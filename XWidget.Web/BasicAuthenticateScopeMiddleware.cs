@@ -50,13 +50,15 @@ namespace XWidget.Web {
                             // 驗證失敗拋出403狀態與錯誤訊息
                             context.Response.StatusCode = StatusCodes.Status403Forbidden;
                             context.Response.ContentType = "text/plain";
-                            await context.Response.WriteAsync("403 Forbidden.");
+                            context.Response.Headers["WWW-Authenticate"] = $"Basic realm=\"{Realm}\"";
+                            await context.Response.WriteAsync("401 Unauthorized.");
                         }
                     } catch {
                         // 驗證與剖析過程出現例外，拋回錯誤
                         context.Response.StatusCode = StatusCodes.Status403Forbidden;
                         context.Response.ContentType = "text/plain";
-                        await context.Response.WriteAsync("403 Forbidden.");
+                        context.Response.Headers["WWW-Authenticate"] = $"Basic realm=\"{Realm}\"";
+                        await context.Response.WriteAsync("401 Unauthorized.");
                     }
                 } else {
                     // 未攜帶資訊，拋出驗證需求標頭、401狀態以及realm資訊
