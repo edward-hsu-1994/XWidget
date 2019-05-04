@@ -21,6 +21,9 @@
     <DocumentationFile>bin\Release\netstandard2.0\XWidget.Web.Mvc.EFETag.Redis.xml</DocumentationFile>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="StackExchange.Redis" Version="2.0.601" />
+  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\XWidget.Web.Mvc.EFETag\XWidget.Web.Mvc.EFETag.csproj" />
