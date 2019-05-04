@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using StackExchange.Redis;
 using System;
 using System.Collections.Generic;
 using System.Text;
