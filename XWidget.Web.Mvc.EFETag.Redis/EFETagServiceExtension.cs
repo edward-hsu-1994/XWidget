@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using StackExchange.Redis;
@@ -36,6 +37,22 @@ namespace XWidget.Web.Mvc.EFETag.Redis {
             });
             EFETagMiddleware<TContext>.ETagUpdated += _ETagUpdated;
             EFETagMiddleware<TContext>.ETagInit += _ETagInit<TContext>;
+            EFETagMiddleware<TContext>.LoadResponseCache = (string etag, HttpContext context) => {
+                if (database.KeyExists(etag)) {
+                    context.Response.StatusCode = 200;
+                    var responseBytes = Encoding.UTF8.GetBytes(database.StringGet(etag));
+                    context.Response.Body.Write(responseBytes, 0, responseBytes.Length);
+                }
+                return false;
+            };
+            EFETagMiddleware<TContext>.SaveResponseCache = (string etag, HttpContext context) => {
+                context.Response.Body.Seek(0, System.IO.SeekOrigin.Begin);
+                byte[] responseBytes = new byte[context.Response.Body.Length];
+                context.Response.Body.ReadAsync(responseBytes, 0, responseBytes.Length);
+                database.StringSet(etag, Encoding.UTF8.GetString(responseBytes));
+                context.Response.Body.Seek(0, System.IO.SeekOrigin.Begin);
+                return true;
+            };
             return services;
         }
 
