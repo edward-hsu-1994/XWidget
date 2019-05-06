@@ -19,6 +19,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace XWidget.Web.Mvc.EFETag {
+    public delegate bool ResponseCacheProcess(string etag, HttpContext context);
     public class EFETagMiddleware<TContext>
         where TContext : DbContext {
         private static bool Inited = false;
@@ -30,6 +31,8 @@ namespace XWidget.Web.Mvc.EFETag {
 
         public static event EventHandler ETagInit;
         public static event EventHandler<KeyValuePair<string, string>> ETagUpdated;
+        public static ResponseCacheProcess LoadResponseCache { get; set; }
+        public static ResponseCacheProcess SaveResponseCache { get; set; }
 
         public EFETagMiddleware(RequestDelegate next) {
             Next = next;
@@ -227,25 +230,57 @@ namespace XWidget.Web.Mvc.EFETag {
             })?.MethodInfo;
             #endregion
 
-
             // 如果目前Request為針對MVC方法
-            if (HttpMethods.IsGet(context.Request.Method) && // 必須為GET
-                action != null && // 且包含舊的ETag
-                context.Request.Headers.TryGetValue("If-None-Match", out StringValues oldETag)) {
+            if (HttpMethods.IsGet(context.Request.Method) &&// 必須為GET
+                action != null) {// 且包含舊的ETag
                 // 目前Action的識別
                 var currentActionId = $"{action.DeclaringType.FullName}.{action.Name}<{string.Join(", ", action.GetParameters().Select(x => x.ParameterType.FullName))}>".ToLower();
 
-                // 透過相關ModelType的ETag計算MD5作為ETag
-                var currentETag = "W/\"" + string.Join(",", ActionRefType[currentActionId].Select(x => ETags[x.Name])).ToHashString<MD5>() + "\"";
+                var etag = string.Join(",", ActionRefType[currentActionId].Select(x => ETags[x.Name])).ToHashString<MD5>();
 
-                // ETag相等於計算的，表示內容無變化，返回304
-                if (oldETag[0] == currentETag) {
-                    context.Response.StatusCode = (int)HttpStatusCode.NotModified;
-                    return;
+                // 透過相關ModelType的ETag計算MD5作為ETag
+                var currentETag = "W/\"" + etag + "\"";
+
+                if (context.Request.Headers.TryGetValue("If-None-Match", out StringValues oldETag)) {
+                    // ETag相等於計算的，表示內容無變化，返回304
+                    if (oldETag[0] == currentETag) {
+                        context.Response.StatusCode = (int)HttpStatusCode.NotModified;
+                        return;
+                    }
+                } else {
+                    // 讀取快取
+                    if (LoadResponseCache != null) {
+                        if (LoadResponseCache.Invoke(
+                            currentETag,
+                            context)) {
+                            return;
+                        }
+                    }
                 }
             }
 
             await Next(context);
+
+            // 如果目前Request為針對MVC方法
+            if (HttpMethods.IsGet(context.Request.Method) &&// 必須為GET
+                action != null) {// 且包含舊的ETag
+                // 目前Action的識別
+                var currentActionId = $"{action.DeclaringType.FullName}.{action.Name}<{string.Join(", ", action.GetParameters().Select(x => x.ParameterType.FullName))}>".ToLower();
+
+                var etag = string.Join(",", ActionRefType[currentActionId].Select(x => ETags[x.Name])).ToHashString<MD5>();
+
+                // 透過相關ModelType的ETag計算MD5作為ETag
+                var currentETag = "W/\"" + etag + "\"";
+
+                // 儲存快取
+                if (SaveResponseCache != null) {
+                    if (SaveResponseCache.Invoke(
+                        currentETag,
+                        context)) {
+                        return;
+                    }
+                }
+            }
 
             // 刪除事件綁定
             dbcontext.ChangeTracker.StateChanged -= eventHandler;
