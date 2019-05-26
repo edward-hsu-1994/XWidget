@@ -18,7 +18,6 @@ namespace XWidget.Web {
         /// <returns>應用程式建構器</returns>
         public static IApplicationBuilder UseBasicAuthenticateScope<TBaseAuthorizeHandler>(
             this IApplicationBuilder app,
-            PathString path,
             IOptions<BasicAuthenticateScopeOption> options)
             where TBaseAuthorizeHandler : IBaseAuthorizeHandler {
             return app.UseMiddleware<BasicAuthenticateScopeMiddleware<TBaseAuthorizeHandler>>(

@@ -38,23 +38,20 @@ namespace XWidget.Web {
                 // 檢查是否攜帶驗證標頭
                 if (context.Request.Headers.ContainsKey("Authorization")) {
                     // 發現驗證標頭，解析驗證資訊
-                    try {
-                        var authData = Encoding.UTF8.GetString(Convert.FromBase64String(context.Request.Headers["Authorization"].ToString().Split(' ')[1])).Split(':');
-                        // 自DI提供者中取得泛型中指定的基礎驗證處理類別實例
-                        var handler = (TBaseAuthorizeHandler)context.RequestServices.GetService(typeof(TBaseAuthorizeHandler));
-                        // 調用驗證方法確認驗證是否通過
-                        if (await handler.Authorize(authData[0], authData[1])) {
-                            // 通過驗證則繼續處理後去動作
-                            await Next(context);
-                        } else {
-                            // 驗證失敗拋出401狀態與錯誤訊息
-                            context.Response.StatusCode = StatusCodes.Status401Unauthorized;
-                            context.Response.ContentType = "text/plain";
-                            context.Response.Headers["WWW-Authenticate"] = $"Basic realm=\"{Realm}\"";
-                            await context.Response.WriteAsync("401 Unauthorized.");
-                        }
-                    } catch {
-                        // 驗證與剖析過程出現例外，拋回錯誤
+                    var authData = GetAuthData(context);
+                    // 自DI提供者中取得泛型中指定的基礎驗證處理類別實例
+                    var handler = (TBaseAuthorizeHandler)context.RequestServices.GetService(typeof(TBaseAuthorizeHandler));
+
+                    if (handler == null) {
+                        throw new NullReferenceException("Not Found TBaseAuthorizeHandler");
+                    }
+
+                    // 調用驗證方法確認驗證是否通過
+                    if (await handler.Authorize(authData[0], authData[1])) {
+                        // 通過驗證則繼續處理後去動作
+                        await Next(context);
+                    } else {
+                        // 驗證失敗拋出401狀態與錯誤訊息
                         context.Response.StatusCode = StatusCodes.Status401Unauthorized;
                         context.Response.ContentType = "text/plain";
                         context.Response.Headers["WWW-Authenticate"] = $"Basic realm=\"{Realm}\"";
@@ -70,6 +67,18 @@ namespace XWidget.Web {
             } else {
                 // 非指定路由則不檢查直接下一步
                 await Next(context);
+            }
+        }
+
+        private string[] GetAuthData(HttpContext context) {
+            try {
+                return Encoding.UTF8.GetString(
+                    Convert.FromBase64String(
+                        context.Request.Headers["Authorization"].ToString().Split(' ')[1]
+                        )
+                    ).Split(':');
+            } catch {
+                return new string[] { "", "" };
             }
         }
     }
