@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27428.2037
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28803.452
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XWidget.Web.Mvc.JsonMask", "XWidget.Web.Mvc.JsonMask\XWidget.Web.Mvc.JsonMask.csproj", "{AC85A51A-D93C-4F2B-8480-2232593C9964}"
 EndProject
@@ -84,9 +84,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XWidget.Web.AddThis.Test", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XWidget.Web.SSO", "XWidget.Web.SSO\XWidget.Web.SSO.csproj", "{4C0F5CC6-4C34-4497-A44D-6562E89EC2E0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XWidget.Web.Mvc.EFETag", "XWidget.Web.Mvc.EFETag\XWidget.Web.Mvc.EFETag.csproj", "{24768616-895D-4466-9B91-47AC0FE4E28A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XWidget.Web.Mvc.EFETag", "XWidget.Web.Mvc.EFETag\XWidget.Web.Mvc.EFETag.csproj", "{24768616-895D-4466-9B91-47AC0FE4E28A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XWidget.Web.Mvc.EFETag.Redis", "XWidget.Web.Mvc.EFETag.Redis\XWidget.Web.Mvc.EFETag.Redis.csproj", "{B2FA97C3-F785-4E2E-AA9D-A14CB292AA41}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XWidget.Web.Mvc.EFETag.Redis", "XWidget.Web.Mvc.EFETag.Redis\XWidget.Web.Mvc.EFETag.Redis.csproj", "{B2FA97C3-F785-4E2E-AA9D-A14CB292AA41}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XWidget.Web.WebSockets", "XWidget.Web.WebSockets\XWidget.Web.WebSockets.csproj", "{68D0A512-2CB8-437B-9879-3E830BFD2C94}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -246,6 +248,10 @@ Global
 		{B2FA97C3-F785-4E2E-AA9D-A14CB292AA41}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B2FA97C3-F785-4E2E-AA9D-A14CB292AA41}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B2FA97C3-F785-4E2E-AA9D-A14CB292AA41}.Release|Any CPU.Build.0 = Release|Any CPU
+		{68D0A512-2CB8-437B-9879-3E830BFD2C94}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{68D0A512-2CB8-437B-9879-3E830BFD2C94}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{68D0A512-2CB8-437B-9879-3E830BFD2C94}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{68D0A512-2CB8-437B-9879-3E830BFD2C94}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
