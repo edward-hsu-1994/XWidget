@@ -116,6 +116,7 @@ namespace XWidget.Web.SSO {
             return app.Use(async (context, next) => {
                 if (!context.Request.Path.StartsWithSegments(pathMatch)) {
                     await next();
+                    return;
                 }
 
                 var providers = context.RequestServices.GetService<ISsoProvider[]>();
