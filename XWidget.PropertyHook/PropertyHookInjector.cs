@@ -5,19 +5,40 @@ using System.Linq.Expressions;
 using System.Reflection;
 
 namespace XWidget.PropertyHook {
+    /// <summary>
+    /// 屬性掛勾回呼函數
+    /// </summary>
+    /// <typeparam name="T">物件類型</typeparam>
+    /// <param name="sender">物件</param>
+    /// <param name="indexs">索引子參數</param>
+    /// <param name="value">值</param>
     public delegate void PropertyHookCallback<T>(T sender, object[] indexs, ref object value);
     public partial class PropertyHookInjector<T>
         where T : class {
+        /// <summary>
+        /// 注射目標物件
+        /// </summary>
         public T OrigionObject { get; private set; }
 
-        public PropertyHookInterceptor<T> Interceptor { get; set; }
+        PropertyHookInterceptor<T> Interceptor { get; set; }
 
+        /// <summary>
+        /// 建立物件注射器
+        /// </summary>
+        /// <param name="origionObject">注射物件</param>
         public PropertyHookInjector(T origionObject) {
             OrigionObject = origionObject;
             Interceptor = new PropertyHookInterceptor<T>();
             Interceptor.OrigionObject = origionObject;
         }
 
+        /// <summary>
+        /// 加入GetBefore屬性掛勾
+        /// </summary>
+        /// <typeparam name="TProperty">屬性類型</typeparam>
+        /// <param name="selector">屬性選擇器</param>
+        /// <param name="callback">掛勾回呼</param>
+        /// <returns>物件注射器</returns>
         public PropertyHookInjector<T> HookGetBeforeProperty<TProperty>(
             Expression<Func<T, TProperty>> selector,
             PropertyHookCallback<T> callback) {
@@ -33,6 +54,13 @@ namespace XWidget.PropertyHook {
             return this;
         }
 
+        /// <summary>
+        /// 加入GetAfter屬性掛勾
+        /// </summary>
+        /// <typeparam name="TProperty">屬性類型</typeparam>
+        /// <param name="selector">屬性選擇器</param>
+        /// <param name="callback">掛勾回呼</param>
+        /// <returns>物件注射器</returns>
         public PropertyHookInjector<T> HookGetAfterProperty<TProperty>(
             Expression<Func<T, TProperty>> selector,
             PropertyHookCallback<T> callback) {
@@ -48,6 +76,13 @@ namespace XWidget.PropertyHook {
             return this;
         }
 
+        /// <summary>
+        /// 加入SetBefore屬性掛勾
+        /// </summary>
+        /// <typeparam name="TProperty">屬性類型</typeparam>
+        /// <param name="selector">屬性選擇器</param>
+        /// <param name="callback">掛勾回呼</param>
+        /// <returns>物件注射器</returns>
         public PropertyHookInjector<T> HookSetBeforeProperty<TProperty>(
             Expression<Func<T, TProperty>> selector,
             PropertyHookCallback<T> callback) {
@@ -66,6 +101,13 @@ namespace XWidget.PropertyHook {
             return this;
         }
 
+        /// <summary>
+        /// 加入SetAfter屬性掛勾
+        /// </summary>
+        /// <typeparam name="TProperty">屬性類型</typeparam>
+        /// <param name="selector">屬性選擇器</param>
+        /// <param name="callback">掛勾回呼</param>
+        /// <returns>物件注射器</returns>
         public PropertyHookInjector<T> HookSetAfterProperty<TProperty>(
             Expression<Func<T, TProperty>> selector,
             PropertyHookCallback<T> callback) {
@@ -84,6 +126,10 @@ namespace XWidget.PropertyHook {
             return this;
         }
 
+        /// <summary>
+        /// 注入掛勾
+        /// </summary>
+        /// <returns>注入後的Proxy物件</returns>
         public T Inject() {
             return new Castle.DynamicProxy.ProxyGenerator()
                     .CreateClassProxyWithTarget(

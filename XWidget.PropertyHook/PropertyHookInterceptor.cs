@@ -6,7 +6,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 
 namespace XWidget.PropertyHook {
-    public class PropertyHookInterceptor<T> : IInterceptor
+    internal class PropertyHookInterceptor<T> : IInterceptor
         where T : class {
         public T OrigionObject { get; set; }
 
