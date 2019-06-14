@@ -27,10 +27,10 @@ namespace XWidget.PropertyHook.Test {
                 v = "123456"; // 複寫結果
             });
             injector1.HookGetAfterProperty(x => x[default(string)], (TestClass o, object[] i, ref object v) => {
-                v = "INDEX SET";
+                v = "INDEX SET"; // 複寫結果
             });
             injector1.HookSetBeforeProperty(x => x[default(string)], (TestClass o, object[] i, ref object v) => {
-                v = "SET INDEX";
+                v = "SET INDEX"; // 複寫結果
             });
 
 
