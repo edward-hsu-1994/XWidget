@@ -8,7 +8,7 @@ using System.Reflection;
 namespace XWidget.PropertyHook {
     internal class PropertyHookInterceptor<T> : IInterceptor
         where T : class {
-        public T OrigionObject { get; set; }
+        public T TargetObject { get; set; }
 
         public Dictionary<(bool indexer, bool setter, MethodInfo method), PropertyHookCallback<T>> MethodBeforeInfoCallbackDict { get; set; }
             = new Dictionary<(bool indexer, bool setter, MethodInfo method), PropertyHookCallback<T>>();
@@ -25,14 +25,14 @@ namespace XWidget.PropertyHook {
                 }
                 if (method.Key.setter) {
                     var value = invocation.Arguments.LastOrDefault();
-                    MethodBeforeInfoCallbackDict[method.Key].Invoke(OrigionObject, indexs.ToArray(), ref value);
+                    MethodBeforeInfoCallbackDict[method.Key].Invoke(TargetObject, indexs.ToArray(), ref value);
                     if (invocation.Arguments.Any()) {
                         invocation.SetArgumentValue(invocation.Arguments.Length - 1, value);
                     }
                     invocation.ReturnValue = value;
                 } else {
                     var value = invocation.ReturnValue;
-                    MethodBeforeInfoCallbackDict[method.Key].Invoke(OrigionObject, indexs.ToArray(), ref value);
+                    MethodBeforeInfoCallbackDict[method.Key].Invoke(TargetObject, indexs.ToArray(), ref value);
                     invocation.ReturnValue = value;
                 }
             }
@@ -47,17 +47,26 @@ namespace XWidget.PropertyHook {
                 }
                 if (method.Key.setter) {
                     var value = invocation.Arguments.LastOrDefault();
-                    MethodAfterInfoCallbackDict[method.Key].Invoke(OrigionObject, indexs.ToArray(), ref value);
+                    MethodAfterInfoCallbackDict[method.Key].Invoke(TargetObject, indexs.ToArray(), ref value);
                     if (invocation.Arguments.Any()) {
                         invocation.SetArgumentValue(invocation.Arguments.Length - 1, value);
                     }
                     invocation.ReturnValue = value;
                 } else {
                     var value = invocation.ReturnValue;
-                    MethodAfterInfoCallbackDict[method.Key].Invoke(OrigionObject, indexs.ToArray(), ref value);
+                    MethodAfterInfoCallbackDict[method.Key].Invoke(TargetObject, indexs.ToArray(), ref value);
                     invocation.ReturnValue = value;
                 }
             }
+        }
+
+        public PropertyHookInterceptor<T> UseFor(T targetObject) {
+            var result = new PropertyHookInterceptor<T>();
+            result.TargetObject = targetObject;
+            result.MethodBeforeInfoCallbackDict = this.MethodBeforeInfoCallbackDict.ToDictionary(x => x.Key, x => x.Value);
+            result.MethodAfterInfoCallbackDict = this.MethodAfterInfoCallbackDict.ToDictionary(x => x.Key, x => x.Value);
+
+            return result;
         }
     }
 }

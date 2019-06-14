@@ -15,21 +15,13 @@ namespace XWidget.PropertyHook {
     public delegate void PropertyHookCallback<T>(T sender, object[] indexs, ref object value);
     public partial class PropertyHookInjector<T>
         where T : class {
-        /// <summary>
-        /// 注射目標物件
-        /// </summary>
-        public T OrigionObject { get; private set; }
-
         PropertyHookInterceptor<T> Interceptor { get; set; }
 
         /// <summary>
         /// 建立物件注射器
         /// </summary>
-        /// <param name="origionObject">注射物件</param>
-        public PropertyHookInjector(T origionObject) {
-            OrigionObject = origionObject;
+        public PropertyHookInjector() {
             Interceptor = new PropertyHookInterceptor<T>();
-            Interceptor.OrigionObject = origionObject;
         }
 
         /// <summary>
@@ -129,12 +121,13 @@ namespace XWidget.PropertyHook {
         /// <summary>
         /// 注入掛勾
         /// </summary>
+        /// <param name="targetObject">目標注射物件</param>
         /// <returns>注入後的Proxy物件</returns>
-        public T Inject() {
+        public T Inject(T targetObject) {
             return new Castle.DynamicProxy.ProxyGenerator()
                     .CreateClassProxyWithTarget(
-                        OrigionObject,
-                        Interceptor);
+                        targetObject,
+                        Interceptor.UseFor(targetObject));
         }
     }
 }
