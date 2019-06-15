@@ -4,7 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 
-namespace XWidget.PropertyHook {
+namespace XWidget.ObjectHook {
     /// <summary>
     /// 屬性掛勾回呼函數
     /// </summary>
@@ -13,14 +13,27 @@ namespace XWidget.PropertyHook {
     /// <param name="indexs">索引子參數</param>
     /// <param name="value">值</param>
     public delegate void PropertyHookCallback<T>(T sender, object[] indexs, ref object value);
-    public partial class PropertyHookInjector<T>
+
+    /// <summary>
+    /// 方法掛勾回呼函數
+    /// </summary>
+    /// <typeparam name="T">物件類型</typeparam>
+    /// <param name="sender">物件</param>
+    /// <param name="parameters">方法參數</param>
+    public delegate void MethodHookCallback<T>(T sender, object[] parameters);
+
+    /// <summary>
+    /// 物件掛勾注射器
+    /// </summary>
+    /// <typeparam name="T">注射類型</typeparam>
+    public partial class ObjectHookInjector<T>
         where T : class {
         PropertyHookInterceptor<T> Interceptor { get; set; }
 
         /// <summary>
         /// 建立物件注射器
         /// </summary>
-        public PropertyHookInjector() {
+        public ObjectHookInjector() {
             Interceptor = new PropertyHookInterceptor<T>();
         }
 
@@ -31,16 +44,16 @@ namespace XWidget.PropertyHook {
         /// <param name="selector">屬性選擇器</param>
         /// <param name="callback">掛勾回呼</param>
         /// <returns>物件注射器</returns>
-        public PropertyHookInjector<T> HookGetBeforeProperty<TProperty>(
+        public ObjectHookInjector<T> HookGetPropertyBefore<TProperty>(
             Expression<Func<T, TProperty>> selector,
             PropertyHookCallback<T> callback) {
 
             if (selector.Body.NodeType == ExpressionType.Call) {
                 var methodCallExpression = selector.Body as MethodCallExpression;
-                Interceptor.MethodBeforeInfoCallbackDict[(true, false, methodCallExpression.Method)] = callback;
+                Interceptor.PropertyBeforeCallbackDict[new HookMethodInfo() { Type = MethodType.IndexerGatter, Method = methodCallExpression.Method }] = callback;
             } else if (selector.Body.NodeType == ExpressionType.MemberAccess) {
                 var memberException = selector.Body as MemberExpression;
-                Interceptor.MethodBeforeInfoCallbackDict[(false, false, ((PropertyInfo)memberException.Member).GetMethod)] = callback;
+                Interceptor.PropertyBeforeCallbackDict[new HookMethodInfo() { Type = MethodType.PropertyGatter, Method = ((PropertyInfo)memberException.Member).GetMethod }] = callback;
             }
 
             return this;
@@ -53,16 +66,16 @@ namespace XWidget.PropertyHook {
         /// <param name="selector">屬性選擇器</param>
         /// <param name="callback">掛勾回呼</param>
         /// <returns>物件注射器</returns>
-        public PropertyHookInjector<T> HookGetAfterProperty<TProperty>(
+        public ObjectHookInjector<T> HookGetPropertyAfter<TProperty>(
             Expression<Func<T, TProperty>> selector,
             PropertyHookCallback<T> callback) {
 
             if (selector.Body.NodeType == ExpressionType.Call) {
                 var methodCallExpression = selector.Body as MethodCallExpression;
-                Interceptor.MethodAfterInfoCallbackDict[(true, false, methodCallExpression.Method)] = callback;
+                Interceptor.PropertyAfterCallbackDict[new HookMethodInfo() { Type = MethodType.IndexerGatter, Method = methodCallExpression.Method }] = callback;
             } else if (selector.Body.NodeType == ExpressionType.MemberAccess) {
                 var memberException = selector.Body as MemberExpression;
-                Interceptor.MethodAfterInfoCallbackDict[(false, false, ((PropertyInfo)memberException.Member).GetMethod)] = callback;
+                Interceptor.PropertyAfterCallbackDict[new HookMethodInfo() { Type = MethodType.PropertyGatter, Method = ((PropertyInfo)memberException.Member).GetMethod }] = callback;
             }
 
             return this;
@@ -75,7 +88,7 @@ namespace XWidget.PropertyHook {
         /// <param name="selector">屬性選擇器</param>
         /// <param name="callback">掛勾回呼</param>
         /// <returns>物件注射器</returns>
-        public PropertyHookInjector<T> HookSetBeforeProperty<TProperty>(
+        public ObjectHookInjector<T> HookSetPropertyBefore<TProperty>(
             Expression<Func<T, TProperty>> selector,
             PropertyHookCallback<T> callback) {
 
@@ -84,10 +97,11 @@ namespace XWidget.PropertyHook {
 
                 var property = typeof(T).GetProperties().Single(x => x.GetMethod == methodCallExpression.Method || x.SetMethod == methodCallExpression.Method);
 
-                Interceptor.MethodBeforeInfoCallbackDict[(true, true, property.SetMethod)] = callback;
+                Interceptor.PropertyBeforeCallbackDict[new HookMethodInfo() { Type = MethodType.IndexerSetter, Method = property.SetMethod }] = callback;
             } else if (selector.Body.NodeType == ExpressionType.MemberAccess) {
                 var memberException = selector.Body as MemberExpression;
-                Interceptor.MethodBeforeInfoCallbackDict[(false, true, ((PropertyInfo)memberException.Member).SetMethod)] = callback;
+
+                Interceptor.PropertyBeforeCallbackDict[new HookMethodInfo() { Type = MethodType.PropertySetter, Method = ((PropertyInfo)memberException.Member).SetMethod }] = callback;
             }
 
             return this;
@@ -100,7 +114,7 @@ namespace XWidget.PropertyHook {
         /// <param name="selector">屬性選擇器</param>
         /// <param name="callback">掛勾回呼</param>
         /// <returns>物件注射器</returns>
-        public PropertyHookInjector<T> HookSetAfterProperty<TProperty>(
+        public ObjectHookInjector<T> HookSetPropertyAfter<TProperty>(
             Expression<Func<T, TProperty>> selector,
             PropertyHookCallback<T> callback) {
 
@@ -109,10 +123,37 @@ namespace XWidget.PropertyHook {
 
                 var property = typeof(T).GetProperties().Single(x => x.GetMethod == methodCallExpression.Method || x.SetMethod == methodCallExpression.Method);
 
-                Interceptor.MethodAfterInfoCallbackDict[(true, true, property.SetMethod)] = callback;
+                Interceptor.PropertyAfterCallbackDict[new HookMethodInfo() { Type = MethodType.IndexerSetter, Method = property.SetMethod }] = callback;
             } else if (selector.Body.NodeType == ExpressionType.MemberAccess) {
                 var memberException = selector.Body as MemberExpression;
-                Interceptor.MethodAfterInfoCallbackDict[(false, true, ((PropertyInfo)memberException.Member).SetMethod)] = callback;
+
+                Interceptor.PropertyAfterCallbackDict[new HookMethodInfo() { Type = MethodType.PropertySetter, Method = ((PropertyInfo)memberException.Member).SetMethod }] = callback;
+            }
+
+            return this;
+        }
+
+        public ObjectHookInjector<T> HookMethodInvokeBefore(
+            Expression<Action<T>> selector,
+            MethodHookCallback<T> callback) {
+
+            if (selector.Body.NodeType == ExpressionType.Call) {
+                var methodCallExpression = selector.Body as MethodCallExpression;
+
+                Interceptor.MethodBeforeCallbackDict[new HookMethodInfo() { Type = MethodType.Default, Method = methodCallExpression.Method }] = callback;
+            }
+
+            return this;
+        }
+
+        public ObjectHookInjector<T> HookMethodInvokeAfter(
+           Expression<Action<T>> selector,
+           MethodHookCallback<T> callback) {
+
+            if (selector.Body.NodeType == ExpressionType.Call) {
+                var methodCallExpression = selector.Body as MethodCallExpression;
+
+                Interceptor.MethodAfterCallbackDict[new HookMethodInfo() { Type = MethodType.Default, Method = methodCallExpression.Method }] = callback;
             }
 
             return this;
