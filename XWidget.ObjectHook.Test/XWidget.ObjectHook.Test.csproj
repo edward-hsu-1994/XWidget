@@ -13,7 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\XWidget.PropertyHook\XWidget.PropertyHook.csproj" />
+    <ProjectReference Include="..\XWidget.ObjectHook\XWidget.ObjectHook.csproj" />
   </ItemGroup>
 
 </Project>
