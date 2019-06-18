@@ -27,7 +27,7 @@ namespace XWidget.Web.SSO.Providers {
             url.Query = $"?client_id={Configuration.AppId}&redirect_uri={Uri.EscapeDataString(GetCallbackUrl(context))}&response_type=code&state={GenerateStateCode()}";
 
             if (Configuration.Scopes != null && Configuration.Scopes.Count > 0) {
-                url.Query += "&scopes=" + string.Join(",", Configuration.Scopes.Select(x => Uri.EscapeDataString(x)));
+                url.Query += "&scope=" + string.Join(",", Configuration.Scopes.Select(x => Uri.EscapeDataString(x)));
             }
 
             return url.ToString();
