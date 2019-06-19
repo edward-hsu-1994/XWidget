@@ -112,7 +112,7 @@ namespace XWidget.Web.SSO {
         public static IApplicationBuilder UseSso<THandler>(
             this IApplicationBuilder app,
             PathString pathMatch)
-            where THandler : ISsoHandler, new() {
+            where THandler : ISsoHandler {
             return app.Use(async (context, next) => {
                 if (!context.Request.Path.StartsWithSegments(pathMatch)) {
                     await next();
