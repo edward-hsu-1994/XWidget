@@ -45,20 +45,23 @@ namespace XWidget.Web.SSO.Providers {
             if (context.Request.Query.TryGetValue("code", out StringValues code)) {
                 try {
                     var currentUrl = context.Request.GetAbsoluteUri();
-                    var ignoreQuery = new string[] {
-                        "code",
-                        "state",
-                        "scope"
-                    }.Select(x => x.ToUpper());
-                    var okQuery = string.Join("&", currentUrl.Query.Split('&').Where(x => {
-                        var name = x.Split(new char[] { '=', '?' }, 2, StringSplitOptions.RemoveEmptyEntries)[0].ToUpper();
-                        return !ignoreQuery.Contains(name.ToUpper());
-                    }));
+
+                    //var ignoreQuery = new string[] {
+                    //    "code",
+                    //    "state",
+                    //    "scope"
+                    //}.Select(x => x.ToUpper());
+
+                    //var okQuery = string.Join("&", currentUrl.Query.Split('&').Where(x => {
+                    //    var name = x.Split(new char[] { '=', '?' }, 2, StringSplitOptions.RemoveEmptyEntries)[0].ToUpper();
+                    //    return !ignoreQuery.Contains(name.ToUpper());
+                    //}));
 
                     var callbackUrl = currentUrl.ToString().Split(new char[] { '?' }, 2)[0];
-                    if (okQuery?.Length > 0) {
-                        callbackUrl += '?' + okQuery;
-                    }
+
+                    //if (okQuery?.Length > 0) {
+                    //    callbackUrl += '?' + okQuery;
+                    //}
 
                     Dictionary<string, string> formDataDictionary = new Dictionary<string, string>() {
                         ["client_id"] = Configuration.AppId,
