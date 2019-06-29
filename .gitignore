@@ -264,3 +264,4 @@ coverage.json
 result.json
 *.opencover.xml
 XWidget.Cryptography.Test/tools/
+XWidget.Web.SSO.TestWeb/
