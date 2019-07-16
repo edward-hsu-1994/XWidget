@@ -5,6 +5,7 @@ pipeline {
         stage('Build') { 
             steps { 
                 echo "Build... $GIT_BRANCH"
+                sh "bash ./build.sh";
             }
         }
         stage('Test') {        
