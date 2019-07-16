@@ -13,7 +13,7 @@ pipeline {
                  expression { return "$GIT_BRANCH".startsWith("refs/tags/") }
             }
             steps {
-                echo 'Deploying....'
+                echo 'Deploying.... $NuGetKey'
             }
         }
     }
