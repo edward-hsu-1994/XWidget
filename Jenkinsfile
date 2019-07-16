@@ -15,7 +15,7 @@ pipeline {
         }
         stage('Deploy') {
             when {
-                branch 'master'
+                 expression { return "$GIT_BRANCH".startsWith("refs/tags/") }
             }
             steps {
                 echo 'Deploying....'
