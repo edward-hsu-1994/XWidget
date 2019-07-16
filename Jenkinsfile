@@ -8,11 +8,6 @@ pipeline {
                 sh "bash ./build.sh";
             }
         }
-        stage('Test') {        
-            steps {
-                echo 'Testing...'
-            }
-        }
         stage('Deploy') {
             when {
                  expression { return "$GIT_BRANCH".startsWith("refs/tags/") }
