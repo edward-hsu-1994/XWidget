@@ -4,7 +4,7 @@ pipeline {
     stages {
         stage('Build') { 
             steps { 
-                echo "Build... $GIT_BRANCH"
+                echo "Build... $GIT_BRANCH";
                 sh "bash ./build.sh";
             }
         }
@@ -13,7 +13,8 @@ pipeline {
                  expression { return "$GIT_BRANCH".startsWith("refs/tags/") }
             }
             steps {
-                echo "Deploying.... $NuGetKey"
+                echo "Deploying.... $NuGetKey";
+                sh 'cd ./ngpkgs; ls | grep ".nupkg$" | { while read -r nupkg; do eval "dotnet nuget push $nupkg -k $NuGetKey -s https://www.nuget.org/;"; done }';
             }
         }
     }
