@@ -9,6 +9,6 @@ XWidget
 |---------|----------------------------------------------------------------------------------------------------------------------|
 | master  | [![Build Status](https://travis-ci.org/XuPeiYao/XWidget.svg?branch=master)](https://travis-ci.org/XuPeiYao/XWidget)  |
 | develop | [![Build Status](https://travis-ci.org/XuPeiYao/XWidget.svg?branch=develop)](https://travis-ci.org/XuPeiYao/XWidget) |
-| jenkins | [![Build Status](http://jenkins.gofa.cloud/buildStatus/icon?job=XWidget)](http://jenkins.gofa.cloud/job/XWidget) |
+| jenkins | [![Build Status](http://jenkins.gofa.cloud/buildStatus/icon?job=XuPeiYao-XWidget)]() |
 
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FXuPeiYao%2FXWidget.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2FXuPeiYao%2FXWidget?ref=badge_large)
