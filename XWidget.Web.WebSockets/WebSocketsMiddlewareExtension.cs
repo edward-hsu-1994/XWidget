@@ -25,8 +25,6 @@ namespace XWidget.Web.WebSockets {
                 app.UseWebSockets(options);
             }
 
-            THandler handler = (THandler)Activator.CreateInstance(typeof(THandler));
-
             app.Map(path, app2 => {
                 app2.UseMiddleware<WebSocketsMiddleware<THandler>>(options);
             });
